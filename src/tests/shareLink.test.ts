@@ -52,6 +52,10 @@ const country: CountryData = {
   updateDate: "2026-10-10",
   parties: [partyA, partyB],
   selectedParties: [partyA],
+  majorityThreshold: { numerator: 2, denominator: 3 },
+  allowTieBreaker: true,
+  sortBy: "name",
+  locale: "de",
 };
 
 const emptyCountry: CountryData = {

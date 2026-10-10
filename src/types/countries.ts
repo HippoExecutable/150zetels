@@ -18,7 +18,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { MajorityThreshold } from "./majority";
 import { Party } from "./party";
+import { SortByState } from "./zustand";
 
 export interface Country {
   name: string;
@@ -32,4 +34,9 @@ export type CountryInfo = Pick<Country, "name" | "updateDate">;
 export interface CountryData extends CountryInfo {
   parties: Party[];
   selectedParties: Party[];
+  // Left out when the importer should keep their own settings
+  majorityThreshold?: MajorityThreshold;
+  allowTieBreaker?: boolean;
+  sortBy?: SortByState["sortBy"];
+  locale?: string;
 }

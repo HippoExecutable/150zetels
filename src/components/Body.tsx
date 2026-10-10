@@ -32,6 +32,7 @@ import {
   useSelectedCountry,
   useMajorityThreshold,
   useCustomInfo,
+  importCountryData,
 } from "@/lib/zustandStore";
 import {
   PartyButton,
@@ -81,11 +82,7 @@ const Seats = () => {
       if (isCancelled) return;
 
       if (sharedCountry) {
-        const { name, updateDate, parties, selectedParties } = sharedCountry;
-        setParties(parties);
-        setSelectedParties(selectedParties);
-        setSelectedCountry(null);
-        setCustomInfo({ name, updateDate });
+        importCountryData(sharedCountry);
       } else {
         alert(i("dialogs.invalidShareLink"));
         loadCountry();
@@ -114,14 +111,7 @@ const Seats = () => {
       isCancelled = true;
       window.removeEventListener("hashchange", handleHashChange);
     };
-  }, [
-    i,
-    setLocale,
-    setParties,
-    setSelectedCountry,
-    setSelectedParties,
-    setCustomInfo,
-  ]);
+  }, [i, setLocale, setParties, setSelectedCountry, setSelectedParties]);
 
   return (
     <div>

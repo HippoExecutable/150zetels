@@ -90,6 +90,72 @@ test("ignores selected ids that match no party", () => {
   ).toEqual([partyB]);
 });
 
+test("round-trips the majority threshold and tie breaker", () => {
+  const twoThirds = {
+    ...country,
+    majorityThreshold: { numerator: 2, denominator: 3 },
+    allowTieBreaker: false,
+  };
+  const customHalf = {
+    ...country,
+    majorityThreshold: { numerator: 5000, denominator: 10000 },
+    allowTieBreaker: true,
+  };
+
+  expect(parseCountry(stringifyCountry(twoThirds))).toEqual(twoThirds);
+  expect(parseCountry(stringifyCountry(customHalf))).toEqual(customHalf);
+});
+
+test("leaves the majority settings out when they are not included", () => {
+  const exported = JSON.parse(stringifyCountry(country));
+
+  expect(exported).not.toHaveProperty("majorityThreshold");
+  expect(exported).not.toHaveProperty("allowTieBreaker");
+  expect(
+    parseCountry(stringifyCountry(country))?.majorityThreshold,
+  ).toBeUndefined();
+});
+
+test("returns null for invalid majority settings", () => {
+  const withThreshold = (numerator: unknown, denominator: unknown) =>
+    JSON.stringify({
+      ...country,
+      majorityThreshold: { numerator, denominator },
+    });
+
+  expect(parseCountry(withThreshold(0, 2))).toBeNull();
+  expect(parseCountry(withThreshold(3, 2))).toBeNull();
+  expect(parseCountry(withThreshold(1.5, 2))).toBeNull();
+  expect(parseCountry(withThreshold(1, 20000))).toBeNull();
+  expect(parseCountry(withThreshold("1", "2"))).toBeNull();
+  expect(
+    parseCountry(JSON.stringify({ ...country, majorityThreshold: 0.5 })),
+  ).toBeNull();
+  expect(
+    parseCountry(JSON.stringify({ ...country, allowTieBreaker: "yes" })),
+  ).toBeNull();
+});
+
+test("round-trips the sort order and language", () => {
+  const withSettings: CountryData = {
+    ...country,
+    sortBy: "position",
+    locale: "nl",
+  };
+
+  expect(parseCountry(stringifyCountry(withSettings))).toEqual(withSettings);
+  expect(JSON.parse(stringifyCountry(country))).not.toHaveProperty("sortBy");
+  expect(JSON.parse(stringifyCountry(country))).not.toHaveProperty("locale");
+});
+
+test("returns null for unknown sort orders and languages", () => {
+  expect(
+    parseCountry(JSON.stringify({ ...country, sortBy: "colour" })),
+  ).toBeNull();
+  expect(parseCountry(JSON.stringify({ ...country, locale: "xx" }))).toBeNull();
+  expect(parseCountry(JSON.stringify({ ...country, locale: 1 }))).toBeNull();
+});
+
 test("accepts older exports that are only a list of parties", () => {
   expect(parseCountry(JSON.stringify([partyA, partyB], null, 2))).toEqual({
     name: "",

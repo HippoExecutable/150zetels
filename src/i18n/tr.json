@@ -30,7 +30,9 @@
     "edit": "Düzenle",
     "noParties": "Kullanılabilir parti yok",
     "pasteDataPlaceholder": "Dışa aktarılan verileri buraya yapıştırın",
-    "sampleDataUpdatedAt": "Örnek veri güncellemesi"
+    "sampleDataUpdatedAt": "Örnek veri güncellemesi",
+    "countryName": "Ülke/bölge",
+    "dataUpdatedAt": "Veri güncellemesi"
   },
   "majority": {
     "blockingMinority": "Engelleyici azınlık",

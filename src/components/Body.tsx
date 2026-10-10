@@ -31,6 +31,7 @@ import {
   useI18n,
   useSelectedCountry,
   useMajorityThreshold,
+  useCustomInfo,
 } from "@/lib/zustandStore";
 import {
   PartyButton,
@@ -41,6 +42,7 @@ import {
   AddNewPartyButton,
   SeatsGraph,
   CountryListDropdown,
+  CountryInfoEditor,
   JsonShareExportButton,
   JsonShareImportButton,
   PieChart,
@@ -55,6 +57,7 @@ const Seats = () => {
   const { i, setLocale } = useI18n();
   const { setSelectedCountry } = useSelectedCountry();
   const { majorityThreshold } = useMajorityThreshold();
+  const { setCustomInfo } = useCustomInfo();
 
   useEffect(() => {
     const queryParams = new URLSearchParams(document.location.search);
@@ -73,14 +76,16 @@ const Seats = () => {
       }
     };
 
-    const loadSharedParties = async (data: string) => {
-      const sharedParties = await decodeShareData(data);
+    const loadSharedCountry = async (data: string) => {
+      const sharedCountry = await decodeShareData(data);
       if (isCancelled) return;
 
-      if (sharedParties) {
-        setParties(sharedParties);
-        setSelectedParties(sharedParties);
+      if (sharedCountry) {
+        const { name, updateDate, parties } = sharedCountry;
+        setParties(parties);
+        setSelectedParties(parties);
         setSelectedCountry(null);
+        setCustomInfo({ name, updateDate });
       } else {
         alert(i("dialogs.invalidShareLink"));
         loadCountry();
@@ -90,12 +95,12 @@ const Seats = () => {
     // Pasting a share link into an open tab only changes the hash
     const handleHashChange = () => {
       const data = getShareData(document.location.hash);
-      if (data) loadSharedParties(data);
+      if (data) loadSharedCountry(data);
     };
 
     const data = getShareData(document.location.hash);
     if (data) {
-      loadSharedParties(data);
+      loadSharedCountry(data);
     } else {
       loadCountry();
     }
@@ -109,7 +114,14 @@ const Seats = () => {
       isCancelled = true;
       window.removeEventListener("hashchange", handleHashChange);
     };
-  }, [i, setLocale, setParties, setSelectedCountry, setSelectedParties]);
+  }, [
+    i,
+    setLocale,
+    setParties,
+    setSelectedCountry,
+    setSelectedParties,
+    setCustomInfo,
+  ]);
 
   return (
     <div>
@@ -133,6 +145,7 @@ const Seats = () => {
         <SortButton />
         <SwitchViewModeButton />
       </div>
+      {isEditMode && <CountryInfoEditor />}
       <>
         <ul
           className={`xs:grid-cols-2 grid grid-cols-1 gap-4 transition-all sm:grid-cols-3 sm:gap-4 md:grid-cols-4`}
@@ -181,6 +194,7 @@ const Seats = () => {
             setParties([]);
             setSelectedParties([]);
             setSelectedCountry(null);
+            setCustomInfo({ name: "", updateDate: "" });
           }}
           className="w-full flex-1 rounded-full border-2 border-transparent bg-white py-1 text-rose-600 transition-colors duration-300 hover:bg-rose-600 hover:text-white dark:bg-zinc-900 dark:text-rose-500"
         >

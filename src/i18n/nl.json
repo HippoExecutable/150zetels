@@ -30,7 +30,9 @@
     "edit": "Bewerken",
     "noParties": "Geen partijen beschikbaar",
     "pasteDataPlaceholder": "Plak hier de geëxporteerde gegevens",
-    "sampleDataUpdatedAt": "Voorbeelddata bijgewerkt op"
+    "sampleDataUpdatedAt": "Voorbeelddata bijgewerkt op",
+    "countryName": "Land/regio",
+    "dataUpdatedAt": "Data bijgewerkt op"
   },
   "majority": {
     "blockingMinority": "Blokkerende minderheid",

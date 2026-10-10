@@ -19,8 +19,8 @@
 */
 
 import { expect, test } from "vitest";
-import { parseParties, stringifyParties } from "@/utils/parseParties";
-import { Party } from "@/types";
+import { parseCountry, stringifyCountry } from "@/utils/parseCountry";
+import { Country, Party } from "@/types";
 
 const partyA: Party = {
   id: "a",
@@ -41,35 +41,81 @@ const partyB: Party = {
   position: 3,
 };
 
-test("round-trips exported parties", () => {
-  expect(parseParties(stringifyParties([partyA, partyB]))).toEqual([
-    partyA,
-    partyB,
-  ]);
-  expect(parseParties(stringifyParties([]))).toEqual([]);
+const country: Country = {
+  name: "Alphaland",
+  updateDate: "2026-10-10",
+  parties: [partyA, partyB],
+};
+
+test("round-trips exported countries", () => {
+  expect(parseCountry(stringifyCountry(country))).toEqual(country);
+  expect(
+    parseCountry(stringifyCountry({ name: "", updateDate: "", parties: [] })),
+  ).toEqual({ name: "", updateDate: "", parties: [] });
+});
+
+test("leaves the emoji out of exports", () => {
+  expect(parseCountry(stringifyCountry({ ...country, emoji: "🏳️" }))).toEqual(
+    country,
+  );
+});
+
+test("accepts older exports that are only a list of parties", () => {
+  expect(parseCountry(JSON.stringify([partyA, partyB], null, 2))).toEqual({
+    name: "",
+    updateDate: "",
+    parties: [partyA, partyB],
+  });
+  expect(parseCountry("[]")).toEqual({
+    name: "",
+    updateDate: "",
+    parties: [],
+  });
+});
+
+test("fills in a missing name and update date", () => {
+  expect(parseCountry(JSON.stringify({ parties: [partyA] }))).toEqual({
+    name: "",
+    updateDate: "",
+    parties: [partyA],
+  });
 });
 
 test("accepts compact and pasted whitespace", () => {
-  expect(parseParties(JSON.stringify([partyA]))).toEqual([partyA]);
-  expect(parseParties(`\n  ${stringifyParties([partyB])}  \n`)).toEqual([
-    partyB,
-  ]);
+  expect(parseCountry(stringifyCountry(country, 0))).toEqual(country);
+  expect(parseCountry(`\n  ${stringifyCountry(country)}  \n`)).toEqual(country);
 });
 
-test("returns null for JSON that is not a list of parties", () => {
-  expect(parseParties("{}")).toBeNull();
-  expect(parseParties("null")).toBeNull();
-  expect(parseParties('"Alpha Party"')).toBeNull();
-  expect(parseParties(JSON.stringify(partyA))).toBeNull();
-  expect(parseParties(JSON.stringify([partyA, null]))).toBeNull();
-  expect(parseParties(JSON.stringify([{ ...partyA, seats: "20" }]))).toBeNull();
+test("returns null for JSON that is not a country or a list of parties", () => {
+  expect(parseCountry("{}")).toBeNull();
+  expect(parseCountry("null")).toBeNull();
+  expect(parseCountry('"Alpha Party"')).toBeNull();
+  expect(parseCountry(JSON.stringify(partyA))).toBeNull();
+  expect(parseCountry(JSON.stringify([partyA, null]))).toBeNull();
+  expect(parseCountry(JSON.stringify([{ ...partyA, seats: "20" }]))).toBeNull();
   expect(
-    parseParties(JSON.stringify([{ ...partyA, isIndependent: "no" }])),
+    parseCountry(JSON.stringify([{ ...partyA, isIndependent: "no" }])),
+  ).toBeNull();
+  expect(
+    parseCountry(JSON.stringify({ ...country, parties: [partyA, null] })),
+  ).toBeNull();
+  expect(parseCountry(JSON.stringify({ ...country, name: 1 }))).toBeNull();
+});
+
+test("returns null for update dates that are not YYYY-MM-DD", () => {
+  expect(
+    parseCountry(JSON.stringify({ ...country, updateDate: "10/10/2026" })),
+  ).toBeNull();
+  expect(
+    parseCountry(JSON.stringify({ ...country, updateDate: "yesterday" })),
+  ).toBeNull();
+  expect(
+    parseCountry(JSON.stringify({ ...country, updateDate: 20261010 })),
   ).toBeNull();
 });
 
 test("throws for text that is not JSON", () => {
-  expect(() => parseParties("")).toThrow();
-  expect(() => parseParties("[{")).toThrow();
-  expect(() => parseParties("Alpha Party")).toThrow();
+  expect(() => parseCountry("")).toThrow();
+  expect(() => parseCountry("[{")).toThrow();
+  expect(() => parseCountry("Alpha Party")).toThrow();
 });

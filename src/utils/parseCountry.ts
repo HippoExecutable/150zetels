@@ -18,19 +18,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Party } from "@/types";
+import { Country, Party } from "@/types";
 
-export function stringifyParties(parties: Party[]) {
-  return JSON.stringify(parties, null, 2);
-}
-
-// Throws when the data is not JSON, and returns null when it is not a list of parties
-export function parseParties(data: string) {
-  const parsedData: unknown = JSON.parse(data);
-
-  const isValid =
-    Array.isArray(parsedData) &&
-    parsedData.every(
+function isParties(data: unknown): data is Party[] {
+  return (
+    Array.isArray(data) &&
+    data.every(
       (item): item is Party =>
         typeof item === "object" &&
         item !== null &&
@@ -41,7 +34,39 @@ export function parseParties(data: string) {
         typeof item.position === "number" &&
         (typeof item.isIndependent === "boolean" ||
           item.isIndependent === undefined),
-    );
+    )
+  );
+}
 
-  return isValid ? parsedData : null;
+export function stringifyCountry(
+  { name, updateDate, parties }: Country,
+  space = 2,
+) {
+  return JSON.stringify({ name, updateDate, parties }, null, space);
+}
+
+// Throws when the data is not JSON, and returns null when it is not a country or a list of parties
+export function parseCountry(data: string): Country | null {
+  const parsedData: unknown = JSON.parse(data);
+
+  // Older exports are only a list of parties
+  if (isParties(parsedData)) {
+    return { name: "", updateDate: "", parties: parsedData };
+  }
+
+  if (typeof parsedData !== "object" || parsedData === null) return null;
+
+  const {
+    name = "",
+    updateDate = "",
+    parties,
+  } = parsedData as Record<string, unknown>;
+
+  const isValid =
+    typeof name === "string" &&
+    typeof updateDate === "string" &&
+    (updateDate === "" || /^\d{4}-\d{2}-\d{2}$/.test(updateDate)) &&
+    isParties(parties);
+
+  return isValid ? { name, updateDate, parties } : null;
 }

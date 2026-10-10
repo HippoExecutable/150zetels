@@ -30,7 +30,9 @@
     "edit": "Bearbeiten",
     "noParties": "Keine Parteien verfügbar",
     "pasteDataPlaceholder": "Exportierte Daten hier einfügen",
-    "sampleDataUpdatedAt": "Beispieldaten aktualisiert am"
+    "sampleDataUpdatedAt": "Beispieldaten aktualisiert am",
+    "countryName": "Land/Region",
+    "dataUpdatedAt": "Daten aktualisiert am"
   },
   "majority": {
     "blockingMinority": "Sperrminorität",

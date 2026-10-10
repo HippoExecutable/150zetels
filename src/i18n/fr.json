@@ -30,7 +30,9 @@
     "edit": "Modifier",
     "noParties": "Aucun parti disponible",
     "pasteDataPlaceholder": "Collez les données exportées ici",
-    "sampleDataUpdatedAt": "Données d'exemple mises à jour le"
+    "sampleDataUpdatedAt": "Données d'exemple mises à jour le",
+    "countryName": "Pays/région",
+    "dataUpdatedAt": "Données mises à jour le"
   },
   "majority": {
     "blockingMinority": "Minorité de blocage",

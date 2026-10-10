@@ -18,8 +18,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Party } from "@/types";
-import { parseParties } from "@/utils/parseParties";
+import { Country } from "@/types";
+import { parseCountry, stringifyCountry } from "@/utils/parseCountry";
 
 // The data lives in the URL hash, so it is never sent to the server
 const shareDataKey = "data";
@@ -53,24 +53,24 @@ function fromBase64Url(text: string) {
   return Uint8Array.from(binary, (char) => char.charCodeAt(0));
 }
 
-export async function encodeShareData(parties: Party[]) {
-  return toBase64Url(await deflate(JSON.stringify(parties)));
+export async function encodeShareData(country: Country) {
+  return toBase64Url(await deflate(stringifyCountry(country, 0)));
 }
 
-// Returns null when the data is damaged or is not a list of parties
+// Returns null when the data is damaged or is not a country
 export async function decodeShareData(data: string) {
   try {
-    return parseParties(await inflate(fromBase64Url(data)));
+    return parseCountry(await inflate(fromBase64Url(data)));
   } catch {
     return null;
   }
 }
 
-export async function createShareLink(parties: Party[], baseUrl: string) {
+export async function createShareLink(country: Country, baseUrl: string) {
   const url = new URL(baseUrl);
   url.search = "";
   url.hash = new URLSearchParams({
-    [shareDataKey]: await encodeShareData(parties),
+    [shareDataKey]: await encodeShareData(country),
   }).toString();
   return url.toString();
 }

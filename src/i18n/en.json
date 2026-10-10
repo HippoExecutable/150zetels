@@ -30,7 +30,9 @@
     "edit": "Edit",
     "noParties": "No parties available",
     "pasteDataPlaceholder": "Paste exported data here",
-    "sampleDataUpdatedAt": "Sample data updated at"
+    "sampleDataUpdatedAt": "Sample data updated at",
+    "countryName": "Country/region",
+    "dataUpdatedAt": "Data updated at"
   },
   "majority": {
     "blockingMinority": "Blocking minority",

@@ -26,7 +26,7 @@ import {
   getShareData,
 } from "@/utils/shareLink";
 import { countries } from "@/data/countries";
-import { Party } from "@/types";
+import { Country, Party } from "@/types";
 
 const partyA: Party = {
   id: "a",
@@ -47,21 +47,32 @@ const partyB: Party = {
   position: 3,
 };
 
-test("round-trips parties, including non-ASCII names", async () => {
-  const data = await encodeShareData([partyA, partyB]);
+const country: Country = {
+  name: "Ostfriesland 🌊",
+  updateDate: "2026-10-10",
+  parties: [partyA, partyB],
+};
+
+const emptyCountry: Country = { name: "", updateDate: "", parties: [] };
+
+test("round-trips countries, including non-ASCII names", async () => {
+  const data = await encodeShareData(country);
 
   expect(data).toMatch(/^[A-Za-z0-9_-]+$/);
-  expect(await decodeShareData(data)).toEqual([partyA, partyB]);
-  expect(await decodeShareData(await encodeShareData([]))).toEqual([]);
+  expect(await decodeShareData(data)).toEqual(country);
+  expect(await decodeShareData(await encodeShareData(emptyCountry))).toEqual(
+    emptyCountry,
+  );
 });
 
 test("keeps links for every country reasonably short", async () => {
-  for (const country of countries) {
-    const link = await createShareLink(country.parties, "https://example.com/");
+  for (const { name, updateDate, parties } of countries) {
+    const sampleCountry = { name, updateDate, parties };
+    const link = await createShareLink(sampleCountry, "https://example.com/");
 
     expect(link.length).toBeLessThan(2000);
     expect(await decodeShareData(getShareData(new URL(link).hash)!)).toEqual(
-      country.parties,
+      sampleCountry,
     );
   }
 });
@@ -69,7 +80,7 @@ test("keeps links for every country reasonably short", async () => {
 test("puts the data in the hash and drops other query params", async () => {
   const link = new URL(
     await createShareLink(
-      [partyA],
+      country,
       "https://example.com/app/?country=Germany&lang=de#old",
     ),
   );
@@ -87,16 +98,21 @@ test("reads the data from a hash", () => {
 });
 
 test("returns null for damaged or invalid data", async () => {
-  const data = await encodeShareData([partyA]);
+  const data = await encodeShareData(country);
 
   expect(await decodeShareData("")).toBeNull();
   expect(await decodeShareData("not base64!")).toBeNull();
   expect(await decodeShareData(data.slice(0, -4))).toBeNull();
   // Uncompressed JSON is not a valid share link
-  expect(await decodeShareData(btoa(JSON.stringify([partyB])))).toBeNull();
+  expect(
+    await decodeShareData(btoa(JSON.stringify(country.parties))),
+  ).toBeNull();
   expect(
     await decodeShareData(
-      await encodeShareData([{ ...partyA, seats: "20" }] as unknown as Party[]),
+      await encodeShareData({
+        ...country,
+        parties: [{ ...partyA, seats: "20" }],
+      } as unknown as Country),
     ),
   ).toBeNull();
 });

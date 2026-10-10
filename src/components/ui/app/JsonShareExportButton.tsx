@@ -18,8 +18,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useParties, useI18n } from "@/lib/zustandStore";
-import { stringifyParties } from "@/utils/parseParties";
+import {
+  useParties,
+  useI18n,
+  useSelectedCountry,
+  useCustomInfo,
+} from "@/lib/zustandStore";
+import { stringifyCountry } from "@/utils/parseCountry";
 import { createShareLink } from "@/utils/shareLink";
 import {
   ArrowUpTrayIcon,
@@ -34,7 +39,11 @@ import { useEffect, useRef, useState } from "react";
 
 export default function JsonShareExportButton() {
   const { parties } = useParties();
+  const { selectedCountry } = useSelectedCountry();
+  const { customInfo } = useCustomInfo();
   const { i } = useI18n();
+  const { name, updateDate } = selectedCountry ?? customInfo;
+  const country = { name, updateDate, parties };
   const [isOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
@@ -51,7 +60,7 @@ export default function JsonShareExportButton() {
 
     if (!shouldExport) return;
 
-    const data = stringifyParties(parties);
+    const data = stringifyCountry(country);
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -66,7 +75,7 @@ export default function JsonShareExportButton() {
 
   const handleTextExport = async () => {
     try {
-      await navigator.clipboard.writeText(stringifyParties(parties));
+      await navigator.clipboard.writeText(stringifyCountry(country));
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
@@ -78,7 +87,7 @@ export default function JsonShareExportButton() {
   const handleLinkExport = async () => {
     try {
       await navigator.clipboard.writeText(
-        await createShareLink(parties, window.location.href),
+        await createShareLink(country, window.location.href),
       );
       setIsLinkCopied(true);
       setTimeout(() => setIsLinkCopied(false), 2000);

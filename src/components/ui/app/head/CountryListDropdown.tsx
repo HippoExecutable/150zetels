@@ -23,6 +23,7 @@ import {
   useParties,
   useSelectedCountry,
   useI18n,
+  useCustomInfo,
 } from "@/lib/zustandStore";
 import { countries } from "@/data/countries";
 import { useEffect, useRef, useState } from "react";
@@ -34,6 +35,7 @@ export default function CountryListDropdown() {
   const { selectedCountry, setSelectedCountry } = useSelectedCountry();
   const { setParties } = useParties();
   const { setSelectedParties } = useSelectedParties();
+  const { customInfo, setCustomInfo } = useCustomInfo();
   const { i } = useI18n();
   const [openCountryList, setOpenCountryList] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -106,13 +108,23 @@ export default function CountryListDropdown() {
                 {i("body.sampleDataUpdatedAt")}:{" "}
                 {new Date(selectedCountry.updateDate).toLocaleDateString(
                   i("locale"),
+                  { timeZone: "UTC" },
                 )}
               </p>
             </div>
           ) : (
-            <>
-              <span>{i("header.custom")}</span>
-            </>
+            <div className="flex flex-col items-start gap-0 text-start">
+              <span>{customInfo.name || i("header.custom")}</span>
+              {customInfo.updateDate && (
+                <p className="text-xs opacity-75">
+                  {i("body.dataUpdatedAt")}:{" "}
+                  {new Date(customInfo.updateDate).toLocaleDateString(
+                    i("locale"),
+                    { timeZone: "UTC" },
+                  )}
+                </p>
+              )}
+            </div>
           )}
           <ChevronDownIcon
             className={`size-5 transition-transform duration-300 ${openCountryList ? "rotate-180" : ""}`}
@@ -147,18 +159,32 @@ export default function CountryListDropdown() {
                               setSelectedCountry(null);
                               setParties([]);
                               setSelectedParties([]);
+                              setCustomInfo({ name: "", updateDate: "" });
                             }
                             setOpenCountryList(false);
                           }}
-                          className={`w-full p-2 transition-colors duration-300 ${
+                          className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
                             !selectedCountry
                               ? "bg-zinc-200 dark:bg-zinc-700"
                               : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
                           }`}
                         >
                           <div className="flex gap-1">
-                            <span>{i("header.custom")}</span>
+                            <span>
+                              {(!selectedCountry && customInfo.name) ||
+                                i("header.custom")}
+                            </span>
                           </div>
+                          {!selectedCountry && customInfo.updateDate && (
+                            <p className="text-xs opacity-75">
+                              {i("body.dataUpdatedAt")}:{" "}
+                              {new Date(
+                                customInfo.updateDate,
+                              ).toLocaleDateString(i("locale"), {
+                                timeZone: "UTC",
+                              })}
+                            </p>
+                          )}
                         </button>
                       </li>
                     </ul>
@@ -198,7 +224,9 @@ export default function CountryListDropdown() {
                                 {i("body.sampleDataUpdatedAt")}:{" "}
                                 {new Date(
                                   country.updateDate,
-                                ).toLocaleDateString(i("locale"))}
+                                ).toLocaleDateString(i("locale"), {
+                                  timeZone: "UTC",
+                                })}
                               </p>
                               {/* )} */}
                             </button>

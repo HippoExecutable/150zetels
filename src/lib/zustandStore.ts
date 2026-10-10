@@ -30,6 +30,7 @@ import {
   SelectedPartiesState,
   SelectedCountryState,
   I18nState,
+  CustomInfoState,
 } from "@/types";
 import { simpleMajority } from "@/utils/getMajority";
 import { create } from "zustand";
@@ -115,6 +116,11 @@ const useSelectedCountry = create<SelectedCountryState>((set) => ({
   },
 }));
 
+const useCustomInfo = create<CustomInfoState>((set) => ({
+  customInfo: { name: "", updateDate: "" },
+  setCustomInfo: (by) => set(() => ({ customInfo: by })),
+}));
+
 export {
   useDefaultCountryValue,
   useParties,
@@ -125,4 +131,5 @@ export {
   useMajorityThreshold,
   useI18n,
   useSelectedCountry,
+  useCustomInfo,
 };

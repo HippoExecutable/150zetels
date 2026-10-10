@@ -23,8 +23,9 @@ import {
   useParties,
   useSelectedCountry,
   useI18n,
+  useCustomInfo,
 } from "@/lib/zustandStore";
-import { parseParties } from "@/utils/parseParties";
+import { parseCountry } from "@/utils/parseCountry";
 import {
   ArrowDownTrayIcon,
   ChevronDownIcon,
@@ -39,6 +40,7 @@ export default function JsonShareImportButton() {
   const { setParties } = useParties();
   const { setSelectedParties } = useSelectedParties();
   const { setSelectedCountry } = useSelectedCountry();
+  const { setCustomInfo } = useCustomInfo();
   const { i } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [importText, setImportText] = useState("");
@@ -53,12 +55,14 @@ export default function JsonShareImportButton() {
 
   // Throws when the data is not JSON, and returns whether it was imported
   const importParties = (data: string) => {
-    const parsedParties = parseParties(data);
-    if (!parsedParties) return false;
+    const parsedCountry = parseCountry(data);
+    if (!parsedCountry) return false;
 
-    setParties(parsedParties);
-    setSelectedParties(parsedParties);
+    const { name, updateDate, parties } = parsedCountry;
+    setParties(parties);
+    setSelectedParties(parties);
     setSelectedCountry(null);
+    setCustomInfo({ name, updateDate });
     return true;
   };
 

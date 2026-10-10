@@ -107,7 +107,7 @@ Scenarios can also be shared as a **link**. The data is compressed into the part
 
 The current coalition can be downloaded or copied as a **PNG image** in square (1:1), portrait (4:5, the tallest Instagram feed post), vertical (9:16, for stories and reels), or wide (16:9) format. Images are drawn in the browser.
 
-**Copy embed code** gives an `<iframe>` for showing the chart on another website. Readers can select parties in it, and open it in the full app. The included script resizes the iframe to fit; sites that strip scripts show it at a fixed height.
+**Copy embed code** gives an `<iframe>` for showing the chart on another website. Readers can select parties in it, start over with **Select All** or **Deselect All**, go back to the embedded coalition with **Reset**, and open it in the full app. The included script resizes the iframe to fit; sites that strip scripts show it at a fixed height.
 
 Embeds can also be built by hand:
 

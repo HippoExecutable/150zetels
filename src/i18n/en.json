@@ -113,6 +113,7 @@
   },
   "embed": {
     "openFullVersion": "Open in Parliament Seats",
-    "invalidData": "This chart could not be loaded."
+    "invalidData": "This chart could not be loaded.",
+    "reset": "Reset"
   }
 }

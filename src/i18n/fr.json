@@ -113,6 +113,7 @@
   },
   "embed": {
     "openFullVersion": "Ouvrir dans Parliament Seats",
-    "invalidData": "Ce graphique n'a pas pu être chargé."
+    "invalidData": "Ce graphique n'a pas pu être chargé.",
+    "reset": "Réinitialiser"
   }
 }

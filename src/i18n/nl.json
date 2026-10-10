@@ -113,6 +113,7 @@
   },
   "embed": {
     "openFullVersion": "Openen in Parliament Seats",
-    "invalidData": "Deze grafiek kon niet worden geladen."
+    "invalidData": "Deze grafiek kon niet worden geladen.",
+    "reset": "Herstellen"
   }
 }

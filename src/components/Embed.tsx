@@ -18,8 +18,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/16/solid";
+import {
+  ArrowUturnLeftIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/20/solid";
 import { PartyButton, PieChart, SeatsGraph } from "@/components/ui/app";
 import {
   useParties,
@@ -32,17 +37,27 @@ import {
   useI18n,
   exportCountryData,
 } from "@/lib/zustandStore";
+import { CountryData } from "@/types";
 import { getCountryTitle } from "@/utils/countryTitle";
 import { createShareLink, embedHeightMessage } from "@/utils/shareLink";
 import { sort } from "@/utils/sort";
 
+interface ButtonConfig {
+  id: string;
+  label: string;
+  icon: ReactNode;
+  onClick: () => void;
+}
+
 export default function Embed({
+  sharedCountry,
   isShareLinkInvalid,
 }: {
+  sharedCountry: CountryData | null;
   isShareLinkInvalid: boolean;
 }) {
   const { parties } = useParties();
-  const { selectedParties } = useSelectedParties();
+  const { selectedParties, setSelectedParties } = useSelectedParties();
   const { selectedCountry } = useSelectedCountry();
   const { customInfo } = useCustomInfo();
   const { majorityThreshold } = useMajorityThreshold();
@@ -52,6 +67,33 @@ export default function Embed({
   const [fullVersionLink, setFullVersionLink] = useState<string>();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const { title, subtitle } = getCountryTitle(selectedCountry, customInfo, i);
+
+  const buttonConfigurations: ButtonConfig[] = [
+    {
+      id: "selectAll",
+      label: i("controls.selectAll"),
+      icon: <PlusCircleIcon className="size-4 shrink-0" />,
+      onClick: () => setSelectedParties([...parties]),
+    },
+    {
+      id: "deselectAll",
+      label: i("controls.deselectAll"),
+      icon: <MinusCircleIcon className="size-4 shrink-0" />,
+      onClick: () => setSelectedParties([]),
+    },
+  ];
+
+  // Goes back to the coalition the embed came with, unless that was everyone,
+  // which Select All already does
+  const embeddedParties = sharedCountry?.selectedParties;
+  if (embeddedParties && embeddedParties.length < parties.length) {
+    buttonConfigurations.push({
+      id: "reset",
+      label: i("embed.reset"),
+      icon: <ArrowUturnLeftIcon className="size-4 shrink-0" />,
+      onClick: () => setSelectedParties(embeddedParties),
+    });
+  }
 
   // Opens the full app with whatever the reader has changed here
   useEffect(() => {
@@ -132,17 +174,30 @@ export default function Embed({
                 </li>
               ))}
           </ul>
-          {fullVersionLink && (
-            <a
-              href={fullVersionLink}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="mt-4 flex items-center justify-end gap-1 text-sm opacity-75 hover:underline"
-            >
-              {i("embed.openFullVersion")}
-              <ArrowTopRightOnSquareIcon className="size-4 shrink-0" />
-            </a>
-          )}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {buttonConfigurations.map((buttonConfig) => (
+              <button
+                key={buttonConfig.id}
+                onClick={buttonConfig.onClick}
+                className="flex items-center gap-1 rounded-full border-2 border-transparent bg-zinc-200 px-2.5 py-0.5 text-sm text-nowrap transition-colors duration-300 hover:bg-zinc-700 hover:text-white dark:bg-zinc-700 dark:hover:bg-zinc-200 dark:hover:text-zinc-950"
+                type="button"
+              >
+                {buttonConfig.icon}
+                {buttonConfig.label}
+              </button>
+            ))}
+            {fullVersionLink && (
+              <a
+                href={fullVersionLink}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="ms-auto flex items-center gap-1 text-sm opacity-75 hover:underline"
+              >
+                {i("embed.openFullVersion")}
+                <ArrowTopRightOnSquareIcon className="size-4 shrink-0" />
+              </a>
+            )}
+          </div>
         </>
       )}
     </div>

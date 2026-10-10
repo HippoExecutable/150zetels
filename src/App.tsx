@@ -30,9 +30,16 @@ import { useUrlData } from "@/lib/useUrlData";
 const isEmbed = new URLSearchParams(window.location.search).has("embed");
 
 function App() {
-  const isShareLinkInvalid = useUrlData(isEmbed);
+  const { sharedCountry, isShareLinkInvalid } = useUrlData(isEmbed);
 
-  if (isEmbed) return <Embed isShareLinkInvalid={isShareLinkInvalid} />;
+  if (isEmbed) {
+    return (
+      <Embed
+        sharedCountry={sharedCountry}
+        isShareLinkInvalid={isShareLinkInvalid}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white text-zinc-950 transition-colors duration-300 dark:bg-zinc-900 dark:text-white">

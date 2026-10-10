@@ -113,6 +113,7 @@
   },
   "embed": {
     "openFullVersion": "Parliament Seats'te aç",
-    "invalidData": "Bu grafik yüklenemedi."
+    "invalidData": "Bu grafik yüklenemedi.",
+    "reset": "Sıfırla"
   }
 }

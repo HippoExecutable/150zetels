@@ -28,15 +28,17 @@ import {
   useI18n,
   importCountryData,
 } from "@/lib/zustandStore";
+import { CountryData } from "@/types";
 import { decodeShareData, getShareData } from "@/utils/shareLink";
 
 // Loads the sample country, shared data, and language that the URL asks for,
-// and returns whether a share link could not be read
+// and returns the shared data and whether a share link could not be read
 export function useUrlData(isEmbed: boolean) {
   const { setParties } = useParties();
   const { setSelectedParties } = useSelectedParties();
   const { setSelectedCountry } = useSelectedCountry();
   const { i, setLocale } = useI18n();
+  const [sharedCountry, setSharedCountry] = useState<CountryData | null>(null);
   const [isShareLinkInvalid, setIsShareLinkInvalid] = useState(false);
 
   useEffect(() => {
@@ -57,12 +59,13 @@ export function useUrlData(isEmbed: boolean) {
     };
 
     const loadSharedCountry = async (data: string) => {
-      const sharedCountry = await decodeShareData(data);
+      const decodedCountry = await decodeShareData(data);
       if (isCancelled) return;
 
-      setIsShareLinkInvalid(!sharedCountry);
-      if (sharedCountry) {
-        importCountryData(sharedCountry);
+      setSharedCountry(decodedCountry);
+      setIsShareLinkInvalid(!decodedCountry);
+      if (decodedCountry) {
+        importCountryData(decodedCountry);
       } else if (!isEmbed) {
         // Embeds show a message instead, since iframes block alerts
         alert(i("dialogs.invalidShareLink"));
@@ -101,5 +104,5 @@ export function useUrlData(isEmbed: boolean) {
     setSelectedParties,
   ]);
 
-  return isShareLinkInvalid;
+  return { sharedCountry, isShareLinkInvalid };
 }

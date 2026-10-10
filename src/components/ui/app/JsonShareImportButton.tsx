@@ -18,26 +18,47 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Party } from "@/types";
 import {
   useSelectedParties,
   useParties,
   useSelectedCountry,
   useI18n,
 } from "@/lib/zustandStore";
-import { ArrowDownTrayIcon } from "@heroicons/react/20/solid";
-import { useRef } from "react";
+import { parseParties } from "@/utils/parseParties";
+import {
+  ArrowDownTrayIcon,
+  ChevronDownIcon,
+  DocumentArrowUpIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/20/solid";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
-export default function JsonShareButton() {
+export default function JsonShareImportButton() {
   const { setParties } = useParties();
   const { setSelectedParties } = useSelectedParties();
   const { setSelectedCountry } = useSelectedCountry();
   const { i } = useI18n();
-
+  const [isOpen, setIsOpen] = useState(false);
+  const [importText, setImportText] = useState("");
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImportClick = () => {
-    fileInputRef.current?.click();
+  useEffect(() => {
+    if (isOpen && dropdownRef.current) {
+      dropdownRef.current.focus();
+    }
+  }, [isOpen]);
+
+  // Throws when the data is not JSON, and returns whether it was imported
+  const importParties = (data: string) => {
+    const parsedParties = parseParties(data);
+    if (!parsedParties) return false;
+
+    setParties(parsedParties);
+    setSelectedParties(parsedParties);
+    setSelectedCountry(null);
+    return true;
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,31 +72,9 @@ export default function JsonShareButton() {
       if (typeof data !== "string") return;
 
       try {
-        const parsedData: unknown = JSON.parse(data);
-
-        const isValid =
-          Array.isArray(parsedData) &&
-          parsedData.every(
-            (item): item is Party =>
-              typeof item === "object" &&
-              item !== null &&
-              typeof item.name === "string" &&
-              typeof item.shortName === "string" &&
-              typeof item.seats === "number" &&
-              typeof item.colour === "string" &&
-              typeof item.position === "number" &&
-              (typeof item.isIndependent === "boolean" ||
-                item.isIndependent === undefined),
-          );
-
-        if (!isValid) {
+        if (!importParties(data)) {
           alert(i("dialogs.invalidImportFormat"));
-          return;
         }
-
-        setParties(parsedData);
-        setSelectedParties(parsedData);
-        setSelectedCountry(null);
       } catch (error) {
         console.error("Error parsing JSON file:", error);
         alert(i("dialogs.invalidImportParse"));
@@ -87,18 +86,108 @@ export default function JsonShareButton() {
     reader.readAsText(file);
   };
 
+  const handleTextImport = () => {
+    try {
+      if (!importParties(importText)) {
+        alert(i("dialogs.invalidImportTextFormat"));
+        return;
+      }
+
+      setImportText("");
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Error parsing JSON text:", error);
+      alert(i("dialogs.invalidImportTextParse"));
+    }
+  };
+
   return (
-    <>
+    <div
+      className="relative w-full flex-1"
+      tabIndex={-1}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+          setIsOpen(false);
+        }
+      }}
+    >
       <button
         type="button"
-        onClick={handleImportClick}
-        className={`w-full flex-1 rounded-full border-2 border-transparent bg-white px-3 py-1 text-nowrap transition-colors hover:bg-zinc-700 hover:text-white dark:bg-zinc-900 dark:hover:bg-zinc-200 dark:hover:text-zinc-950`}
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full rounded-full border-2 border-transparent px-3 py-1 text-nowrap transition-colors hover:bg-zinc-700 hover:text-white dark:hover:bg-zinc-200 dark:hover:text-zinc-950 ${
+          isOpen
+            ? "bg-zinc-700 text-white dark:bg-zinc-200 dark:text-zinc-950"
+            : "bg-white dark:bg-zinc-900"
+        }`}
+        aria-expanded={isOpen}
       >
         <span className="line-clamp-1 flex items-center justify-center gap-1 text-nowrap">
           <ArrowDownTrayIcon className="size-5 shrink-0" />
           {i("buttons.importParties")}
+          <ChevronDownIcon
+            className={`size-5 shrink-0 transition-transform duration-300 ${isOpen ? "" : "rotate-180"}`}
+          />
         </span>
       </button>
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div
+              key="modal"
+              transition={{
+                duration: 0.3,
+              }}
+              initial={{ opacity: 0, translateY: 2 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              exit={{ opacity: 0, translateY: 2 }}
+              ref={dropdownRef}
+              tabIndex={-1}
+              className="absolute bottom-full z-100 mb-2 w-full overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
+            >
+              <ul>
+                <li className="transition-colors duration-300 hover:bg-zinc-200 dark:hover:bg-zinc-700">
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      fileInputRef.current?.click();
+                    }}
+                    className="flex w-full items-center gap-2 p-2 text-start"
+                    type="button"
+                  >
+                    <DocumentArrowUpIcon className="size-5 shrink-0" />
+                    <span>{i("buttons.importFromFile")}</span>
+                  </button>
+                </li>
+                <li className="flex flex-col gap-2 border-t-2 border-zinc-200 p-2 dark:border-zinc-700">
+                  <label className="flex flex-col gap-2">
+                    <span className="flex items-center gap-2">
+                      <DocumentTextIcon className="size-5 shrink-0" />
+                      {i("buttons.importFromText")}
+                    </span>
+                    <textarea
+                      name="importText"
+                      rows={4}
+                      placeholder={i("body.pasteDataPlaceholder")}
+                      spellCheck={false}
+                      className="w-full resize-none rounded-lg border-2 border-zinc-200 bg-transparent p-2 font-mono outline-hidden transition-colors duration-300 focus:border-zinc-400 dark:border-zinc-700 dark:focus:border-zinc-500"
+                      value={importText}
+                      onChange={(e) => setImportText(e.target.value)}
+                    />
+                  </label>
+                  <button
+                    onClick={handleTextImport}
+                    disabled={!importText.trim()}
+                    className="w-full rounded-full border-2 border-transparent bg-zinc-200 px-3 py-1 transition-colors hover:bg-zinc-700 hover:text-white disabled:pointer-events-none disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-200 dark:hover:text-zinc-950"
+                    type="button"
+                  >
+                    {i("buttons.import")}
+                  </button>
+                </li>
+              </ul>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
       <input
         ref={fileInputRef}
         type="file"
@@ -106,6 +195,6 @@ export default function JsonShareButton() {
         className="sr-only"
         onChange={handleFileChange}
       />
-    </>
+    </div>
   );
 }

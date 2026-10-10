@@ -29,6 +29,7 @@
     "view": "Ansehen",
     "edit": "Bearbeiten",
     "noParties": "Keine Parteien verfügbar",
+    "pasteDataPlaceholder": "Exportierte Daten hier einfügen",
     "sampleDataUpdatedAt": "Beispieldaten aktualisiert am"
   },
   "majority": {
@@ -56,13 +57,22 @@
     "dataManagement": "Datenverwaltung",
     "clear": "Daten löschen",
     "exportParties": "Daten exportieren",
-    "importParties": "Daten importieren"
+    "importParties": "Daten importieren",
+    "importFromFile": "Aus Datei",
+    "importFromText": "Aus Text",
+    "import": "Importieren",
+    "exportToFile": "Als Datei herunterladen",
+    "exportToText": "Als Text kopieren",
+    "copied": "Kopiert"
   },
   "dialogs": {
     "clearDataConfirm": "Möchten Sie wirklich alle Daten löschen?",
     "exportDataConfirm": "Möchten Sie die Parteidaten wirklich exportieren?",
     "invalidImportFormat": "Die hochgeladene Datei hat ein ungültiges Format. Bitte laden Sie eine gültige JSON-Datei hoch.",
-    "invalidImportParse": "Die JSON-Datei konnte nicht analysiert werden. Bitte stellen Sie sicher, dass sie das richtige Format hat."
+    "invalidImportParse": "Die JSON-Datei konnte nicht analysiert werden. Bitte stellen Sie sicher, dass sie das richtige Format hat.",
+    "invalidImportTextFormat": "Der eingefügte Text hat ein ungültiges Format. Bitte fügen Sie gültige Parteidaten ein.",
+    "invalidImportTextParse": "Der eingefügte Text konnte nicht analysiert werden. Bitte stellen Sie sicher, dass er das richtige Format hat.",
+    "copyDataFailed": "Die Daten konnten nicht kopiert werden. Bitte überprüfen Sie die Berechtigungen für die Zwischenablage."
   },
   "spectrum": {
     "farLeft": "Äußerste Linke",

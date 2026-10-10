@@ -90,13 +90,14 @@ Visualizations update instantly when party data changes.
 
 ## Scenario Import / Export
 
-Parliament configurations can be saved and shared using **JSON import/export**.
+Parliament configurations can be saved and shared using **JSON import/export**, either as a `.json` file or as text copied to the clipboard.
 
 This allows users to:
 
 - store custom scenarios
 - recreate hypothetical elections
 - share configurations with others
+- paste a shared configuration straight from a message
 
 ---
 

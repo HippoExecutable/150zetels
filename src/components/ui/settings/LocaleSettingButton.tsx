@@ -20,7 +20,7 @@
 
 import { locales } from "@/i18n/i18n";
 import { useI18n } from "@/lib/zustandStore";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon, LanguageIcon } from "@heroicons/react/20/solid";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
@@ -46,15 +46,22 @@ export default function LocaleSettingButton() {
       }}
     >
       <button
-        className={`flex min-w-16 items-center justify-between rounded-full border-2 border-white py-1 ps-2 pe-1 dark:border-zinc-900 ${
-          isOpen ? "bg-zinc-200 dark:bg-zinc-700" : "bg-white dark:bg-zinc-900"
-        }`}
         onClick={() => setIsOpen(!isOpen)}
+        className={`rounded-full border-2 border-transparent px-3 py-1 text-nowrap transition-colors hover:bg-zinc-700 hover:text-white dark:hover:bg-zinc-200 dark:hover:text-zinc-950 ${
+          isOpen
+            ? "bg-zinc-700 text-white dark:bg-zinc-200 dark:text-zinc-950"
+            : "bg-white dark:bg-zinc-900"
+        }`}
+        type="button"
+        aria-expanded={isOpen}
       >
-        <span className="text-start">{locale.toUpperCase()}</span>
-        <ChevronDownIcon
-          className={`size-5 transition-transform duration-300 ${isOpen ? "" : "rotate-180"}`}
-        />
+        <span className="line-clamp-1 flex items-center justify-center gap-1 text-nowrap">
+          <LanguageIcon className="size-5 shrink-0" />
+          {locale.toUpperCase()}
+          <ChevronDownIcon
+            className={`size-5 shrink-0 transition-transform duration-300 ${isOpen ? "" : "rotate-180"}`}
+          />
+        </span>
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -68,24 +75,32 @@ export default function LocaleSettingButton() {
               animate={{ opacity: 1, translateY: 0 }}
               exit={{ opacity: 0, translateY: 2 }}
               ref={dropdownRef}
-              className="absolute bottom-10 z-100 flex w-full flex-col overflow-hidden rounded-2xl border-2 border-zinc-200 shadow-xl dark:border-zinc-700"
+              tabIndex={-1}
+              className="absolute bottom-full z-100 mb-2 w-full overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
             >
-              {Object.keys(locales).map((loc) => (
-                <button
-                  key={loc}
-                  onClick={() => {
-                    setLocale(loc);
-                    setIsOpen(false);
-                  }}
-                  className={`appearance-none px-2 py-1 text-start transition-colors duration-300 ${
-                    locale === loc
-                      ? "bg-zinc-200 dark:bg-zinc-700"
-                      : "bg-white hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-700"
-                  }`}
-                >
-                  {loc.toUpperCase()}
-                </button>
-              ))}
+              <ul>
+                {Object.keys(locales).map((loc) => (
+                  <li
+                    key={loc}
+                    className={`transition-colors duration-300 ${
+                      locale === loc
+                        ? "bg-zinc-200 dark:bg-zinc-700"
+                        : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                    }`}
+                  >
+                    <button
+                      onClick={() => {
+                        setLocale(loc);
+                        setIsOpen(false);
+                      }}
+                      className="flex w-full items-center gap-2 p-2 text-start"
+                      type="button"
+                    >
+                      {loc.toUpperCase()}
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </motion.div>
           </>
         )}

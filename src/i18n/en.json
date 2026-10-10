@@ -29,6 +29,7 @@
     "view": "View",
     "edit": "Edit",
     "noParties": "No parties available",
+    "pasteDataPlaceholder": "Paste exported data here",
     "sampleDataUpdatedAt": "Sample data updated at"
   },
   "majority": {
@@ -56,13 +57,22 @@
     "dataManagement": "Data Management",
     "clear": "Clear data",
     "exportParties": "Export data",
-    "importParties": "Import data"
+    "importParties": "Import data",
+    "importFromFile": "From file",
+    "importFromText": "From text",
+    "import": "Import",
+    "exportToFile": "Download as file",
+    "exportToText": "Copy as text",
+    "copied": "Copied"
   },
   "dialogs": {
     "clearDataConfirm": "Are you sure you want to clear all data?",
     "exportDataConfirm": "Are you sure you want to export the party data?",
     "invalidImportFormat": "The uploaded file has an incorrect format. Please upload a valid JSON file.",
-    "invalidImportParse": "Failed to parse the JSON file. Please ensure it's in the correct format."
+    "invalidImportParse": "Failed to parse the JSON file. Please ensure it's in the correct format.",
+    "invalidImportTextFormat": "The pasted text has an incorrect format. Please paste valid party data.",
+    "invalidImportTextParse": "Failed to parse the pasted text. Please ensure it's in the correct format.",
+    "copyDataFailed": "Failed to copy the data. Please check your clipboard permissions."
   },
   "spectrum": {
     "farLeft": "Far left",

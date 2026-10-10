@@ -30,7 +30,9 @@
     "edit": "Modifier",
     "noParties": "Aucun parti disponible",
     "pasteDataPlaceholder": "Collez les données exportées ici",
-    "sampleDataUpdatedAt": "Données d'exemple mises à jour le"
+    "sampleDataUpdatedAt": "Données d'exemple mises à jour le",
+    "countryName": "Pays/région",
+    "dataUpdatedAt": "Données mises à jour le"
   },
   "majority": {
     "blockingMinority": "Minorité de blocage",
@@ -62,8 +64,10 @@
     "importFromText": "Depuis un texte",
     "import": "Importer",
     "paste": "Coller",
+    "includeSelectedParties": "Inclure les partis sélectionnés",
     "exportToFile": "Télécharger en fichier",
     "exportToText": "Copier en texte",
+    "exportToLink": "Copier le lien de partage",
     "copied": "Copié"
   },
   "dialogs": {
@@ -74,7 +78,8 @@
     "invalidImportTextFormat": "Le texte collé a un format incorrect. Veuillez coller des données de partis valides.",
     "invalidImportTextParse": "Impossible d'analyser le texte collé. Veuillez vérifier qu'il est dans le bon format.",
     "copyDataFailed": "Impossible de copier les données. Veuillez vérifier les autorisations du presse-papiers.",
-    "pasteDataFailed": "Impossible de coller depuis le presse-papiers. Veuillez coller les données manuellement."
+    "pasteDataFailed": "Impossible de coller depuis le presse-papiers. Veuillez coller les données manuellement.",
+    "invalidShareLink": "Ce lien de partage est invalide ou endommagé. Les données par défaut sont affichées à la place."
   },
   "spectrum": {
     "farLeft": "Extrême gauche",

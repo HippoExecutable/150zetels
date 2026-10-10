@@ -18,7 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Country, MajorityThreshold, Party } from "@/types";
+import { Country, CountryInfo, MajorityThreshold, Party } from "@/types";
 
 interface DefaultCountryValueState {
   defaultCountryValue: string | null;
@@ -66,6 +66,11 @@ interface SelectedCountryState {
   setSelectedCountry: (by: Country | null) => void;
 }
 
+interface CustomInfoState {
+  customInfo: CountryInfo;
+  setCustomInfo: (by: CountryInfo) => void;
+}
+
 export type {
   DefaultCountryValueState,
   PartiesState,
@@ -76,4 +81,5 @@ export type {
   MajorityThresholdState,
   I18nState,
   SelectedCountryState,
+  CustomInfoState,
 };

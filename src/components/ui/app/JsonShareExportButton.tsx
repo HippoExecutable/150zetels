@@ -18,23 +18,43 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useParties, useI18n } from "@/lib/zustandStore";
-import { stringifyParties } from "@/utils/parseParties";
+import {
+  useParties,
+  useSelectedParties,
+  useI18n,
+  useSelectedCountry,
+  useCustomInfo,
+} from "@/lib/zustandStore";
+import { stringifyCountry } from "@/utils/parseCountry";
+import { createShareLink } from "@/utils/shareLink";
 import {
   ArrowUpTrayIcon,
   CheckIcon,
   ChevronDownIcon,
   ClipboardDocumentIcon,
   DocumentArrowDownIcon,
+  LinkIcon,
 } from "@heroicons/react/20/solid";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 export default function JsonShareExportButton() {
   const { parties } = useParties();
+  const { selectedParties } = useSelectedParties();
+  const { selectedCountry } = useSelectedCountry();
+  const { customInfo } = useCustomInfo();
   const { i } = useI18n();
+  const [includeSelectedParties, setIncludeSelectedParties] = useState(true);
+  const { name, updateDate } = selectedCountry ?? customInfo;
+  const country = {
+    name,
+    updateDate,
+    parties,
+    selectedParties: includeSelectedParties ? selectedParties : parties,
+  };
   const [isOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -48,7 +68,7 @@ export default function JsonShareExportButton() {
 
     if (!shouldExport) return;
 
-    const data = stringifyParties(parties);
+    const data = stringifyCountry(country);
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -63,11 +83,24 @@ export default function JsonShareExportButton() {
 
   const handleTextExport = async () => {
     try {
-      await navigator.clipboard.writeText(stringifyParties(parties));
+      await navigator.clipboard.writeText(stringifyCountry(country));
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
       console.error("Error copying JSON text:", error);
+      alert(i("dialogs.copyDataFailed"));
+    }
+  };
+
+  const handleLinkExport = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        await createShareLink(country, window.location.href),
+      );
+      setIsLinkCopied(true);
+      setTimeout(() => setIsLinkCopied(false), 2000);
+    } catch (error) {
+      console.error("Error copying share link:", error);
       alert(i("dialogs.copyDataFailed"));
     }
   };
@@ -118,7 +151,41 @@ export default function JsonShareExportButton() {
               className="absolute bottom-full z-100 mb-2 w-full overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
             >
               <ul>
-                <li className="transition-colors duration-300 hover:bg-zinc-200 dark:hover:bg-zinc-700">
+                <li className="p-2">
+                  <label className="flex max-w-fit items-center gap-2 text-sm">
+                    <span className="relative">
+                      <input
+                        title="Include Selected Parties"
+                        type="checkbox"
+                        name="includeSelectedParties"
+                        id="includeSelectedParties"
+                        className="absolute h-full w-full opacity-0"
+                        checked={includeSelectedParties}
+                        onChange={() => {
+                          setIncludeSelectedParties(!includeSelectedParties);
+                        }}
+                      />
+                      <div
+                        aria-hidden
+                        className={`${
+                          includeSelectedParties
+                            ? "bg-zinc-700 dark:bg-zinc-200"
+                            : "bg-zinc-200 dark:bg-zinc-700"
+                        } flex aspect-square size-5 items-center justify-center overflow-hidden rounded-full transition-colors`}
+                      >
+                        {includeSelectedParties && (
+                          <div className="flex h-full w-full items-center justify-center text-white dark:text-zinc-950">
+                            <CheckIcon className="size-4" />
+                          </div>
+                        )}
+                      </div>
+                    </span>
+                    <span className="select-none">
+                      {i("buttons.includeSelectedParties")}
+                    </span>
+                  </label>
+                </li>
+                <li className="border-t-2 border-zinc-200 transition-colors duration-300 hover:bg-zinc-200 dark:border-zinc-700 dark:hover:bg-zinc-700">
                   <button
                     onClick={handleFileExport}
                     className="flex w-full items-center gap-2 p-2 text-start"
@@ -143,6 +210,24 @@ export default function JsonShareExportButton() {
                       {isCopied
                         ? i("buttons.copied")
                         : i("buttons.exportToText")}
+                    </span>
+                  </button>
+                </li>
+                <li className="border-t-2 border-zinc-200 transition-colors duration-300 hover:bg-zinc-200 dark:border-zinc-700 dark:hover:bg-zinc-700">
+                  <button
+                    onClick={handleLinkExport}
+                    className="flex w-full items-center gap-2 p-2 text-start"
+                    type="button"
+                  >
+                    {isLinkCopied ? (
+                      <CheckIcon className="size-5 shrink-0" />
+                    ) : (
+                      <LinkIcon className="size-5 shrink-0" />
+                    )}
+                    <span>
+                      {isLinkCopied
+                        ? i("buttons.copied")
+                        : i("buttons.exportToLink")}
                     </span>
                   </button>
                 </li>

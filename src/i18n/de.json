@@ -30,7 +30,9 @@
     "edit": "Bearbeiten",
     "noParties": "Keine Parteien verfügbar",
     "pasteDataPlaceholder": "Exportierte Daten hier einfügen",
-    "sampleDataUpdatedAt": "Beispieldaten aktualisiert am"
+    "sampleDataUpdatedAt": "Beispieldaten aktualisiert am",
+    "countryName": "Land/Region",
+    "dataUpdatedAt": "Daten aktualisiert am"
   },
   "majority": {
     "blockingMinority": "Sperrminorität",
@@ -62,8 +64,10 @@
     "importFromText": "Aus Text",
     "import": "Importieren",
     "paste": "Einfügen",
+    "includeSelectedParties": "Ausgewählte Parteien einbeziehen",
     "exportToFile": "Als Datei herunterladen",
     "exportToText": "Als Text kopieren",
+    "exportToLink": "Link zum Teilen kopieren",
     "copied": "Kopiert"
   },
   "dialogs": {
@@ -74,7 +78,8 @@
     "invalidImportTextFormat": "Der eingefügte Text hat ein ungültiges Format. Bitte fügen Sie gültige Parteidaten ein.",
     "invalidImportTextParse": "Der eingefügte Text konnte nicht analysiert werden. Bitte stellen Sie sicher, dass er das richtige Format hat.",
     "copyDataFailed": "Die Daten konnten nicht kopiert werden. Bitte überprüfen Sie die Berechtigungen für die Zwischenablage.",
-    "pasteDataFailed": "Einfügen aus der Zwischenablage fehlgeschlagen. Bitte fügen Sie die Daten manuell ein."
+    "pasteDataFailed": "Einfügen aus der Zwischenablage fehlgeschlagen. Bitte fügen Sie die Daten manuell ein.",
+    "invalidShareLink": "Dieser Link ist ungültig oder beschädigt. Stattdessen werden die Standarddaten angezeigt."
   },
   "spectrum": {
     "farLeft": "Äußerste Linke",

@@ -24,6 +24,7 @@ import {
   useSelectedCountry,
   useParties,
   useSelectedParties,
+  useCustomInfo,
 } from "@/lib/zustandStore";
 import { Country } from "@/types";
 
@@ -32,6 +33,7 @@ export default function LandscapeCountryListBanner() {
   const { selectedCountry, setSelectedCountry } = useSelectedCountry();
   const { setParties } = useParties();
   const { setSelectedParties } = useSelectedParties();
+  const { customInfo, setCustomInfo } = useCustomInfo();
   return (
     <>
       <div className="sticky top-4 z-100 h-[80vh] w-full overflow-auto rounded-2xl border-2 border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
@@ -49,17 +51,30 @@ export default function LandscapeCountryListBanner() {
                       setSelectedCountry(null);
                       setParties([]);
                       setSelectedParties([]);
+                      setCustomInfo({ name: "", updateDate: "" });
                     }
                   }}
-                  className={`w-full p-2 transition-colors duration-300 ${
+                  className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
                     !selectedCountry
                       ? "bg-zinc-200 dark:bg-zinc-700"
                       : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
                   }`}
                 >
-                  <div className="flex gap-1">
-                    <span>{i("header.custom")}</span>
+                  <div className="line-clamp-1 flex gap-1">
+                    <span>
+                      {(!selectedCountry && customInfo.name) ||
+                        i("header.custom")}
+                    </span>
                   </div>
+                  {!selectedCountry && customInfo.updateDate && (
+                    <p className="text-xs opacity-75">
+                      {i("body.dataUpdatedAt")}:{" "}
+                      {new Date(customInfo.updateDate).toLocaleDateString(
+                        i("locale"),
+                        { timeZone: "UTC" },
+                      )}
+                    </p>
+                  )}
                 </button>
               </li>
             </ul>
@@ -107,6 +122,7 @@ export default function LandscapeCountryListBanner() {
                         {i("body.sampleDataUpdatedAt")}:{" "}
                         {new Date(country.updateDate).toLocaleDateString(
                           i("locale"),
+                          { timeZone: "UTC" },
                         )}
                       </p>
                       {/* )} */}

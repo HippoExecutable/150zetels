@@ -26,3 +26,10 @@ export interface Country {
   parties: Party[];
   updateDate: string;
 }
+
+export type CountryInfo = Pick<Country, "name" | "updateDate">;
+
+export interface CountryData extends CountryInfo {
+  parties: Party[];
+  selectedParties: Party[];
+}

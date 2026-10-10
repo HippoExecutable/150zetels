@@ -29,6 +29,7 @@
     "view": "Voir",
     "edit": "Modifier",
     "noParties": "Aucun parti disponible",
+    "pasteDataPlaceholder": "Collez les données exportées ici",
     "sampleDataUpdatedAt": "Données d'exemple mises à jour le"
   },
   "majority": {
@@ -56,13 +57,24 @@
     "dataManagement": "Gestion des données",
     "clear": "Effacer les données",
     "exportParties": "Exporter les données",
-    "importParties": "Importer les données"
+    "importParties": "Importer les données",
+    "importFromFile": "Depuis un fichier",
+    "importFromText": "Depuis un texte",
+    "import": "Importer",
+    "paste": "Coller",
+    "exportToFile": "Télécharger en fichier",
+    "exportToText": "Copier en texte",
+    "copied": "Copié"
   },
   "dialogs": {
     "clearDataConfirm": "Voulez-vous vraiment effacer toutes les données ?",
     "exportDataConfirm": "Voulez-vous vraiment exporter les données des partis ?",
     "invalidImportFormat": "Le fichier importé a un format incorrect. Veuillez téléverser un fichier JSON valide.",
-    "invalidImportParse": "Impossible d'analyser le fichier JSON. Veuillez vérifier qu'il est dans le bon format."
+    "invalidImportParse": "Impossible d'analyser le fichier JSON. Veuillez vérifier qu'il est dans le bon format.",
+    "invalidImportTextFormat": "Le texte collé a un format incorrect. Veuillez coller des données de partis valides.",
+    "invalidImportTextParse": "Impossible d'analyser le texte collé. Veuillez vérifier qu'il est dans le bon format.",
+    "copyDataFailed": "Impossible de copier les données. Veuillez vérifier les autorisations du presse-papiers.",
+    "pasteDataFailed": "Impossible de coller depuis le presse-papiers. Veuillez coller les données manuellement."
   },
   "spectrum": {
     "farLeft": "Extrême gauche",

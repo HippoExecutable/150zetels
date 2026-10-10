@@ -29,6 +29,7 @@
     "view": "Görünüm",
     "edit": "Düzenle",
     "noParties": "Kullanılabilir parti yok",
+    "pasteDataPlaceholder": "Dışa aktarılan verileri buraya yapıştırın",
     "sampleDataUpdatedAt": "Örnek veri güncellemesi"
   },
   "majority": {
@@ -56,13 +57,24 @@
     "dataManagement": "Veri Yönetimi",
     "clear": "Verileri temizle",
     "exportParties": "Verileri dışa aktar",
-    "importParties": "Verileri içe aktar"
+    "importParties": "Verileri içe aktar",
+    "importFromFile": "Dosyadan",
+    "importFromText": "Metinden",
+    "import": "İçe aktar",
+    "paste": "Yapıştır",
+    "exportToFile": "Dosya olarak indir",
+    "exportToText": "Metin olarak kopyala",
+    "copied": "Kopyalandı"
   },
   "dialogs": {
     "clearDataConfirm": "Tüm verileri temizlemek istediğinizden emin misiniz?",
     "exportDataConfirm": "Parti verilerini dışa aktarmak istediğinizden emin misiniz?",
     "invalidImportFormat": "Yüklenen dosyanın biçimi hatalı. Lütfen geçerli bir JSON dosyası yükleyin.",
-    "invalidImportParse": "JSON dosyası ayrıştırılamadı. Lütfen dosyanın doğru biçimde olduğundan emin olun."
+    "invalidImportParse": "JSON dosyası ayrıştırılamadı. Lütfen dosyanın doğru biçimde olduğundan emin olun.",
+    "invalidImportTextFormat": "Yapıştırılan metnin biçimi hatalı. Lütfen geçerli parti verileri yapıştırın.",
+    "invalidImportTextParse": "Yapıştırılan metin ayrıştırılamadı. Lütfen metnin doğru biçimde olduğundan emin olun.",
+    "copyDataFailed": "Veriler kopyalanamadı. Lütfen pano izinlerini kontrol edin.",
+    "pasteDataFailed": "Panodan yapıştırılamadı. Lütfen verileri elle yapıştırın."
   },
   "spectrum": {
     "farLeft": "Aşırı sol",

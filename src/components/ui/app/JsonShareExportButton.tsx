@@ -20,6 +20,7 @@
 
 import {
   useParties,
+  useSelectedParties,
   useI18n,
   useSelectedCountry,
   useCustomInfo,
@@ -39,11 +40,18 @@ import { useEffect, useRef, useState } from "react";
 
 export default function JsonShareExportButton() {
   const { parties } = useParties();
+  const { selectedParties } = useSelectedParties();
   const { selectedCountry } = useSelectedCountry();
   const { customInfo } = useCustomInfo();
   const { i } = useI18n();
+  const [includeSelectedParties, setIncludeSelectedParties] = useState(true);
   const { name, updateDate } = selectedCountry ?? customInfo;
-  const country = { name, updateDate, parties };
+  const country = {
+    name,
+    updateDate,
+    parties,
+    selectedParties: includeSelectedParties ? selectedParties : parties,
+  };
   const [isOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
@@ -143,7 +151,41 @@ export default function JsonShareExportButton() {
               className="absolute bottom-full z-100 mb-2 w-full overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
             >
               <ul>
-                <li className="transition-colors duration-300 hover:bg-zinc-200 dark:hover:bg-zinc-700">
+                <li className="p-2">
+                  <label className="flex max-w-fit items-center gap-2 text-sm">
+                    <span className="relative">
+                      <input
+                        title="Include Selected Parties"
+                        type="checkbox"
+                        name="includeSelectedParties"
+                        id="includeSelectedParties"
+                        className="absolute h-full w-full opacity-0"
+                        checked={includeSelectedParties}
+                        onChange={() => {
+                          setIncludeSelectedParties(!includeSelectedParties);
+                        }}
+                      />
+                      <div
+                        aria-hidden
+                        className={`${
+                          includeSelectedParties
+                            ? "bg-zinc-700 dark:bg-zinc-200"
+                            : "bg-zinc-200 dark:bg-zinc-700"
+                        } flex aspect-square size-5 items-center justify-center overflow-hidden rounded-full transition-colors`}
+                      >
+                        {includeSelectedParties && (
+                          <div className="flex h-full w-full items-center justify-center text-white dark:text-zinc-950">
+                            <CheckIcon className="size-4" />
+                          </div>
+                        )}
+                      </div>
+                    </span>
+                    <span className="select-none">
+                      {i("buttons.includeSelectedParties")}
+                    </span>
+                  </label>
+                </li>
+                <li className="border-t-2 border-zinc-200 transition-colors duration-300 hover:bg-zinc-200 dark:border-zinc-700 dark:hover:bg-zinc-700">
                   <button
                     onClick={handleFileExport}
                     className="flex w-full items-center gap-2 p-2 text-start"

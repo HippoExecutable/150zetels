@@ -20,7 +20,7 @@
 
 import { expect, test } from "vitest";
 import { parseCountry, stringifyCountry } from "@/utils/parseCountry";
-import { Country, Party } from "@/types";
+import { CountryData, Party } from "@/types";
 
 const partyA: Party = {
   id: "a",
@@ -41,23 +41,53 @@ const partyB: Party = {
   position: 3,
 };
 
-const country: Country = {
+const country: CountryData = {
   name: "Alphaland",
   updateDate: "2026-10-10",
   parties: [partyA, partyB],
+  selectedParties: [partyB],
+};
+
+const emptyCountry: CountryData = {
+  name: "",
+  updateDate: "",
+  parties: [],
+  selectedParties: [],
 };
 
 test("round-trips exported countries", () => {
   expect(parseCountry(stringifyCountry(country))).toEqual(country);
   expect(
-    parseCountry(stringifyCountry({ name: "", updateDate: "", parties: [] })),
-  ).toEqual({ name: "", updateDate: "", parties: [] });
+    parseCountry(stringifyCountry({ ...country, selectedParties: [] })),
+  ).toEqual({ ...country, selectedParties: [] });
+  expect(parseCountry(stringifyCountry(emptyCountry))).toEqual(emptyCountry);
 });
 
-test("leaves the emoji out of exports", () => {
-  expect(parseCountry(stringifyCountry({ ...country, emoji: "🏳️" }))).toEqual(
-    country,
+test("exports the selected parties as ids", () => {
+  expect(JSON.parse(stringifyCountry(country)).selectedPartyIds).toEqual(["b"]);
+});
+
+test("leaves the ids out when every party is selected", () => {
+  const allSelected = { ...country, selectedParties: [partyB, partyA] };
+
+  expect(JSON.parse(stringifyCountry(allSelected))).not.toHaveProperty(
+    "selectedPartyIds",
   );
+  expect(parseCountry(stringifyCountry(allSelected))?.selectedParties).toEqual([
+    partyA,
+    partyB,
+  ]);
+});
+
+test("ignores selected ids that match no party", () => {
+  expect(
+    parseCountry(
+      JSON.stringify({
+        parties: [partyA, partyB],
+        selectedPartyIds: ["b", "missing"],
+      }),
+    )?.selectedParties,
+  ).toEqual([partyB]);
 });
 
 test("accepts older exports that are only a list of parties", () => {
@@ -65,19 +95,17 @@ test("accepts older exports that are only a list of parties", () => {
     name: "",
     updateDate: "",
     parties: [partyA, partyB],
+    selectedParties: [partyA, partyB],
   });
-  expect(parseCountry("[]")).toEqual({
-    name: "",
-    updateDate: "",
-    parties: [],
-  });
+  expect(parseCountry("[]")).toEqual(emptyCountry);
 });
 
-test("fills in a missing name and update date", () => {
+test("fills in a missing name, update date, and selection", () => {
   expect(parseCountry(JSON.stringify({ parties: [partyA] }))).toEqual({
     name: "",
     updateDate: "",
     parties: [partyA],
+    selectedParties: [partyA],
   });
 });
 
@@ -100,6 +128,12 @@ test("returns null for JSON that is not a country or a list of parties", () => {
     parseCountry(JSON.stringify({ ...country, parties: [partyA, null] })),
   ).toBeNull();
   expect(parseCountry(JSON.stringify({ ...country, name: 1 }))).toBeNull();
+  expect(
+    parseCountry(JSON.stringify({ parties: [partyA], selectedPartyIds: "a" })),
+  ).toBeNull();
+  expect(
+    parseCountry(JSON.stringify({ parties: [partyA], selectedPartyIds: [1] })),
+  ).toBeNull();
 });
 
 test("returns null for update dates that are not YYYY-MM-DD", () => {

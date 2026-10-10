@@ -64,6 +64,7 @@
     "importFromText": "Uit tekst",
     "import": "Importeren",
     "paste": "Plakken",
+    "includeSelectedParties": "Geselecteerde partijen meenemen",
     "exportToFile": "Downloaden als bestand",
     "exportToText": "Kopiëren als tekst",
     "exportToLink": "Deellink kopiëren",

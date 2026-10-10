@@ -58,9 +58,9 @@ export default function JsonShareImportButton() {
     const parsedCountry = parseCountry(data);
     if (!parsedCountry) return false;
 
-    const { name, updateDate, parties } = parsedCountry;
+    const { name, updateDate, parties, selectedParties } = parsedCountry;
     setParties(parties);
-    setSelectedParties(parties);
+    setSelectedParties(selectedParties);
     setSelectedCountry(null);
     setCustomInfo({ name, updateDate });
     return true;

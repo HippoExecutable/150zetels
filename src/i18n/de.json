@@ -64,6 +64,7 @@
     "importFromText": "Aus Text",
     "import": "Importieren",
     "paste": "Einfügen",
+    "includeSelectedParties": "Ausgewählte Parteien einbeziehen",
     "exportToFile": "Als Datei herunterladen",
     "exportToText": "Als Text kopieren",
     "exportToLink": "Link zum Teilen kopieren",

@@ -26,7 +26,7 @@ import {
   getShareData,
 } from "@/utils/shareLink";
 import { countries } from "@/data/countries";
-import { Country, Party } from "@/types";
+import { CountryData, Party } from "@/types";
 
 const partyA: Party = {
   id: "a",
@@ -47,13 +47,19 @@ const partyB: Party = {
   position: 3,
 };
 
-const country: Country = {
+const country: CountryData = {
   name: "Ostfriesland 🌊",
   updateDate: "2026-10-10",
   parties: [partyA, partyB],
+  selectedParties: [partyA],
 };
 
-const emptyCountry: Country = { name: "", updateDate: "", parties: [] };
+const emptyCountry: CountryData = {
+  name: "",
+  updateDate: "",
+  parties: [],
+  selectedParties: [],
+};
 
 test("round-trips countries, including non-ASCII names", async () => {
   const data = await encodeShareData(country);
@@ -67,7 +73,12 @@ test("round-trips countries, including non-ASCII names", async () => {
 
 test("keeps links for every country reasonably short", async () => {
   for (const { name, updateDate, parties } of countries) {
-    const sampleCountry = { name, updateDate, parties };
+    const sampleCountry = {
+      name,
+      updateDate,
+      parties,
+      selectedParties: parties,
+    };
     const link = await createShareLink(sampleCountry, "https://example.com/");
 
     expect(link.length).toBeLessThan(2000);
@@ -112,7 +123,7 @@ test("returns null for damaged or invalid data", async () => {
       await encodeShareData({
         ...country,
         parties: [{ ...partyA, seats: "20" }],
-      } as unknown as Country),
+      } as unknown as CountryData),
     ),
   ).toBeNull();
 });

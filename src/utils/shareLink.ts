@@ -18,7 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Country } from "@/types";
+import { CountryData } from "@/types";
 import { parseCountry, stringifyCountry } from "@/utils/parseCountry";
 
 // The data lives in the URL hash, so it is never sent to the server
@@ -53,7 +53,7 @@ function fromBase64Url(text: string) {
   return Uint8Array.from(binary, (char) => char.charCodeAt(0));
 }
 
-export async function encodeShareData(country: Country) {
+export async function encodeShareData(country: CountryData) {
   return toBase64Url(await deflate(stringifyCountry(country, 0)));
 }
 
@@ -66,7 +66,7 @@ export async function decodeShareData(data: string) {
   }
 }
 
-export async function createShareLink(country: Country, baseUrl: string) {
+export async function createShareLink(country: CountryData, baseUrl: string) {
   const url = new URL(baseUrl);
   url.search = "";
   url.hash = new URLSearchParams({

@@ -81,9 +81,9 @@ const Seats = () => {
       if (isCancelled) return;
 
       if (sharedCountry) {
-        const { name, updateDate, parties } = sharedCountry;
+        const { name, updateDate, parties, selectedParties } = sharedCountry;
         setParties(parties);
-        setSelectedParties(parties);
+        setSelectedParties(selectedParties);
         setSelectedCountry(null);
         setCustomInfo({ name, updateDate });
       } else {

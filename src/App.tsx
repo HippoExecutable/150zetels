@@ -20,11 +20,27 @@
 
 import "./App.css";
 import Body from "@/components/Body";
+import Embed from "@/components/Embed";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LandscapeCountryListBanner from "./components/ui/app/head/LandscapeCountryListBanner";
+import { useUrlData } from "@/lib/useUrlData";
+
+// Other sites show only the chart, in an iframe pointing at ?embed
+const isEmbed = new URLSearchParams(window.location.search).has("embed");
 
 function App() {
+  const { sharedCountry, isShareLinkInvalid } = useUrlData(isEmbed);
+
+  if (isEmbed) {
+    return (
+      <Embed
+        sharedCountry={sharedCountry}
+        isShareLinkInvalid={isShareLinkInvalid}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white text-zinc-950 transition-colors duration-300 dark:bg-zinc-900 dark:text-white">
       <div className="mx-auto max-w-7xl pt-[calc(env(safe-area-inset-top)+1rem)] pr-[calc(env(safe-area-inset-right)+1rem)] pb-[calc(env(safe-area-inset-bottom)+1rem)] pl-[calc(env(safe-area-inset-left)+1rem)]">

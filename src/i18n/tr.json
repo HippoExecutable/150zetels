@@ -71,7 +71,17 @@
     "exportToFile": "Dosya olarak indir",
     "exportToText": "Metin olarak kopyala",
     "exportToLink": "Paylaşım bağlantısını kopyala",
-    "copied": "Kopyalandı"
+    "exportToEmbed": "Yerleştirme kodunu kopyala",
+    "copied": "Kopyalandı",
+    "data": "Veri",
+    "image": "Görsel",
+    "format": "Biçim",
+    "square": "Kare",
+    "portrait": "Portre",
+    "vertical": "Dikey",
+    "wide": "Geniş",
+    "downloadImage": "Görseli indir",
+    "copyImage": "Görseli kopyala"
   },
   "dialogs": {
     "clearDataConfirm": "Tüm verileri temizlemek istediğinizden emin misiniz?",
@@ -100,5 +110,10 @@
     "feelFree": "Bir sorununuz veya öneriniz varsa",
     "onGitHub": "GitHub'da",
     "ifYouHave": "çekinmeden bir issue açın."
+  },
+  "embed": {
+    "openFullVersion": "Parliament Seats'te aç",
+    "invalidData": "Bu grafik yüklenemedi.",
+    "reset": "Sıfırla"
   }
 }

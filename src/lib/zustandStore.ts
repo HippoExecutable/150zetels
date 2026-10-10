@@ -32,6 +32,7 @@ import {
   I18nState,
   CustomInfoState,
   CountryData,
+  IncludeOptions,
 } from "@/types";
 import { simpleMajority } from "@/utils/getMajority";
 import { create } from "zustand";
@@ -148,6 +149,32 @@ function importCountryData({
   if (locale) useI18n.getState().setLocale(locale);
 }
 
+// Collects the current data, and leaves out the settings that are not included
+function exportCountryData(include: IncludeOptions): CountryData {
+  const { parties } = useParties.getState();
+  const { selectedParties } = useSelectedParties.getState();
+  const { selectedCountry } = useSelectedCountry.getState();
+  const { customInfo } = useCustomInfo.getState();
+  const { majorityThreshold } = useMajorityThreshold.getState();
+  const { allowTieBreaker } = useAllowTieBreaker.getState();
+  const { sortBy } = useSortBy.getState();
+  const { locale } = useI18n.getState();
+  const { name, updateDate } = selectedCountry ?? customInfo;
+
+  return {
+    name,
+    updateDate,
+    parties,
+    selectedParties: include.selectedParties ? selectedParties : parties,
+    majorityThreshold: include.majorityThreshold
+      ? majorityThreshold
+      : undefined,
+    allowTieBreaker: include.majorityThreshold ? allowTieBreaker : undefined,
+    sortBy: include.sortBy ? sortBy : undefined,
+    locale: include.locale ? locale : undefined,
+  };
+}
+
 export {
   useDefaultCountryValue,
   useParties,
@@ -160,4 +187,5 @@ export {
   useSelectedCountry,
   useCustomInfo,
   importCountryData,
+  exportCountryData,
 };

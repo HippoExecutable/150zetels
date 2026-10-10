@@ -71,7 +71,17 @@
     "exportToFile": "Downloaden als bestand",
     "exportToText": "Kopiëren als tekst",
     "exportToLink": "Deellink kopiëren",
-    "copied": "Gekopieerd"
+    "exportToEmbed": "Insluitcode kopiëren",
+    "copied": "Gekopieerd",
+    "data": "Gegevens",
+    "image": "Afbeelding",
+    "format": "Formaat",
+    "square": "Vierkant",
+    "portrait": "Staand",
+    "vertical": "Verticaal",
+    "wide": "Breed",
+    "downloadImage": "Afbeelding downloaden",
+    "copyImage": "Afbeelding kopiëren"
   },
   "dialogs": {
     "clearDataConfirm": "Weet je zeker dat je alle gegevens wilt wissen?",
@@ -100,5 +110,10 @@
     "feelFree": "Voel je vrij om een issue te openen",
     "onGitHub": "op GitHub",
     "ifYouHave": "als u problemen of suggesties heeft."
+  },
+  "embed": {
+    "openFullVersion": "Openen in Parliament Seats",
+    "invalidData": "Deze grafiek kon niet worden geladen.",
+    "reset": "Herstellen"
   }
 }

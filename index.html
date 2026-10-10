@@ -14,49 +14,123 @@
     <meta
       name="theme-color"
       media="(prefers-color-scheme: dark)"
-      content="#111827"
+      content="#18181b"
     />
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-title" content="Parliament" />
+    <meta name="application-name" content="Parliament Seats" />
     <link rel="manifest" href="/site.webmanifest" />
+
     <title>
-      Parliament Seats - Parliament Seat & Coalition Majority Calculator
+      Coalition Calculator & Parliament Chart Maker | Parliament Seats
     </title>
     <meta
       name="description"
-      content="Interactive parliament seat distribution and coalition majority calculator for Germany, France, the UK, Canada, the EU and more."
+      content="Free coalition and majority calculator for the EU, Germany, the UK, Canada, France and more. Build a coalition, then share it as a link, image or embed."
     />
+    <meta name="author" content="HSW.is" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="canonical" href="https://parl.hsw.is/" />
 
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Parliament Seats" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:url" content="https://parl.hsw.is/" />
     <meta
       property="og:title"
-      content="Parliament Seats - Parliament Seat & Coalition Majority Calculator"
+      content="Parliament Seats – Coalition Calculator & Parliament Chart Maker"
     />
     <meta
       property="og:description"
-      content="Visualize parliamentary seat distributions and test coalition majorities for Germany, France, the UK, Canada, the EU and more."
+      content="Build coalitions and check majorities in the European Parliament, the Bundestag, the House of Commons and more. Share them as links, images or embeds."
     />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://parl.hsw.is/" />
     <meta property="og:image" content="https://parl.hsw.is/og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="The Parliament Seats logo, an isometric parliament building"
+    />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
-      content="Parliament Seats - Parliament Seat & Coalition Majority Calculator"
+      content="Parliament Seats – Coalition Calculator & Parliament Chart Maker"
     />
     <meta
       name="twitter:description"
-      content="Visualize parliamentary seat distributions and test coalition majorities."
+      content="Build coalitions and check majorities in the European Parliament, the Bundestag, the House of Commons and more. Share them as links, images or embeds."
     />
     <meta name="twitter:image" content="https://parl.hsw.is/og-image.jpg" />
+    <meta
+      name="twitter:image:alt"
+      content="The Parliament Seats logo, an isometric parliament building"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://parl.hsw.is/#website",
+            "name": "Parliament Seats",
+            "alternateName": "Parliament",
+            "url": "https://parl.hsw.is/",
+            "inLanguage": ["en", "de", "fr", "nl", "tr"]
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "https://parl.hsw.is/#app",
+            "name": "Parliament Seats",
+            "url": "https://parl.hsw.is/",
+            "description": "Free coalition and majority calculator for the EU, Germany, the UK, Canada, France and more. Build a coalition, then share it as a link, image or embed.",
+            "image": "https://parl.hsw.is/og-image.jpg",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Any",
+            "browserRequirements": "Requires JavaScript",
+            "isAccessibleForFree": true,
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "EUR"
+            },
+            "inLanguage": ["en", "de", "fr", "nl", "tr"],
+            "featureList": [
+              "Coalition majority calculator",
+              "Simple, three-fifths, two-thirds, three-quarters and custom majorities",
+              "Blocking minority and tie-breaker checks",
+              "Half-pie parliament chart and seat bar",
+              "Coalitions by political spectrum",
+              "Custom parliaments",
+              "Share links and JSON import and export",
+              "PNG images for social media",
+              "Embeds for websites"
+            ],
+            "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+            "sameAs": ["https://github.com/disfordave/parliament-seats"],
+            "isPartOf": { "@id": "https://parl.hsw.is/#website" },
+            "publisher": {
+              "@type": "Organization",
+              "name": "HSW.is",
+              "url": "https://hsw.is"
+            }
+          }
+        ]
+      }
+    </script>
     <script>
       (function () {
         try {
-          var t = localStorage.getItem("theme");
+          var params = new URLSearchParams(location.search);
+          // Embeds use ?theme=light|dark|auto, since the host page sets the look
+          var t = params.has("embed")
+            ? params.get("theme") || "light"
+            : localStorage.getItem("theme");
           var d =
             t === "dark" ||
             (t !== "light" &&
@@ -72,61 +146,79 @@
       style="
         display: block;
         background: #ffffff;
-        color: #030712;
+        color: #09090b;
         padding: 16px;
         border-radius: 16px;
         margin: 8px auto;
         font-family: sans-serif;
         line-height: 1.5;
-        border: 2px solid #e5e7eb;
+        border: 2px solid #e4e4e7;
         max-width: 720px;
       "
     >
       <h1 style="margin: 0 0 16px 0">
-        Parliament Seats - Parliament Seat & Coalition Majority Calculator
+        Parliament Seats – Coalition Calculator & Parliament Chart Maker
       </h1>
 
       <p style="margin: 0 0 16px 0">
-        Parliament Seats is an interactive tool for visualizing parliamentary
-        seat distributions and checking whether a coalition reaches a majority.
+        Parliament Seats is a free tool for exploring how the seats in a
+        parliament are shared out, and checking whether a coalition reaches a
+        majority.
       </p>
 
-      <p style="margin: 0 0 16px 0">
-        Supported examples include the European Union, Germany, Austria, the
-        Netherlands, Belgium, the United Kingdom, South Africa, Australia,
-        Canada, France, and New Zealand.
-      </p>
-
-      <p style="margin: 0 0 16px 0">
-        You can also create a custom parliament configuration and test coalition
-        combinations manually.
-      </p>
+      <h2 style="margin: 0 0 12px 0">Features</h2>
+      <ul style="margin: 0 0 16px 20px; padding: 0">
+        <li>
+          Coalition calculator with simple, three-fifths, two-thirds,
+          three-quarters, and custom majorities, plus blocking minorities and an
+          optional tie breaker
+        </li>
+        <li>Half-pie parliament chart and seat bar</li>
+        <li>Coalitions by political spectrum, from far left to far right</li>
+        <li>
+          Custom parliaments with your own parties, seats, colours, name, and
+          date
+        </li>
+        <li>
+          Share links, JSON import and export, PNG images for social media, and
+          embeds for websites
+        </li>
+        <li>Available in English, German, French, Dutch, and Turkish</li>
+      </ul>
 
       <h2 style="margin: 0 0 12px 0">Supported parliaments</h2>
       <ul style="margin: 0 0 16px 20px; padding: 0">
-        <li>European Union</li>
-        <li>Germany (Bundestag)</li>
-        <li>Austria (Nationalrat)</li>
-        <li>Netherlands (Tweede Kamer)</li>
-        <li>Belgium (Kamer / Chambre)</li>
-        <li>United Kingdom (House of Commons)</li>
-        <li>South Africa (National Assembly)</li>
+        <li>European Union (European Parliament)</li>
         <li>Australia (House of Representatives and Senate)</li>
+        <li>Austria (Nationalrat)</li>
+        <li>Belgium (Kamer / Chambre)</li>
         <li>Canada (House of Commons / Chambre des communes)</li>
         <li>France (Assemblée nationale)</li>
+        <li>Germany (Bundestag)</li>
+        <li>Malta (House of Representatives)</li>
+        <li>Netherlands (Tweede Kamer)</li>
         <li>New Zealand (House of Representatives)</li>
+        <li>South Africa (National Assembly)</li>
+        <li>Turkey (Türkiye Büyük Millet Meclisi)</li>
+        <li>United Kingdom (House of Commons)</li>
       </ul>
 
       <p style="margin: 0 0 16px 0">
-        This application works only with JavaScript enabled. Please enable
-        JavaScript in your browser settings and reload the page to use this
-        application.
+        This application needs JavaScript. Please enable JavaScript in your
+        browser settings and reload the page.
       </p>
 
       <p style="margin: 0">
         &copy; 2026
         <a href="https://hsw.is" rel="noreferrer noopener" target="_blank"
           >HSW.is</a
+        >
+        ·
+        <a
+          href="https://github.com/disfordave/parliament-seats"
+          rel="noreferrer noopener"
+          target="_blank"
+          >Source code on GitHub</a
         >
       </p>
     </noscript>

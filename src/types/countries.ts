@@ -40,3 +40,11 @@ export interface CountryData extends CountryInfo {
   sortBy?: SortByState["sortBy"];
   locale?: string;
 }
+
+// Which settings an export carries along with the parties
+export interface IncludeOptions {
+  selectedParties: boolean;
+  majorityThreshold: boolean;
+  sortBy: boolean;
+  locale: boolean;
+}

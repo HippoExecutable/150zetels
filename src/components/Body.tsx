@@ -20,6 +20,7 @@
 
 import { useEffect } from "react";
 import { countries } from "@/data/countries";
+import { supportedLocales } from "@/i18n/i18n";
 import { sort } from "@/utils/sort";
 import {
   useSelectedParties,
@@ -32,7 +33,6 @@ import {
 } from "@/lib/zustandStore";
 import {
   PartyButton,
-  AllowTieBreakerButton,
   MajorityThresholdButton,
   SwitchViewModeButton,
   SortButton,
@@ -75,7 +75,7 @@ const Seats = () => {
       }
     }
 
-    if (lang && ["en", "fr", "de", "nl"].includes(lang)) {
+    if (lang && supportedLocales.some((locale) => locale === lang)) {
       setLocale(lang);
     }
   }, [setLocale, setParties, setSelectedCountry, setSelectedParties]);
@@ -98,10 +98,7 @@ const Seats = () => {
         <SeatsGraph />
       </div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-1 flex-wrap items-center gap-x-4 gap-y-2">
-          <MajorityThresholdButton />
-          <AllowTieBreakerButton />
-        </div>
+        <MajorityThresholdButton />
         <SortButton />
         <SwitchViewModeButton />
       </div>

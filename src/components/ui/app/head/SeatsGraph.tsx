@@ -96,9 +96,10 @@ export default function SeatsGraph() {
           </p>
           <div
             className="relative flex items-center justify-center"
-            title={`${
-              majority.seatsForMajority
-            } ${i("header.seatsForMajority")}`}
+            title={i("header.seatsForMajority").replace(
+              "{count}",
+              majority.seatsForMajority.toString(),
+            )}
           >
             <ChevronDownIcon className="size-5" />
             <p
@@ -107,8 +108,11 @@ export default function SeatsGraph() {
               {majority.seatsForMajority}{" "}
             </p>
           </div>
-          <div className="flex flex-1 justify-end text-end">
-            <p className="tabular-nums">
+          <div className="flex min-w-0 flex-1 justify-end text-end">
+            <p
+              className="truncate tabular-nums"
+              title={`${selectedTotal} / ${total}`}
+            >
               <span className="font-semibold">{selectedTotal}</span> / {total}
             </p>
           </div>

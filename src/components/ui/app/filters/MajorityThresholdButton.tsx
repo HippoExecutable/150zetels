@@ -30,6 +30,7 @@ import { pluralize } from "@/utils/pluralize";
 import { ChevronDownIcon, ScaleIcon } from "@heroicons/react/16/solid";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import AllowTieBreakerButton from "./AllowTieBreakerButton";
 
 export default function MajorityThresholdButton() {
   const { majorityThreshold, setMajorityThreshold } = useMajorityThreshold();
@@ -42,7 +43,8 @@ export default function MajorityThresholdButton() {
 
   useEffect(() => {
     if (isOpen && dropdownRef.current) {
-      dropdownRef.current.focus();
+      // Keeps focus inside for onBlur, without scrolling the page to the dropdown
+      dropdownRef.current.focus({ preventScroll: true });
     }
   }, [isOpen]);
 
@@ -54,8 +56,8 @@ export default function MajorityThresholdButton() {
       threshold: { numerator: 1, denominator: 3 },
     },
     {
-      id: "absolute",
-      label: i("majority.absolute"),
+      id: "simple",
+      label: i("majority.simple"),
       threshold: { numerator: 1, denominator: 2 },
     },
     {
@@ -90,141 +92,155 @@ export default function MajorityThresholdButton() {
   );
 
   return (
-    <div
-      className="relative"
-      tabIndex={-1}
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget)) {
-          setIsOpen(false);
-        }
-      }}
-    >
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-1 rounded-full border-2 border-transparent py-0.75 ps-2.5 pe-1.5 text-sm tabular-nums transition-colors duration-300 ${
-          isOpen
-            ? "bg-zinc-700 text-white dark:bg-zinc-200 dark:text-zinc-950"
-            : "bg-zinc-200 dark:bg-zinc-700"
-        }`}
-        type="button"
-        title={i("body.majorityThreshold")}
-        aria-label={i("body.majorityThreshold")}
-        aria-expanded={isOpen}
+    <div className="flex-1">
+      <div
+        className="relative w-fit"
+        tabIndex={-1}
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget)) {
+            setIsOpen(false);
+          }
+        }}
       >
-        <ScaleIcon className="size-4 shrink-0" />
-        <span className="font-semibold">
-          {selectedConfig
-            ? `${selectedConfig.threshold.numerator}/${selectedConfig.threshold.denominator}`
-            : `${percent}%`}
-        </span>
-        <ChevronDownIcon
-          className={`size-4 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-        />
-      </button>
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              key="modal"
-              transition={{
-                duration: 0.3,
-              }}
-              initial={{ opacity: 0, translateY: -8 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              exit={{ opacity: 0, translateY: -2 }}
-              ref={dropdownRef}
-              tabIndex={-1}
-              className="absolute top-full z-75 mt-2 w-64 overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
-            >
-              <ul>
-                <li>
-                  <span className="px-2 py-1 text-sm opacity-75">
-                    {i("body.majorityThreshold")}
-                  </span>
-                  <ul>
-                    {thresholdConfigs.map((config) => (
-                      <li key={config.id}>
-                        <button
-                          onClick={() => {
-                            setMajorityThreshold(config.threshold);
-                            setCustomPercent("");
-                            setIsOpen(false);
-                          }}
-                          className={`flex w-full items-center justify-between gap-2 p-2 text-start transition-colors duration-300 ${
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`flex items-center gap-1 rounded-full border-2 border-transparent py-0.75 ps-2.5 pe-1.5 text-sm tabular-nums transition-colors duration-300 ${
+            isOpen
+              ? "bg-zinc-700 text-white dark:bg-zinc-200 dark:text-zinc-950"
+              : "bg-zinc-200 dark:bg-zinc-700"
+          }`}
+          type="button"
+          title={i("body.majorityThreshold")}
+          aria-label={i("body.majorityThreshold")}
+          aria-expanded={isOpen}
+        >
+          <ScaleIcon className="size-4 shrink-0" />
+          <span className="font-semibold">
+            {selectedConfig
+              ? `${selectedConfig.threshold.numerator}/${selectedConfig.threshold.denominator}`
+              : `${percent}%`}
+          </span>
+          <ChevronDownIcon
+            className={`size-4 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+          />
+        </button>
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              <motion.div
+                key="modal"
+                transition={{
+                  duration: 0.3,
+                }}
+                initial={{ opacity: 0, translateY: -8 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                exit={{ opacity: 0, translateY: -2 }}
+                ref={dropdownRef}
+                tabIndex={-1}
+                className="absolute top-full z-5 mt-2 w-64 overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
+              >
+                <ul>
+                  <li>
+                    <span className="px-2 py-1 text-sm opacity-75">
+                      {i("body.majorityThreshold")}
+                    </span>
+                    <ul>
+                      {thresholdConfigs.map((config) => (
+                        <li
+                          key={config.id}
+                          className={`transition-colors duration-300 ${
                             selectedConfig?.id === config.id
                               ? "bg-zinc-200 dark:bg-zinc-700"
                               : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
                           }`}
-                          type="button"
                         >
-                          <div className="flex flex-col items-start">
-                            <span>{config.label}</span>
-                            {total > 0 && (
-                              <p className="text-xs opacity-75">
-                                {pluralize(
-                                  getMajority(
-                                    total,
-                                    0,
-                                    allowTieBreaker,
-                                    config.threshold,
-                                  ).seatsForMajority,
-                                  i("header.seat"),
-                                  i("header.seats"),
-                                )}
-                              </p>
-                            )}
-                          </div>
-                          <span className="tabular-nums opacity-75">
-                            {config.threshold.numerator}/
-                            {config.threshold.denominator}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-                <li className="border-t-2 border-zinc-200 dark:border-zinc-700">
-                  <label
-                    className={`flex w-full items-center justify-between gap-2 p-2 transition-colors duration-300 ${
-                      !selectedConfig ? "bg-zinc-200 dark:bg-zinc-700" : ""
-                    }`}
-                  >
-                    <span>{i("header.custom")}</span>
-                    <span className="flex items-center gap-1 tabular-nums">
-                      <input
-                        name="majorityThreshold"
-                        type="number"
-                        inputMode="decimal"
-                        placeholder={percent.toString()}
-                        className="w-16 border-b border-zinc-400 bg-transparent text-end outline-hidden dark:border-zinc-500"
-                        min={1}
-                        max={100}
-                        step="any"
-                        value={customPercent}
-                        onChange={(e) => {
-                          setCustomPercent(e.target.value);
-
-                          // Stored out of 10000 so up to two decimals stay exact
-                          const numerator = Math.round(
-                            parseFloat(e.target.value) * 100,
-                          );
-                          if (numerator > 0 && numerator <= 10000) {
-                            setMajorityThreshold({
-                              numerator,
-                              denominator: 10000,
-                            });
+                          <button
+                            onClick={() => {
+                              setMajorityThreshold(config.threshold);
+                              setCustomPercent("");
+                              setIsOpen(false);
+                            }}
+                            className="flex w-full items-center justify-between gap-2 p-2 text-start"
+                            type="button"
+                          >
+                            <div className="flex flex-col items-start">
+                              <span>{config.label}</span>
+                              {total > 0 && (
+                                <p className="text-xs opacity-75">
+                                  {pluralize(
+                                    getMajority(
+                                      total,
+                                      0,
+                                      allowTieBreaker,
+                                      config.threshold,
+                                    ).seatsForMajority,
+                                    i("header.seat"),
+                                    i("header.seats"),
+                                  )}
+                                </p>
+                              )}
+                            </div>
+                            <span className="tabular-nums opacity-75">
+                              {config.threshold.numerator}/
+                              {config.threshold.denominator}
+                            </span>
+                          </button>
+                          {
+                            // Ties can only happen when the threshold is exactly one half
+                            config.id === "simple" &&
+                              selectedConfig?.id === "simple" && (
+                                <div className="px-2 pb-2">
+                                  <AllowTieBreakerButton />
+                                </div>
+                              )
                           }
-                        }}
-                      />
-                      <span className="opacity-75">%</span>
-                    </span>
-                  </label>
-                </li>
-              </ul>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                  <li className="border-t-2 border-zinc-200 dark:border-zinc-700">
+                    <label
+                      className={`flex w-full items-center justify-between gap-2 p-2 transition-colors duration-300 ${
+                        !selectedConfig ? "bg-zinc-200 dark:bg-zinc-700" : ""
+                      }`}
+                    >
+                      <span>{i("header.custom")}</span>
+                      <span className="flex items-center gap-1 tabular-nums">
+                        <input
+                          name="majorityThreshold"
+                          type="number"
+                          inputMode="decimal"
+                          placeholder={percent.toString()}
+                          className="w-16 border-b border-zinc-400 bg-transparent text-end outline-hidden dark:border-zinc-500"
+                          min={1}
+                          max={100}
+                          step="any"
+                          value={customPercent}
+                          onChange={(e) => {
+                            setCustomPercent(e.target.value);
+
+                            // Stored out of 10000 so up to two decimals stay exact
+                            const numerator = Math.round(
+                              parseFloat(e.target.value) * 100,
+                            );
+                            if (numerator > 0 && numerator <= 10000) {
+                              setMajorityThreshold({
+                                numerator,
+                                denominator: 10000,
+                              });
+                            }
+                          }}
+                        />
+                        <span className="opacity-75">%</span>
+                      </span>
+                    </label>
+                  </li>
+                </ul>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

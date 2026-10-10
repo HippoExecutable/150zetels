@@ -18,13 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import {
-  useSelectedParties,
-  useParties,
-  useSelectedCountry,
-  useI18n,
-  useCustomInfo,
-} from "@/lib/zustandStore";
+import { useI18n, importCountryData } from "@/lib/zustandStore";
 import { parseCountry } from "@/utils/parseCountry";
 import {
   ArrowDownTrayIcon,
@@ -37,10 +31,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 export default function JsonShareImportButton() {
-  const { setParties } = useParties();
-  const { setSelectedParties } = useSelectedParties();
-  const { setSelectedCountry } = useSelectedCountry();
-  const { setCustomInfo } = useCustomInfo();
   const { i } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [importText, setImportText] = useState("");
@@ -58,11 +48,7 @@ export default function JsonShareImportButton() {
     const parsedCountry = parseCountry(data);
     if (!parsedCountry) return false;
 
-    const { name, updateDate, parties, selectedParties } = parsedCountry;
-    setParties(parties);
-    setSelectedParties(selectedParties);
-    setSelectedCountry(null);
-    setCustomInfo({ name, updateDate });
+    importCountryData(parsedCountry);
     return true;
   };
 
@@ -156,7 +142,7 @@ export default function JsonShareImportButton() {
               exit={{ opacity: 0, translateY: 2 }}
               ref={dropdownRef}
               tabIndex={-1}
-              className="absolute bottom-full z-100 mb-2 w-full overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
+              className="absolute start-0 bottom-full z-100 mb-2 w-full min-w-72 overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
             >
               <ul>
                 <li className="transition-colors duration-300 hover:bg-zinc-200 dark:hover:bg-zinc-700">

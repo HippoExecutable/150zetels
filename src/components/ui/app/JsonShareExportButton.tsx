@@ -24,6 +24,9 @@ import {
   useI18n,
   useSelectedCountry,
   useCustomInfo,
+  useMajorityThreshold,
+  useAllowTieBreaker,
+  useSortBy,
 } from "@/lib/zustandStore";
 import { stringifyCountry } from "@/utils/parseCountry";
 import { createShareLink } from "@/utils/shareLink";
@@ -34,24 +37,60 @@ import {
   ClipboardDocumentIcon,
   DocumentArrowDownIcon,
   LinkIcon,
+  PlusIcon,
 } from "@heroicons/react/20/solid";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+
+interface IncludeOptions {
+  selectedParties: boolean;
+  majorityThreshold: boolean;
+  sortBy: boolean;
+  locale: boolean;
+}
+
+interface IncludeConfig {
+  id: keyof IncludeOptions;
+  label: string;
+}
 
 export default function JsonShareExportButton() {
   const { parties } = useParties();
   const { selectedParties } = useSelectedParties();
   const { selectedCountry } = useSelectedCountry();
   const { customInfo } = useCustomInfo();
-  const { i } = useI18n();
-  const [includeSelectedParties, setIncludeSelectedParties] = useState(true);
+  const { majorityThreshold } = useMajorityThreshold();
+  const { allowTieBreaker } = useAllowTieBreaker();
+  const { sortBy } = useSortBy();
+  const { i, locale } = useI18n();
+  const [includeOptions, setIncludeOptions] = useState<IncludeOptions>({
+    selectedParties: true,
+    majorityThreshold: true,
+    sortBy: true,
+    // Off by default, since it changes the language of whoever opens the data
+    locale: false,
+  });
   const { name, updateDate } = selectedCountry ?? customInfo;
   const country = {
     name,
     updateDate,
     parties,
-    selectedParties: includeSelectedParties ? selectedParties : parties,
+    selectedParties: includeOptions.selectedParties ? selectedParties : parties,
+    majorityThreshold: includeOptions.majorityThreshold
+      ? majorityThreshold
+      : undefined,
+    allowTieBreaker: includeOptions.majorityThreshold
+      ? allowTieBreaker
+      : undefined,
+    sortBy: includeOptions.sortBy ? sortBy : undefined,
+    locale: includeOptions.locale ? locale : undefined,
   };
+  const includeConfigurations: IncludeConfig[] = [
+    { id: "selectedParties", label: i("buttons.selectedParties") },
+    { id: "majorityThreshold", label: i("body.majorityThreshold") },
+    { id: "sortBy", label: i("buttons.sortOrder") },
+    { id: "locale", label: i("buttons.language") },
+  ];
   const [isOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isLinkCopied, setIsLinkCopied] = useState(false);
@@ -148,42 +187,41 @@ export default function JsonShareExportButton() {
               exit={{ opacity: 0, translateY: 2 }}
               ref={dropdownRef}
               tabIndex={-1}
-              className="absolute bottom-full z-100 mb-2 w-full overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
+              className="absolute end-0 bottom-full z-100 mb-2 w-full min-w-72 overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
             >
               <ul>
-                <li className="p-2">
-                  <label className="flex max-w-fit items-center gap-2 text-sm">
-                    <span className="relative">
-                      <input
-                        title="Include Selected Parties"
-                        type="checkbox"
-                        name="includeSelectedParties"
-                        id="includeSelectedParties"
-                        className="absolute h-full w-full opacity-0"
-                        checked={includeSelectedParties}
-                        onChange={() => {
-                          setIncludeSelectedParties(!includeSelectedParties);
-                        }}
-                      />
-                      <div
-                        aria-hidden
-                        className={`${
-                          includeSelectedParties
-                            ? "bg-zinc-700 dark:bg-zinc-200"
-                            : "bg-zinc-200 dark:bg-zinc-700"
-                        } flex aspect-square size-5 items-center justify-center overflow-hidden rounded-full transition-colors`}
+                <li className="flex flex-col gap-1 p-2">
+                  <span className="text-sm opacity-75">
+                    {i("buttons.include")}
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {includeConfigurations.map((includeConfig) => (
+                      <button
+                        key={includeConfig.id}
+                        onClick={() =>
+                          setIncludeOptions({
+                            ...includeOptions,
+                            [includeConfig.id]:
+                              !includeOptions[includeConfig.id],
+                          })
+                        }
+                        className={`flex items-center gap-1 rounded-full border-2 border-transparent py-0.5 ps-2 pe-3 text-sm text-nowrap transition-colors duration-300 ${
+                          includeOptions[includeConfig.id]
+                            ? "bg-zinc-700 text-white dark:bg-zinc-200 dark:text-zinc-950"
+                            : "bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600"
+                        }`}
+                        type="button"
+                        aria-pressed={includeOptions[includeConfig.id]}
                       >
-                        {includeSelectedParties && (
-                          <div className="flex h-full w-full items-center justify-center text-white dark:text-zinc-950">
-                            <CheckIcon className="size-4" />
-                          </div>
+                        {includeOptions[includeConfig.id] ? (
+                          <CheckIcon className="size-4 shrink-0" />
+                        ) : (
+                          <PlusIcon className="size-4 shrink-0" />
                         )}
-                      </div>
-                    </span>
-                    <span className="select-none">
-                      {i("buttons.includeSelectedParties")}
-                    </span>
-                  </label>
+                        {includeConfig.label}
+                      </button>
+                    ))}
+                  </div>
                 </li>
                 <li className="border-t-2 border-zinc-200 transition-colors duration-300 hover:bg-zinc-200 dark:border-zinc-700 dark:hover:bg-zinc-700">
                   <button

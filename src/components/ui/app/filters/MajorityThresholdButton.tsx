@@ -137,7 +137,7 @@ export default function MajorityThresholdButton() {
                 exit={{ opacity: 0, translateY: -2 }}
                 ref={dropdownRef}
                 tabIndex={-1}
-                className="absolute top-full z-5 mt-2 w-64 overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
+                className="absolute top-full z-100 mt-2 w-64 overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
               >
                 <ul>
                   <li>

@@ -18,7 +18,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { CountryData, Party } from "@/types";
+import { supportedLocales } from "@/i18n/i18n";
+import { CountryData, MajorityThreshold, Party, SortByState } from "@/types";
+
+const sortByKeys: SortByState["sortBy"][] = ["name", "position", "seats"];
 
 function isParties(data: unknown): data is Party[] {
   return (
@@ -38,8 +41,42 @@ function isParties(data: unknown): data is Party[] {
   );
 }
 
+function isMajorityThreshold(data: unknown): data is MajorityThreshold {
+  if (typeof data !== "object" || data === null) return false;
+
+  const { numerator, denominator } = data as Record<string, unknown>;
+
+  return (
+    typeof numerator === "number" &&
+    typeof denominator === "number" &&
+    Number.isInteger(numerator) &&
+    Number.isInteger(denominator) &&
+    numerator > 0 &&
+    numerator <= denominator &&
+    // Custom thresholds are stored out of 10000, and larger fractions could lose precision
+    denominator <= 10000
+  );
+}
+
+function isSortBy(data: unknown): data is SortByState["sortBy"] {
+  return sortByKeys.some((key) => key === data);
+}
+
+function isLocale(data: unknown): data is string {
+  return supportedLocales.some((locale) => locale === data);
+}
+
 export function stringifyCountry(
-  { name, updateDate, parties, selectedParties }: CountryData,
+  {
+    name,
+    updateDate,
+    parties,
+    selectedParties,
+    majorityThreshold,
+    allowTieBreaker,
+    sortBy,
+    locale,
+  }: CountryData,
   space = 2,
 ) {
   const isEveryPartySelected = parties.every(({ id }) =>
@@ -50,7 +87,16 @@ export function stringifyCountry(
     ? undefined
     : selectedParties.map(({ id }) => id);
   return JSON.stringify(
-    { name, updateDate, parties, selectedPartyIds },
+    {
+      name,
+      updateDate,
+      locale,
+      majorityThreshold,
+      allowTieBreaker,
+      sortBy,
+      parties,
+      selectedPartyIds,
+    },
     null,
     space,
   );
@@ -77,6 +123,10 @@ export function parseCountry(data: string): CountryData | null {
     updateDate = "",
     parties,
     selectedPartyIds,
+    majorityThreshold,
+    allowTieBreaker,
+    sortBy,
+    locale,
   } = parsedData as Record<string, unknown>;
 
   const isValid =
@@ -86,7 +136,14 @@ export function parseCountry(data: string): CountryData | null {
     isParties(parties) &&
     (selectedPartyIds === undefined ||
       (Array.isArray(selectedPartyIds) &&
-        selectedPartyIds.every((id): id is string => typeof id === "string")));
+        selectedPartyIds.every(
+          (id): id is string => typeof id === "string",
+        ))) &&
+    (majorityThreshold === undefined ||
+      isMajorityThreshold(majorityThreshold)) &&
+    (allowTieBreaker === undefined || typeof allowTieBreaker === "boolean") &&
+    (sortBy === undefined || isSortBy(sortBy)) &&
+    (locale === undefined || isLocale(locale));
 
   if (!isValid) return null;
 
@@ -98,5 +155,9 @@ export function parseCountry(data: string): CountryData | null {
     selectedParties: selectedPartyIds
       ? parties.filter(({ id }) => selectedPartyIds.includes(id))
       : parties,
+    majorityThreshold,
+    allowTieBreaker,
+    sortBy,
+    locale,
   };
 }

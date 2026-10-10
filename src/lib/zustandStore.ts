@@ -31,6 +31,7 @@ import {
   SelectedCountryState,
   I18nState,
   CustomInfoState,
+  CountryData,
 } from "@/types";
 import { simpleMajority } from "@/utils/getMajority";
 import { create } from "zustand";
@@ -121,6 +122,32 @@ const useCustomInfo = create<CustomInfoState>((set) => ({
   setCustomInfo: (by) => set(() => ({ customInfo: by })),
 }));
 
+// Loads imported or shared data, and keeps the settings it leaves out
+function importCountryData({
+  name,
+  updateDate,
+  parties,
+  selectedParties,
+  majorityThreshold,
+  allowTieBreaker,
+  sortBy,
+  locale,
+}: CountryData) {
+  useParties.getState().setParties(parties);
+  useSelectedParties.getState().setSelectedParties(selectedParties);
+  useSelectedCountry.getState().setSelectedCountry(null);
+  useCustomInfo.getState().setCustomInfo({ name, updateDate });
+
+  if (majorityThreshold) {
+    useMajorityThreshold.getState().setMajorityThreshold(majorityThreshold);
+  }
+  if (allowTieBreaker !== undefined) {
+    useAllowTieBreaker.getState().setAllowTieBreaker(allowTieBreaker);
+  }
+  if (sortBy) useSortBy.getState().setSortBy(sortBy);
+  if (locale) useI18n.getState().setLocale(locale);
+}
+
 export {
   useDefaultCountryValue,
   useParties,
@@ -132,4 +159,5 @@ export {
   useI18n,
   useSelectedCountry,
   useCustomInfo,
+  importCountryData,
 };

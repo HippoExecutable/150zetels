@@ -12,7 +12,7 @@
     "countries": "Pays",
     "custom": "Personnalisé",
     "sampleCountries": "Pays exemples",
-    "seatsForMajority": "sièges pour la majorité",
+    "seatsForMajority": "{count} sièges pour la majorité",
     "seat": "siège",
     "seats": "sièges",
     "left": "restants",
@@ -22,6 +22,7 @@
   },
   "body": {
     "allowTieBreaker": "Autoriser le bris d'égalité",
+    "majorityThreshold": "Seuil de majorité",
     "name": "Nom",
     "position": "Position",
     "seats": "Sièges",
@@ -29,6 +30,13 @@
     "edit": "Modifier",
     "noParties": "Aucun parti disponible",
     "sampleDataUpdatedAt": "Données d'exemple mises à jour le"
+  },
+  "majority": {
+    "blockingMinority": "Minorité de blocage",
+    "simple": "Majorité simple",
+    "threeFifths": "Majorité des trois cinquièmes",
+    "twoThirds": "Majorité des deux tiers",
+    "threeQuarters": "Majorité des trois quarts"
   },
   "controls": {
     "politicalSpectrum": "Spectre politique",

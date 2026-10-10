@@ -22,6 +22,7 @@
   },
   "body": {
     "allowTieBreaker": "Stichentscheid zulassen",
+    "majorityThreshold": "Mehrheitsschwelle",
     "name": "Name",
     "position": "Position",
     "seats": "Sitze",
@@ -29,6 +30,13 @@
     "edit": "Bearbeiten",
     "noParties": "Keine Parteien verfügbar",
     "sampleDataUpdatedAt": "Beispieldaten aktualisiert am"
+  },
+  "majority": {
+    "blockingMinority": "Sperrminorität",
+    "simple": "Einfache Mehrheit",
+    "threeFifths": "Dreifünftelmehrheit",
+    "twoThirds": "Zweidrittelmehrheit",
+    "threeQuarters": "Dreiviertelmehrheit"
   },
   "controls": {
     "politicalSpectrum": "Politische Spektrum",

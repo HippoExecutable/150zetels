@@ -20,6 +20,7 @@
 
 import {
   useAllowTieBreaker,
+  useMajorityThreshold,
   useParties,
   useSelectedParties,
   useI18n,
@@ -35,6 +36,7 @@ export default function SeatsGraph() {
   const { parties } = useParties();
   const { selectedParties } = useSelectedParties();
   const { allowTieBreaker } = useAllowTieBreaker();
+  const { majorityThreshold } = useMajorityThreshold();
   const { isEditMode } = useIsEditMode();
   const { sortBy } = useSortBy();
   const { i } = useI18n();
@@ -45,13 +47,24 @@ export default function SeatsGraph() {
     0,
   );
 
-  const majority = getMajority(total, selectedTotal, allowTieBreaker);
+  const majority = getMajority(
+    total,
+    selectedTotal,
+    allowTieBreaker,
+    majorityThreshold,
+  );
+  const thresholdPercent =
+    (majorityThreshold.numerator / majorityThreshold.denominator) * 100;
 
   return (
     <>
       <div className="sticky top-0 z-50 -mx-4 bg-white px-4 pt-[calc(env(safe-area-inset-top)+12px)] pb-4 transition-colors duration-300 dark:bg-zinc-900">
         <div className="flex items-center justify-between">
-          <p className="flex-1">
+          <p
+            className={`shrink-0 transition-[width] duration-300 ${thresholdPercent > 50 ? "pe-12" : ""}`}
+            // Ends half a chevron before the threshold line, so the chevron sits on it
+            style={{ width: `calc(${thresholdPercent}% - 0.625rem)` }}
+          >
             {
               // All parties selected or no parties selected
               majority.status === "all" || majority.status === "none" ? (
@@ -83,15 +96,23 @@ export default function SeatsGraph() {
           </p>
           <div
             className="relative flex items-center justify-center"
-            title={`${
-              majority.seatsForMajority
-            } ${i("header.seatsForMajority")}`}
+            title={i("header.seatsForMajority").replace(
+              "{count}",
+              majority.seatsForMajority.toString(),
+            )}
           >
             <ChevronDownIcon className="size-5" />
-            <p className="absolute inset-s-5">{majority.seatsForMajority} </p>
+            <p
+              className={`absolute ${thresholdPercent > 50 ? "inset-e-5" : "inset-s-5"}`}
+            >
+              {majority.seatsForMajority}{" "}
+            </p>
           </div>
-          <div className="flex flex-1 justify-end text-end">
-            <p className="tabular-nums">
+          <div className="flex min-w-0 flex-1 justify-end text-end">
+            <p
+              className="truncate tabular-nums"
+              title={`${selectedTotal} / ${total}`}
+            >
               <span className="font-semibold">{selectedTotal}</span> / {total}
             </p>
           </div>
@@ -122,7 +143,10 @@ export default function SeatsGraph() {
                 className={`r-0 h-full overflow-hidden text-nowrap text-ellipsis transition-[width] duration-300`}
               ></div>
             ))}
-          <div className="bg-background-elevated absolute left-[calc(50%-1px)] h-full border-l-2 border-dashed border-white"></div>
+          <div
+            className="bg-background-elevated absolute h-full border-l-2 border-dashed border-white transition-[inset-inline-start] duration-300"
+            style={{ insetInlineStart: `calc(${thresholdPercent}% - 1px)` }}
+          ></div>
         </div>
       </div>
     </>

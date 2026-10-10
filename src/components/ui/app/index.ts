@@ -22,7 +22,7 @@ export { default as CountryListDropdown } from "./head/CountryListDropdown";
 export { default as SeatsGraph } from "./head/SeatsGraph";
 export { default as PieChart } from "./head/PieChart";
 
-export { default as AllowTieBreakerButton } from "./filters/AllowTieBreakerButton";
+export { default as MajorityThresholdButton } from "./filters/MajorityThresholdButton";
 export { default as SortButton } from "./filters/SortButton";
 export { default as SwitchViewModeButton } from "./filters/SwitchViewModeButton";
 export { default as CoalitionBySpectrumButtons } from "./filters/CoalitionBySpectrumButtons";

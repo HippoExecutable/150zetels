@@ -12,7 +12,7 @@
     "countries": "Countries",
     "custom": "Custom",
     "sampleCountries": "Sample countries",
-    "seatsForMajority": "seats for majority",
+    "seatsForMajority": "{count} seats for majority",
     "seat": "seat",
     "seats": "seats",
     "left": "left",
@@ -22,6 +22,7 @@
   },
   "body": {
     "allowTieBreaker": "Allow tie breaker",
+    "majorityThreshold": "Majority threshold",
     "name": "Name",
     "position": "Position",
     "seats": "Seats",
@@ -29,6 +30,13 @@
     "edit": "Edit",
     "noParties": "No parties available",
     "sampleDataUpdatedAt": "Sample data updated at"
+  },
+  "majority": {
+    "blockingMinority": "Blocking minority",
+    "simple": "Simple majority",
+    "threeFifths": "Three-fifths majority",
+    "twoThirds": "Two-thirds majority",
+    "threeQuarters": "Three-quarters majority"
   },
   "controls": {
     "politicalSpectrum": "Political Spectrum",

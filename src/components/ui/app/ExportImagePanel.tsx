@@ -50,6 +50,7 @@ import { useEffect, useRef, useState } from "react";
 interface FormatConfig {
   id: ImageFormat;
   label: string;
+  ratio: string;
   // Outline of the image shape, drawn next to the label
   shapeClassName: string;
 }
@@ -68,13 +69,30 @@ export default function ExportImagePanel() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const formatConfigurations: FormatConfig[] = [
-    { id: "square", label: i("buttons.square"), shapeClassName: "size-3" },
+    {
+      id: "square",
+      label: i("buttons.square"),
+      ratio: "1:1",
+      shapeClassName: "size-3",
+    },
+    {
+      id: "portrait",
+      label: i("buttons.portrait"),
+      ratio: "4:5",
+      shapeClassName: "h-3 w-2.5",
+    },
     {
       id: "vertical",
       label: i("buttons.vertical"),
-      shapeClassName: "h-3.5 w-2.5",
+      ratio: "9:16",
+      shapeClassName: "h-3.5 w-2",
     },
-    { id: "wide", label: i("buttons.wide"), shapeClassName: "h-2.5 w-3.5" },
+    {
+      id: "wide",
+      label: i("buttons.wide"),
+      ratio: "16:9",
+      shapeClassName: "h-2.5 w-3.5",
+    },
   ];
 
   const total = parties.reduce((acc, party) => acc + party.seats, 0);
@@ -178,6 +196,7 @@ export default function ExportImagePanel() {
                   className={`${formatConfig.shapeClassName} shrink-0 rounded-[2px] border-2 border-current`}
                 ></span>
                 {formatConfig.label}
+                <span className="opacity-75">{formatConfig.ratio}</span>
               </button>
             ))}
           </div>

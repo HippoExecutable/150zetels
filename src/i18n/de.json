@@ -77,7 +77,8 @@
     "image": "Bild",
     "format": "Format",
     "square": "Quadrat",
-    "vertical": "Hochformat",
+    "portrait": "Hochformat",
+    "vertical": "Vertikal",
     "wide": "Breitbild",
     "downloadImage": "Bild herunterladen",
     "copyImage": "Bild kopieren"

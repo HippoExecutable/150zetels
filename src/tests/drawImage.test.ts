@@ -19,7 +19,11 @@
 */
 
 import { expect, test } from "vitest";
-import { getArcSegments, getImageFileName } from "@/utils/drawImage";
+import {
+  getArcSegments,
+  getImageFileName,
+  imageSizes,
+} from "@/utils/drawImage";
 import { Party } from "@/types";
 
 const party = (id: string, seats: number, colour: string): Party => ({
@@ -59,10 +63,23 @@ test("half pie leaves out empty segments", () => {
   expect(getArcSegments([party("a", 0, "#f00")], 10, "grey")).toHaveLength(1);
 });
 
+test("image sizes have the ratios that social media expects", () => {
+  const ratio = (format: keyof typeof imageSizes) =>
+    imageSizes[format].width / imageSizes[format].height;
+
+  expect(ratio("square")).toBe(1);
+  expect(ratio("portrait")).toBe(4 / 5);
+  expect(ratio("vertical")).toBe(9 / 16);
+  expect(ratio("wide")).toBe(16 / 9);
+});
+
 test("image file names come from the title", () => {
   expect(getImageFileName("Germany 🇩🇪", "square")).toBe("germany-square.png");
   expect(getImageFileName("Bündnis 90/Die Grünen", "wide")).toBe(
     "bündnis-90-die-grünen-wide.png",
+  );
+  expect(getImageFileName("Alphaland", "portrait")).toBe(
+    "alphaland-portrait.png",
   );
   expect(getImageFileName("", "vertical")).toBe(
     "parliament-seats-vertical.png",

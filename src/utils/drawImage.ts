@@ -25,13 +25,15 @@ import {
 } from "@/components/colors";
 import { Party } from "@/types";
 
-export type ImageFormat = "square" | "vertical" | "wide";
+export type ImageFormat = "square" | "portrait" | "vertical" | "wide";
 
 export const imageSizes: Record<
   ImageFormat,
   { width: number; height: number }
 > = {
   square: { width: 1080, height: 1080 },
+  // The tallest that Instagram shows in the feed without cropping
+  portrait: { width: 1080, height: 1350 },
   vertical: { width: 1080, height: 1920 },
   wide: { width: 1920, height: 1080 },
 };
@@ -293,14 +295,34 @@ interface LegendLayout {
 
 const legendSettings: Record<
   ImageFormat,
-  { maxFontSize: number; columnsFor: (count: number) => number }
+  {
+    maxFontSize: number;
+    // Share of the height the legend may take, leaving the rest to the half pie
+    maxShare: number;
+    columnsFor: (count: number) => number;
+  }
 > = {
-  square: { maxFontSize: 30, columnsFor: (count) => (count > 8 ? 3 : 2) },
+  square: {
+    maxFontSize: 30,
+    maxShare: 0.4,
+    columnsFor: (count) => (count > 8 ? 3 : 2),
+  },
+  portrait: {
+    maxFontSize: 32,
+    maxShare: 0.45,
+    columnsFor: (count) => (count > 12 ? 3 : 2),
+  },
   vertical: {
     maxFontSize: 40,
+    maxShare: 0.5,
     columnsFor: (count) => (count > 24 ? 3 : count > 12 ? 2 : 1),
   },
-  wide: { maxFontSize: 34, columnsFor: (count) => (count > 10 ? 2 : 1) },
+  // The legend has a column of its own next to the half pie
+  wide: {
+    maxFontSize: 34,
+    maxShare: 1,
+    columnsFor: (count) => (count > 10 ? 2 : 1),
+  },
 };
 
 // Long rows put the seats too far from the party names
@@ -478,13 +500,12 @@ export function drawImage(
     return;
   }
 
-  // The legend may take up to a share of the room, and the half pie gets
-  // the rest, up to the widest it can be
+  // The half pie gets what the legend leaves, up to the widest it can be
   const legendLayout = getLegendLayout(
     format,
     count,
     contentWidth,
-    available * (format === "square" ? 0.4 : 0.5),
+    available * legendSettings[format].maxShare,
   );
   const legendHeight = legendLayout.height ? legendLayout.height + gap : 0;
   const chartHeight = Math.min(

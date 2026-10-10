@@ -77,7 +77,8 @@
     "image": "Afbeelding",
     "format": "Formaat",
     "square": "Vierkant",
-    "vertical": "Staand",
+    "portrait": "Staand",
+    "vertical": "Verticaal",
     "wide": "Breed",
     "downloadImage": "Afbeelding downloaden",
     "copyImage": "Afbeelding kopiëren"

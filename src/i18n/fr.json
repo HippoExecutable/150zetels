@@ -61,6 +61,7 @@
     "importFromFile": "Depuis un fichier",
     "importFromText": "Depuis un texte",
     "import": "Importer",
+    "paste": "Coller",
     "exportToFile": "Télécharger en fichier",
     "exportToText": "Copier en texte",
     "copied": "Copié"
@@ -72,7 +73,8 @@
     "invalidImportParse": "Impossible d'analyser le fichier JSON. Veuillez vérifier qu'il est dans le bon format.",
     "invalidImportTextFormat": "Le texte collé a un format incorrect. Veuillez coller des données de partis valides.",
     "invalidImportTextParse": "Impossible d'analyser le texte collé. Veuillez vérifier qu'il est dans le bon format.",
-    "copyDataFailed": "Impossible de copier les données. Veuillez vérifier les autorisations du presse-papiers."
+    "copyDataFailed": "Impossible de copier les données. Veuillez vérifier les autorisations du presse-papiers.",
+    "pasteDataFailed": "Impossible de coller depuis le presse-papiers. Veuillez coller les données manuellement."
   },
   "spectrum": {
     "farLeft": "Extrême gauche",

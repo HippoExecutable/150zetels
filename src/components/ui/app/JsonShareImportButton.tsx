@@ -28,6 +28,7 @@ import { parseParties } from "@/utils/parseParties";
 import {
   ArrowDownTrayIcon,
   ChevronDownIcon,
+  ClipboardDocumentIcon,
   DocumentArrowUpIcon,
   DocumentTextIcon,
 } from "@heroicons/react/20/solid";
@@ -98,6 +99,15 @@ export default function JsonShareImportButton() {
     } catch (error) {
       console.error("Error parsing JSON text:", error);
       alert(i("dialogs.invalidImportTextParse"));
+    }
+  };
+
+  const handleTextPaste = async () => {
+    try {
+      setImportText(await navigator.clipboard.readText());
+    } catch (error) {
+      console.error("Error pasting JSON text:", error);
+      alert(i("dialogs.pasteDataFailed"));
     }
   };
 
@@ -174,14 +184,29 @@ export default function JsonShareImportButton() {
                       onChange={(e) => setImportText(e.target.value)}
                     />
                   </label>
-                  <button
-                    onClick={handleTextImport}
-                    disabled={!importText.trim()}
-                    className="w-full rounded-full border-2 border-transparent bg-zinc-200 px-3 py-1 transition-colors hover:bg-zinc-700 hover:text-white disabled:pointer-events-none disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-200 dark:hover:text-zinc-950"
-                    type="button"
-                  >
-                    {i("buttons.import")}
-                  </button>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={handleTextPaste}
+                      className="w-full flex-1 rounded-full border-2 border-transparent bg-zinc-200 px-3 py-1 text-nowrap transition-colors hover:bg-zinc-700 hover:text-white dark:bg-zinc-700 dark:hover:bg-zinc-200 dark:hover:text-zinc-950"
+                      type="button"
+                    >
+                      <span className="flex items-center justify-center gap-1">
+                        <ClipboardDocumentIcon className="size-5 shrink-0" />
+                        {i("buttons.paste")}
+                      </span>
+                    </button>
+                    <button
+                      onClick={handleTextImport}
+                      disabled={!importText.trim()}
+                      className="w-full flex-1 rounded-full border-2 border-transparent bg-zinc-200 px-3 py-1 text-nowrap transition-colors hover:bg-zinc-700 hover:text-white disabled:pointer-events-none disabled:opacity-50 dark:bg-zinc-700 dark:hover:bg-zinc-200 dark:hover:text-zinc-950"
+                      type="button"
+                    >
+                      <span className="flex items-center justify-center gap-1">
+                        <ArrowDownTrayIcon className="size-5 shrink-0" />
+                        {i("buttons.import")}
+                      </span>
+                    </button>
+                  </div>
                 </li>
               </ul>
             </motion.div>

@@ -61,6 +61,7 @@
     "importFromFile": "Uit bestand",
     "importFromText": "Uit tekst",
     "import": "Importeren",
+    "paste": "Plakken",
     "exportToFile": "Downloaden als bestand",
     "exportToText": "Kopiëren als tekst",
     "copied": "Gekopieerd"
@@ -72,7 +73,8 @@
     "invalidImportParse": "Het JSON-bestand kon niet worden geparseerd. Controleer of het het juiste formaat heeft.",
     "invalidImportTextFormat": "De geplakte tekst heeft een onjuist formaat. Plak geldige partijgegevens.",
     "invalidImportTextParse": "De geplakte tekst kon niet worden geparseerd. Controleer of deze het juiste formaat heeft.",
-    "copyDataFailed": "De gegevens konden niet worden gekopieerd. Controleer de machtigingen voor het klembord."
+    "copyDataFailed": "De gegevens konden niet worden gekopieerd. Controleer de machtigingen voor het klembord.",
+    "pasteDataFailed": "Plakken vanuit het klembord is mislukt. Plak de gegevens handmatig."
   },
   "spectrum": {
     "farLeft": "Uiterste links",

@@ -61,6 +61,7 @@
     "importFromFile": "From file",
     "importFromText": "From text",
     "import": "Import",
+    "paste": "Paste",
     "exportToFile": "Download as file",
     "exportToText": "Copy as text",
     "copied": "Copied"
@@ -72,7 +73,8 @@
     "invalidImportParse": "Failed to parse the JSON file. Please ensure it's in the correct format.",
     "invalidImportTextFormat": "The pasted text has an incorrect format. Please paste valid party data.",
     "invalidImportTextParse": "Failed to parse the pasted text. Please ensure it's in the correct format.",
-    "copyDataFailed": "Failed to copy the data. Please check your clipboard permissions."
+    "copyDataFailed": "Failed to copy the data. Please check your clipboard permissions.",
+    "pasteDataFailed": "Failed to paste from the clipboard. Please paste the data manually."
   },
   "spectrum": {
     "farLeft": "Far left",

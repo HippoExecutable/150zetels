@@ -61,6 +61,7 @@
     "importFromFile": "Dosyadan",
     "importFromText": "Metinden",
     "import": "İçe aktar",
+    "paste": "Yapıştır",
     "exportToFile": "Dosya olarak indir",
     "exportToText": "Metin olarak kopyala",
     "copied": "Kopyalandı"
@@ -72,7 +73,8 @@
     "invalidImportParse": "JSON dosyası ayrıştırılamadı. Lütfen dosyanın doğru biçimde olduğundan emin olun.",
     "invalidImportTextFormat": "Yapıştırılan metnin biçimi hatalı. Lütfen geçerli parti verileri yapıştırın.",
     "invalidImportTextParse": "Yapıştırılan metin ayrıştırılamadı. Lütfen metnin doğru biçimde olduğundan emin olun.",
-    "copyDataFailed": "Veriler kopyalanamadı. Lütfen pano izinlerini kontrol edin."
+    "copyDataFailed": "Veriler kopyalanamadı. Lütfen pano izinlerini kontrol edin.",
+    "pasteDataFailed": "Panodan yapıştırılamadı. Lütfen verileri elle yapıştırın."
   },
   "spectrum": {
     "farLeft": "Aşırı sol",

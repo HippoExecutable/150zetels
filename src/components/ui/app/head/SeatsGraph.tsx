@@ -86,7 +86,7 @@ export default function SeatsGraph() {
                 </span>
               ) : (
                 // Not yet a majority
-                <span className="text-rose-600 dark:text-rose-400">{`${pluralize(
+                <span className="line-clamp-1 text-rose-600 dark:text-rose-400">{`${pluralize(
                   majority.margin,
                   i("header.seat"),
                   i("header.seats"),

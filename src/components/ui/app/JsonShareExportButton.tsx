@@ -20,12 +20,14 @@
 
 import { useParties, useI18n } from "@/lib/zustandStore";
 import { stringifyParties } from "@/utils/parseParties";
+import { createShareLink } from "@/utils/shareLink";
 import {
   ArrowUpTrayIcon,
   CheckIcon,
   ChevronDownIcon,
   ClipboardDocumentIcon,
   DocumentArrowDownIcon,
+  LinkIcon,
 } from "@heroicons/react/20/solid";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
@@ -35,6 +37,7 @@ export default function JsonShareExportButton() {
   const { i } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -68,6 +71,19 @@ export default function JsonShareExportButton() {
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
       console.error("Error copying JSON text:", error);
+      alert(i("dialogs.copyDataFailed"));
+    }
+  };
+
+  const handleLinkExport = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        await createShareLink(parties, window.location.href),
+      );
+      setIsLinkCopied(true);
+      setTimeout(() => setIsLinkCopied(false), 2000);
+    } catch (error) {
+      console.error("Error copying share link:", error);
       alert(i("dialogs.copyDataFailed"));
     }
   };
@@ -143,6 +159,24 @@ export default function JsonShareExportButton() {
                       {isCopied
                         ? i("buttons.copied")
                         : i("buttons.exportToText")}
+                    </span>
+                  </button>
+                </li>
+                <li className="border-t-2 border-zinc-200 transition-colors duration-300 hover:bg-zinc-200 dark:border-zinc-700 dark:hover:bg-zinc-700">
+                  <button
+                    onClick={handleLinkExport}
+                    className="flex w-full items-center gap-2 p-2 text-start"
+                    type="button"
+                  >
+                    {isLinkCopied ? (
+                      <CheckIcon className="size-5 shrink-0" />
+                    ) : (
+                      <LinkIcon className="size-5 shrink-0" />
+                    )}
+                    <span>
+                      {isLinkCopied
+                        ? i("buttons.copied")
+                        : i("buttons.exportToLink")}
                     </span>
                   </button>
                 </li>

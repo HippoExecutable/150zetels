@@ -64,6 +64,7 @@
     "paste": "Yapıştır",
     "exportToFile": "Dosya olarak indir",
     "exportToText": "Metin olarak kopyala",
+    "exportToLink": "Paylaşım bağlantısını kopyala",
     "copied": "Kopyalandı"
   },
   "dialogs": {
@@ -74,7 +75,8 @@
     "invalidImportTextFormat": "Yapıştırılan metnin biçimi hatalı. Lütfen geçerli parti verileri yapıştırın.",
     "invalidImportTextParse": "Yapıştırılan metin ayrıştırılamadı. Lütfen metnin doğru biçimde olduğundan emin olun.",
     "copyDataFailed": "Veriler kopyalanamadı. Lütfen pano izinlerini kontrol edin.",
-    "pasteDataFailed": "Panodan yapıştırılamadı. Lütfen verileri elle yapıştırın."
+    "pasteDataFailed": "Panodan yapıştırılamadı. Lütfen verileri elle yapıştırın.",
+    "invalidShareLink": "Bu paylaşım bağlantısı geçersiz veya bozuk. Bunun yerine varsayılan veriler gösteriliyor."
   },
   "spectrum": {
     "farLeft": "Aşırı sol",

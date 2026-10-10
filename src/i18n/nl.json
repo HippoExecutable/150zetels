@@ -64,6 +64,7 @@
     "paste": "Plakken",
     "exportToFile": "Downloaden als bestand",
     "exportToText": "Kopiëren als tekst",
+    "exportToLink": "Deellink kopiëren",
     "copied": "Gekopieerd"
   },
   "dialogs": {
@@ -74,7 +75,8 @@
     "invalidImportTextFormat": "De geplakte tekst heeft een onjuist formaat. Plak geldige partijgegevens.",
     "invalidImportTextParse": "De geplakte tekst kon niet worden geparseerd. Controleer of deze het juiste formaat heeft.",
     "copyDataFailed": "De gegevens konden niet worden gekopieerd. Controleer de machtigingen voor het klembord.",
-    "pasteDataFailed": "Plakken vanuit het klembord is mislukt. Plak de gegevens handmatig."
+    "pasteDataFailed": "Plakken vanuit het klembord is mislukt. Plak de gegevens handmatig.",
+    "invalidShareLink": "Deze deellink is ongeldig of beschadigd. In plaats daarvan worden de standaardgegevens getoond."
   },
   "spectrum": {
     "farLeft": "Uiterste links",

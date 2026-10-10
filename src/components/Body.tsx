@@ -22,6 +22,7 @@ import { useEffect } from "react";
 import { countries } from "@/data/countries";
 import { supportedLocales } from "@/i18n/i18n";
 import { sort } from "@/utils/sort";
+import { decodeShareData, getShareData } from "@/utils/shareLink";
 import {
   useSelectedParties,
   useIsEditMode,
@@ -59,26 +60,56 @@ const Seats = () => {
     const queryParams = new URLSearchParams(document.location.search);
     const countryName = queryParams.get("country");
     const lang = queryParams.get("lang");
-    const country = countries.find((country) => country.name === countryName);
-    if (country) {
-      setSelectedCountry(country);
-      setParties(country.parties);
-      setSelectedParties(country.parties);
-    } else {
-      const country = countries.find(
-        (country) => country.name === "European Union",
-      );
+    let isCancelled = false;
+
+    const loadCountry = () => {
+      const country =
+        countries.find((country) => country.name === countryName) ??
+        countries.find((country) => country.name === "European Union");
       if (country) {
         setSelectedCountry(country);
         setParties(country.parties);
         setSelectedParties(country.parties);
       }
+    };
+
+    const loadSharedParties = async (data: string) => {
+      const sharedParties = await decodeShareData(data);
+      if (isCancelled) return;
+
+      if (sharedParties) {
+        setParties(sharedParties);
+        setSelectedParties(sharedParties);
+        setSelectedCountry(null);
+      } else {
+        alert(i("dialogs.invalidShareLink"));
+        loadCountry();
+      }
+    };
+
+    // Pasting a share link into an open tab only changes the hash
+    const handleHashChange = () => {
+      const data = getShareData(document.location.hash);
+      if (data) loadSharedParties(data);
+    };
+
+    const data = getShareData(document.location.hash);
+    if (data) {
+      loadSharedParties(data);
+    } else {
+      loadCountry();
     }
 
     if (lang && supportedLocales.some((locale) => locale === lang)) {
       setLocale(lang);
     }
-  }, [setLocale, setParties, setSelectedCountry, setSelectedParties]);
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => {
+      isCancelled = true;
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, [i, setLocale, setParties, setSelectedCountry, setSelectedParties]);
 
   return (
     <div>

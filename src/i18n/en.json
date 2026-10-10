@@ -64,6 +64,7 @@
     "paste": "Paste",
     "exportToFile": "Download as file",
     "exportToText": "Copy as text",
+    "exportToLink": "Copy share link",
     "copied": "Copied"
   },
   "dialogs": {
@@ -74,7 +75,8 @@
     "invalidImportTextFormat": "The pasted text has an incorrect format. Please paste valid party data.",
     "invalidImportTextParse": "Failed to parse the pasted text. Please ensure it's in the correct format.",
     "copyDataFailed": "Failed to copy the data. Please check your clipboard permissions.",
-    "pasteDataFailed": "Failed to paste from the clipboard. Please paste the data manually."
+    "pasteDataFailed": "Failed to paste from the clipboard. Please paste the data manually.",
+    "invalidShareLink": "This share link is invalid or damaged. The default data is shown instead."
   },
   "spectrum": {
     "farLeft": "Far left",

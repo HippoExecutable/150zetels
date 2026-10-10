@@ -63,6 +63,7 @@ Includes sample parliamentary structures such as:
 - Australia (Senate and House)
 - Canada (House of Commons / Chambre des communes)
 - France (Assemblée nationale)
+- Malta (House of Representatives)
 - New Zealand (House of Representatives)
 - Turkey (Türkiye Büyük Millet Meclisi)
 

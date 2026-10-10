@@ -1,6 +1,8 @@
 {
   "name": "Parliament Seats",
   "short_name": "Parliament",
+  "description": "Free coalition and majority calculator for parliaments around the world.",
+  "start_url": "/",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,7 +17,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "27272A",
-  "background_color": "27272A",
+  "theme_color": "#27272a",
+  "background_color": "#27272a",
   "display": "standalone"
 }

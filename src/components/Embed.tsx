@@ -26,6 +26,7 @@ import {
   PlusCircleIcon,
 } from "@heroicons/react/20/solid";
 import { PartyButton, PieChart, SeatsGraph } from "@/components/ui/app";
+import { Logo } from "@/components/icons/Logo";
 import {
   useParties,
   useSelectedParties,
@@ -193,6 +194,7 @@ export default function Embed({
                 rel="noreferrer noopener"
                 className="ms-auto flex items-center gap-1 text-sm opacity-75 hover:underline"
               >
+                <Logo className="size-5 shrink-0" />
                 {i("embed.openFullVersion")}
                 <ArrowTopRightOnSquareIcon className="size-4 shrink-0" />
               </a>

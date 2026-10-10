@@ -66,7 +66,23 @@ export default function ExportImagePanel() {
   const { i } = useI18n();
   const [format, setFormat] = useState<ImageFormat>("square");
   const [isCopied, setIsCopied] = useState(false);
+  const [logo, setLogo] = useState<HTMLImageElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // The same logo as the favicon, for the image's footer
+  useEffect(() => {
+    let isCancelled = false;
+    const image = new Image();
+
+    image.onload = () => {
+      if (!isCancelled) setLogo(image);
+    };
+    image.src = `${import.meta.env.BASE_URL}favicon.svg`;
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   const formatConfigurations: FormatConfig[] = [
     {
@@ -149,6 +165,7 @@ export default function ExportImagePanel() {
     drawImage(canvasRef.current, format, content, {
       isDarkMode: document.documentElement.classList.contains("dark"),
       fontFamily: getComputedStyle(document.body).fontFamily,
+      logo,
     });
   });
 

@@ -57,7 +57,11 @@ export interface ImageContent {
 export interface ImageStyle {
   isDarkMode: boolean;
   fontFamily: string;
+  // Left out until it has loaded
+  logo: CanvasImageSource | null;
 }
+
+const brandName = "Parliament Seats";
 
 export interface ArcSegment {
   colour: string;
@@ -96,8 +100,21 @@ type Palette = (typeof palettes)["light"];
 
 // Same proportions as the half pie in the app
 const innerRadiusRatio = 0.35;
-// Room under the half pie for the three lines of numbers
-const textHeightRatio = 0.42;
+// The lines of numbers under the half pie, as shares of its radius
+const lineSizeRatio = 0.085;
+const lineHeightRatio = lineSizeRatio * 1.4;
+// Space between the half pie and the party list
+const legendGap = 24;
+
+// Room under the half pie for only the lines it shows, since the status line
+// is left out when all or none of the parties are selected
+function getTextHeightRatio(content: ImageContent) {
+  const lineCount = [true, content.statusText, content.majorityText].filter(
+    Boolean,
+  ).length;
+  // A little extra for the descenders of the last line
+  return lineCount * lineHeightRatio + 0.03;
+}
 
 // Angles run clockwise from the left end of the half pie (π) to the right end (2π)
 export function getArcSegments(
@@ -180,6 +197,7 @@ function drawHalfPie(
   palette: Palette,
   fontFamily: string,
 ) {
+  const textHeightRatio = getTextHeightRatio(content);
   const radius = Math.min(box.width / 2, box.height / (1 + textHeightRatio));
   const innerRadius = radius * innerRadiusRatio;
   const centerX = box.x + box.width / 2;
@@ -260,7 +278,7 @@ function drawHalfPie(
   context.fillStyle = palette.text;
   context.fillText(totalText, centerX, centerY - radius * 0.03);
 
-  const lineSize = Math.max(20, radius * 0.085);
+  const lineSize = Math.max(20, radius * lineSizeRatio);
   const lineHeight = lineSize * 1.4;
   const lines = [
     { text: `/ ${content.total}`, weight: 400, colour: palette.muted },
@@ -434,17 +452,22 @@ export function drawImage(
   const { fontFamily } = style;
   const palette = style.isDarkMode ? palettes.dark : palettes.light;
   const padding = 80;
+  // Stories, reels, and TikTok cover the top and bottom of vertical images
+  // with their own buttons, so the content stays clear of them
+  const paddingTop = format === "vertical" ? 240 : padding;
+  const paddingBottom = format === "vertical" ? 260 : padding;
   const gap = 48;
   const contentWidth = width - padding * 2;
   const titleSize = 64;
   const subtitleSize = 30;
   const footerSize = 26;
+  const logoSize = 44;
 
   context.fillStyle = palette.background;
   context.fillRect(0, 0, width, height);
 
   // Header
-  let y = padding;
+  let y = paddingTop;
   context.textAlign = "left";
   context.textBaseline = "top";
   if (content.title) {
@@ -464,14 +487,31 @@ export function drawImage(
     y += subtitleSize * 1.3;
   }
 
-  // Footer
+  // Footer, with the logo and name on the left and the address on the right
+  const footerY = height - paddingBottom - logoSize / 2;
+  let brandX = padding;
+  if (style.logo) {
+    context.drawImage(
+      style.logo,
+      padding,
+      footerY - logoSize / 2,
+      logoSize,
+      logoSize,
+    );
+    brandX += logoSize + 12;
+  }
+  context.textBaseline = "middle";
+  setFont(context, 600, footerSize, fontFamily);
+  context.fillStyle = palette.text;
+  context.fillText(brandName, brandX, footerY);
   setFont(context, 400, footerSize, fontFamily);
-  context.textBaseline = "alphabetic";
+  context.textAlign = "right";
   context.fillStyle = palette.muted;
-  context.fillText(content.footer, padding, height - padding);
+  context.fillText(content.footer, width - padding, footerY);
+  context.textAlign = "left";
 
-  const top = y === padding ? padding : y + gap;
-  const bottom = height - padding - footerSize - gap;
+  const top = y === paddingTop ? paddingTop : y + gap;
+  const bottom = height - paddingBottom - logoSize - gap;
   const available = bottom - top;
   const count = content.parties.length;
 
@@ -507,9 +547,11 @@ export function drawImage(
     contentWidth,
     available * legendSettings[format].maxShare,
   );
-  const legendHeight = legendLayout.height ? legendLayout.height + gap : 0;
+  const legendHeight = legendLayout.height
+    ? legendLayout.height + legendGap
+    : 0;
   const chartHeight = Math.min(
-    (contentWidth / 2) * (1 + textHeightRatio),
+    (contentWidth / 2) * (1 + getTextHeightRatio(content)),
     available - legendHeight,
   );
   // Leftover room goes evenly above and below
@@ -526,7 +568,7 @@ export function drawImage(
     context,
     {
       x: padding,
-      y: chartTop + chartHeight + gap,
+      y: chartTop + chartHeight + legendGap,
       width: contentWidth,
       height: legendLayout.height,
     },

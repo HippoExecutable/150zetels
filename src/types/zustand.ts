@@ -18,7 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Country, Party } from "@/types";
+import { Country, MajorityThreshold, Party } from "@/types";
 
 interface DefaultCountryValueState {
   defaultCountryValue: string | null;
@@ -50,6 +50,11 @@ interface AllowTieBreakerState {
   setAllowTieBreaker: (by: boolean) => void;
 }
 
+interface MajorityThresholdState {
+  majorityThreshold: MajorityThreshold;
+  setMajorityThreshold: (by: MajorityThreshold) => void;
+}
+
 interface I18nState {
   locale: string;
   i: (key: string) => string;
@@ -68,6 +73,7 @@ export type {
   IsEditModeState,
   SortByState,
   AllowTieBreakerState,
+  MajorityThresholdState,
   I18nState,
   SelectedCountryState,
 };

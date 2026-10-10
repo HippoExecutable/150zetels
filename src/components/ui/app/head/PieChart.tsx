@@ -21,6 +21,7 @@
 import { pieChartDarkColor, pieChartLightColor } from "@/components/colors";
 import {
   IsEditModeState,
+  MajorityThresholdState,
   PartiesState,
   SelectedPartiesState,
   SortByState,
@@ -34,11 +35,13 @@ export default function PieChart({
   selectedParties,
   isEditMode,
   sortBy,
+  majorityThreshold,
 }: {
   parties: PartiesState["parties"];
   selectedParties: SelectedPartiesState["selectedParties"];
   isEditMode: IsEditModeState["isEditMode"];
   sortBy: SortByState["sortBy"];
+  majorityThreshold: MajorityThresholdState["majorityThreshold"];
 }) {
   const [isDarkMode, setIsDarkMode] = useState(
     document.documentElement.classList.contains("dark"),
@@ -97,6 +100,21 @@ export default function PieChart({
         transitionMode="innerRadius"
         motionConfig="default"
       />
+      {parties.length > 0 && (
+        // Rotates around the centre of the half pie, from -90deg (0%) to 90deg (100%)
+        <div
+          className="absolute top-px left-[calc(50%-1px)] h-full w-0.5 origin-bottom transition-transform duration-300"
+          style={{
+            transform: `rotate(${
+              (majorityThreshold.numerator / majorityThreshold.denominator) *
+                180 -
+              90
+            }deg)`,
+          }}
+        >
+          <div className="bg-background-elevated h-[64.5%] border-l-2 border-dashed border-white"></div>
+        </div>
+      )}
     </>
   );
 }

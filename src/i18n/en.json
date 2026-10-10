@@ -22,6 +22,8 @@
   },
   "body": {
     "allowTieBreaker": "Allow tie breaker",
+    "majorityThreshold": "Majority threshold",
+    "tieBreakerSimpleMajorityOnly": "Only applies to a 1/2 majority",
     "name": "Name",
     "position": "Position",
     "seats": "Seats",
@@ -29,6 +31,13 @@
     "edit": "Edit",
     "noParties": "No parties available",
     "sampleDataUpdatedAt": "Sample data updated at"
+  },
+  "majority": {
+    "blockingMinority": "Blocking minority",
+    "absolute": "Absolute majority",
+    "threeFifths": "Three-fifths majority",
+    "twoThirds": "Two-thirds majority",
+    "threeQuarters": "Three-quarters majority"
   },
   "controls": {
     "politicalSpectrum": "Political Spectrum",

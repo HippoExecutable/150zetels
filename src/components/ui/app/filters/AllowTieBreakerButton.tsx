@@ -18,17 +18,32 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useAllowTieBreaker, useI18n } from "@/lib/zustandStore";
+import {
+  useAllowTieBreaker,
+  useMajorityThreshold,
+  useI18n,
+} from "@/lib/zustandStore";
+import { isSameThreshold, simpleMajority } from "@/utils/getMajority";
 import { CheckIcon } from "@heroicons/react/16/solid";
 
 export default function AllowTieBreakerButton() {
   const { allowTieBreaker, setAllowTieBreaker } = useAllowTieBreaker();
+  const { majorityThreshold } = useMajorityThreshold();
   const { i } = useI18n();
+  // Ties can only happen when the threshold is exactly one half
+  const isDisabled = !isSameThreshold(majorityThreshold, simpleMajority);
 
   return (
     <>
-      <div className="flex-1 justify-start text-nowrap sm:w-auto">
-        <label className="flex max-w-fit items-center gap-2">
+      <div className="justify-start text-nowrap sm:w-auto">
+        <label
+          className={`flex max-w-fit items-center gap-2 transition-opacity ${
+            isDisabled ? "opacity-50" : ""
+          }`}
+          title={
+            isDisabled ? i("body.tieBreakerSimpleMajorityOnly") : undefined
+          }
+        >
           <span className="relative">
             <input
               title="Allow Tie Breaker"
@@ -37,6 +52,7 @@ export default function AllowTieBreakerButton() {
               id="allowTieBreaker"
               className="absolute h-full w-full opacity-0"
               checked={allowTieBreaker}
+              disabled={isDisabled}
               onChange={() => {
                 setAllowTieBreaker(!allowTieBreaker);
               }}
@@ -45,6 +61,7 @@ export default function AllowTieBreakerButton() {
               role="checkbox"
               aria-label={"Allow Tie Breaker"}
               aria-checked={allowTieBreaker}
+              aria-disabled={isDisabled}
               className={`${
                 allowTieBreaker
                   ? "bg-zinc-700 dark:bg-zinc-200"

@@ -26,10 +26,12 @@ import {
   IsEditModeState,
   SortByState,
   AllowTieBreakerState,
+  MajorityThresholdState,
   SelectedPartiesState,
   SelectedCountryState,
   I18nState,
 } from "@/types";
+import { simpleMajority } from "@/utils/getMajority";
 import { create } from "zustand";
 
 function getBrowserLocale() {
@@ -84,6 +86,11 @@ const useAllowTieBreaker = create<AllowTieBreakerState>((set) => ({
   setAllowTieBreaker: (by) => set(() => ({ allowTieBreaker: by })),
 }));
 
+const useMajorityThreshold = create<MajorityThresholdState>((set) => ({
+  majorityThreshold: simpleMajority,
+  setMajorityThreshold: (by) => set(() => ({ majorityThreshold: by })),
+}));
+
 const useI18n = create<I18nState>((set, get) => ({
   locale:
     typeof window !== "undefined"
@@ -115,6 +122,7 @@ export {
   useIsEditMode,
   useSortBy,
   useAllowTieBreaker,
+  useMajorityThreshold,
   useI18n,
   useSelectedCountry,
 };

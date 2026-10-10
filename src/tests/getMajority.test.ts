@@ -74,3 +74,80 @@ test("handles edge cases", () => {
     margin: 1,
   });
 });
+
+test("tie-breaker does not change margins for odd seat totals", () => {
+  expect(getMajority(101, 51, true)).toEqual({
+    seatsForMajority: 51,
+    status: "majority",
+    margin: 1,
+  });
+
+  expect(getMajority(100, 51, true)).toEqual({
+    seatsForMajority: 50,
+    status: "majority",
+    margin: 1,
+  });
+});
+
+test("supermajorities are reached at exactly the quota", () => {
+  const twoThirds = { numerator: 2, denominator: 3 };
+
+  expect(getMajority(600, 400, false, twoThirds)).toEqual({
+    seatsForMajority: 400,
+    status: "majority",
+    margin: 1,
+  });
+
+  expect(getMajority(600, 399, false, twoThirds)).toEqual({
+    seatsForMajority: 400,
+    status: "minority",
+    margin: 1,
+  });
+
+  expect(getMajority(601, 400, false, twoThirds)).toEqual({
+    seatsForMajority: 401,
+    status: "minority",
+    margin: 1,
+  });
+
+  // A tie breaker only applies to a simple majority
+  expect(getMajority(600, 400, true, twoThirds)).toEqual({
+    seatsForMajority: 400,
+    status: "majority",
+    margin: 1,
+  });
+});
+
+test("thresholds below one half must be exceeded", () => {
+  const oneThird = { numerator: 1, denominator: 3 };
+
+  expect(getMajority(600, 200, false, oneThird)).toEqual({
+    seatsForMajority: 201,
+    status: "minority",
+    margin: 1,
+  });
+
+  expect(getMajority(600, 201, false, oneThird)).toEqual({
+    seatsForMajority: 201,
+    status: "majority",
+    margin: 1,
+  });
+});
+
+test("custom percentages", () => {
+  expect(
+    getMajority(100, 50, true, { numerator: 5000, denominator: 10000 }),
+  ).toEqual({
+    seatsForMajority: 50,
+    status: "tie-breaking majority",
+    margin: 0,
+  });
+
+  expect(
+    getMajority(450, 248, false, { numerator: 5500, denominator: 10000 }),
+  ).toEqual({
+    seatsForMajority: 248,
+    status: "majority",
+    margin: 1,
+  });
+});

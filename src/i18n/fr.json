@@ -22,6 +22,8 @@
   },
   "body": {
     "allowTieBreaker": "Autoriser le bris d'égalité",
+    "majorityThreshold": "Seuil de majorité",
+    "tieBreakerSimpleMajorityOnly": "S'applique uniquement à une majorité de 1/2",
     "name": "Nom",
     "position": "Position",
     "seats": "Sièges",
@@ -29,6 +31,13 @@
     "edit": "Modifier",
     "noParties": "Aucun parti disponible",
     "sampleDataUpdatedAt": "Données d'exemple mises à jour le"
+  },
+  "majority": {
+    "blockingMinority": "Minorité de blocage",
+    "absolute": "Majorité absolue",
+    "threeFifths": "Majorité des trois cinquièmes",
+    "twoThirds": "Majorité des deux tiers",
+    "threeQuarters": "Majorité des trois quarts"
   },
   "controls": {
     "politicalSpectrum": "Spectre politique",

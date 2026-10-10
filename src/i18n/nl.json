@@ -22,6 +22,8 @@
   },
   "body": {
     "allowTieBreaker": "Gelijkmakende stem toestaan",
+    "majorityThreshold": "Meerderheidsdrempel",
+    "tieBreakerSimpleMajorityOnly": "Geldt alleen voor een meerderheid van 1/2",
     "name": "Naam",
     "position": "Positie",
     "seats": "Zetels",
@@ -29,6 +31,13 @@
     "edit": "Bewerken",
     "noParties": "Geen partijen beschikbaar",
     "sampleDataUpdatedAt": "Voorbeelddata bijgewerkt op"
+  },
+  "majority": {
+    "blockingMinority": "Blokkerende minderheid",
+    "absolute": "Volstrekte meerderheid",
+    "threeFifths": "Drievijfdemeerderheid",
+    "twoThirds": "Tweederdemeerderheid",
+    "threeQuarters": "Driekwartmeerderheid"
   },
   "controls": {
     "politicalSpectrum": "Politiek spectrum",

@@ -28,10 +28,12 @@ import {
   useSortBy,
   useI18n,
   useSelectedCountry,
+  useMajorityThreshold,
 } from "@/lib/zustandStore";
 import {
   PartyButton,
   AllowTieBreakerButton,
+  MajorityThresholdButton,
   SwitchViewModeButton,
   SortButton,
   CoalitionBySpectrumButtons,
@@ -51,6 +53,7 @@ const Seats = () => {
   const { sortBy } = useSortBy();
   const { i, setLocale } = useI18n();
   const { setSelectedCountry } = useSelectedCountry();
+  const { majorityThreshold } = useMajorityThreshold();
 
   useEffect(() => {
     const queryParams = new URLSearchParams(document.location.search);
@@ -88,18 +91,17 @@ const Seats = () => {
           selectedParties={[...selectedParties]}
           isEditMode={isEditMode}
           sortBy={sortBy}
+          majorityThreshold={majorityThreshold}
         />
-        {parties.length > 0 && (
-          <div className="absolute top-px left-0 flex h-full w-full items-start justify-center">
-            <div className="bg-background-elevated absolute left-[calc(50%-1px)] h-[64.5%] border-l-2 border-dashed border-white"></div>
-          </div>
-        )}
       </div>
       <div className="sticky top-0 z-10 mx-auto w-full">
         <SeatsGraph />
       </div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-        <AllowTieBreakerButton />
+        <div className="flex flex-1 flex-wrap items-center gap-x-4 gap-y-2">
+          <MajorityThresholdButton />
+          <AllowTieBreakerButton />
+        </div>
         <SortButton />
         <SwitchViewModeButton />
       </div>

@@ -22,6 +22,8 @@
   },
   "body": {
     "allowTieBreaker": "Belirleyici oya izin ver",
+    "majorityThreshold": "Çoğunluk eşiği",
+    "tieBreakerSimpleMajorityOnly": "Yalnızca 1/2 çoğunluk için geçerlidir",
     "name": "Ad",
     "position": "Konum",
     "seats": "Sandalye",
@@ -29,6 +31,13 @@
     "edit": "Düzenle",
     "noParties": "Kullanılabilir parti yok",
     "sampleDataUpdatedAt": "Örnek veri güncellemesi"
+  },
+  "majority": {
+    "blockingMinority": "Engelleyici azınlık",
+    "absolute": "Salt çoğunluk",
+    "threeFifths": "Beşte üç çoğunluk",
+    "twoThirds": "Üçte iki çoğunluk",
+    "threeQuarters": "Dörtte üç çoğunluk"
   },
   "controls": {
     "politicalSpectrum": "Siyasi Yelpaze",

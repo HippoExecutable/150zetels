@@ -223,7 +223,7 @@ export default function JsonShareExportButton() {
               exit={{ opacity: 0, translateY: 2 }}
               ref={dropdownRef}
               tabIndex={-1}
-              className="absolute end-0 bottom-full z-100 mb-2 w-full min-w-72 overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
+              className="absolute inset-e-0 bottom-full z-100 mb-2 w-full min-w-72 overflow-hidden rounded-2xl border-2 border-zinc-200 bg-white shadow-xl outline-hidden dark:border-zinc-700 dark:bg-zinc-900"
             >
               <div className="p-2">
                 <div className="relative flex overflow-hidden rounded-full border-2 border-transparent bg-zinc-200 dark:bg-zinc-700">

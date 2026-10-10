@@ -78,3 +78,29 @@ export async function createShareLink(country: CountryData, baseUrl: string) {
 export function getShareData(hash: string) {
   return new URLSearchParams(hash.replace(/^#/, "")).get(shareDataKey);
 }
+
+// Sent by an embed so the embed code can fit the iframe to it
+export const embedHeightMessage = "parliament-seats:height";
+
+export async function createEmbedLink(country: CountryData, baseUrl: string) {
+  const url = new URL(await createShareLink(country, baseUrl));
+  url.search = "embed";
+  return url.toString();
+}
+
+function escapeHtml(text: string) {
+  return text.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
+}
+
+export function createEmbedCode(embedLink: string, country: CountryData) {
+  const { origin } = new URL(embedLink);
+  const title = country.name
+    ? `${country.name} - Parliament Seats`
+    : "Parliament Seats";
+  // A rough fit for a few rows of parties, until the script resizes it
+  const height = 560 + Math.ceil(country.parties.length / 3) * 60;
+  const iframe = `<iframe src="${escapeHtml(embedLink)}" title="${escapeHtml(title)}" width="100%" height="${height}" style="border:0;max-width:100%" loading="lazy"></iframe>`;
+  // Sites that strip scripts still show the iframe at the fixed height
+  const script = `<script>window.addEventListener("message",function(e){if(e.origin!==${JSON.stringify(origin)}||!e.data||e.data.type!==${JSON.stringify(embedHeightMessage)}||typeof e.data.height!=="number")return;document.querySelectorAll("iframe").forEach(function(f){if(f.contentWindow===e.source)f.style.height=e.data.height+"px"})})</script>`;
+  return `${iframe}\n${script}`;
+}

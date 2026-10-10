@@ -20,8 +20,11 @@
 
 import { expect, test } from "vitest";
 import {
+  createEmbedCode,
+  createEmbedLink,
   createShareLink,
   decodeShareData,
+  embedHeightMessage,
   encodeShareData,
   getShareData,
 } from "@/utils/shareLink";
@@ -130,4 +133,53 @@ test("returns null for damaged or invalid data", async () => {
       } as unknown as CountryData),
     ),
   ).toBeNull();
+});
+
+test("embed links open the embed view with the same data", async () => {
+  const link = new URL(
+    await createEmbedLink(country, "https://example.com/app/?lang=de"),
+  );
+
+  expect(link.origin + link.pathname).toBe("https://example.com/app/");
+  expect(link.searchParams.has("embed")).toBe(true);
+  expect(link.searchParams.has("lang")).toBe(false);
+  expect(await decodeShareData(getShareData(link.hash)!)).toEqual(country);
+});
+
+test("embed code has an iframe and a script that only trusts the app", async () => {
+  const embedLink = await createEmbedLink(country, "https://example.com/");
+  const code = createEmbedCode(embedLink, country);
+
+  expect(code).toContain(`<iframe src="${embedLink}"`);
+  expect(code).toContain('title="Ostfriesland 🌊 - Parliament Seats"');
+  expect(code).toContain('e.origin!=="https://example.com"');
+  expect(code).toContain(embedHeightMessage);
+});
+
+test("embed code escapes names that would break the HTML", async () => {
+  const sneaky = { ...country, name: `"><script>alert(1)</script>` };
+  const code = createEmbedCode(
+    await createEmbedLink(sneaky, "https://example.com/"),
+    sneaky,
+  );
+
+  expect(code).not.toContain("<script>alert(1)");
+  expect(code).toContain("&#34;&#62;&#60;script&#62;");
+  expect(code.match(/<script>/g)).toHaveLength(1);
+});
+
+test("embed code starts taller for more parties", async () => {
+  const height = (count: number) => {
+    const parties = Array.from({ length: count }, (_, index) => ({
+      ...partyA,
+      id: index.toString(),
+    }));
+    const code = createEmbedCode("https://example.com/?embed", {
+      ...emptyCountry,
+      parties,
+    });
+    return Number(code.match(/height="(\d+)"/)![1]);
+  };
+
+  expect(height(3)).toBeLessThan(height(18));
 });

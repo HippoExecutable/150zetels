@@ -71,7 +71,16 @@
     "exportToFile": "Als Datei herunterladen",
     "exportToText": "Als Text kopieren",
     "exportToLink": "Link zum Teilen kopieren",
-    "copied": "Kopiert"
+    "exportToEmbed": "Einbettungscode kopieren",
+    "copied": "Kopiert",
+    "data": "Daten",
+    "image": "Bild",
+    "format": "Format",
+    "square": "Quadrat",
+    "vertical": "Hochformat",
+    "wide": "Breitbild",
+    "downloadImage": "Bild herunterladen",
+    "copyImage": "Bild kopieren"
   },
   "dialogs": {
     "clearDataConfirm": "Möchten Sie wirklich alle Daten löschen?",
@@ -100,5 +109,9 @@
     "feelFree": "Fühlen Sie sich frei, ein Problem zu eröffnen",
     "onGitHub": "auf GitHub",
     "ifYouHave": "wenn Sie Probleme oder Vorschläge haben."
+  },
+  "embed": {
+    "openFullVersion": "In Parliament Seats öffnen",
+    "invalidData": "Dieses Diagramm konnte nicht geladen werden."
   }
 }

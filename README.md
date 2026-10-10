@@ -99,6 +99,22 @@ This allows users to:
 - share configurations with others
 - paste a shared configuration straight from a message
 
+Scenarios can also be shared as a **link**. The data is compressed into the part of the URL after `#`, so it never reaches the server.
+
+---
+
+## Images and Embedding
+
+The current coalition can be downloaded or copied as a **PNG image** in square, vertical, or wide format. Images are drawn in the browser.
+
+**Copy embed code** gives an `<iframe>` for showing the chart on another website. Readers can select parties in it, and open it in the full app. The included script resizes the iframe to fit; sites that strip scripts show it at a fixed height.
+
+Embeds can also be built by hand:
+
+- `?embed` shows only the chart
+- `?embed&country=Germany` shows a sample country
+- `&theme=dark` or `&theme=auto` changes the default light theme
+
 ---
 
 ## Multilingual Interface

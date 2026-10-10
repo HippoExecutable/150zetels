@@ -18,11 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useEffect } from "react";
-import { countries } from "@/data/countries";
-import { supportedLocales } from "@/i18n/i18n";
 import { sort } from "@/utils/sort";
-import { decodeShareData, getShareData } from "@/utils/shareLink";
 import {
   useSelectedParties,
   useIsEditMode,
@@ -32,7 +28,6 @@ import {
   useSelectedCountry,
   useMajorityThreshold,
   useCustomInfo,
-  importCountryData,
 } from "@/lib/zustandStore";
 import {
   PartyButton,
@@ -55,63 +50,10 @@ const Seats = () => {
   const { selectedParties, setSelectedParties } = useSelectedParties();
   const { isEditMode } = useIsEditMode();
   const { sortBy } = useSortBy();
-  const { i, setLocale } = useI18n();
+  const { i } = useI18n();
   const { setSelectedCountry } = useSelectedCountry();
   const { majorityThreshold } = useMajorityThreshold();
   const { setCustomInfo } = useCustomInfo();
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(document.location.search);
-    const countryName = queryParams.get("country");
-    const lang = queryParams.get("lang");
-    let isCancelled = false;
-
-    const loadCountry = () => {
-      const country =
-        countries.find((country) => country.name === countryName) ??
-        countries.find((country) => country.name === "European Union");
-      if (country) {
-        setSelectedCountry(country);
-        setParties(country.parties);
-        setSelectedParties(country.parties);
-      }
-    };
-
-    const loadSharedCountry = async (data: string) => {
-      const sharedCountry = await decodeShareData(data);
-      if (isCancelled) return;
-
-      if (sharedCountry) {
-        importCountryData(sharedCountry);
-      } else {
-        alert(i("dialogs.invalidShareLink"));
-        loadCountry();
-      }
-    };
-
-    // Pasting a share link into an open tab only changes the hash
-    const handleHashChange = () => {
-      const data = getShareData(document.location.hash);
-      if (data) loadSharedCountry(data);
-    };
-
-    const data = getShareData(document.location.hash);
-    if (data) {
-      loadSharedCountry(data);
-    } else {
-      loadCountry();
-    }
-
-    if (lang && supportedLocales.some((locale) => locale === lang)) {
-      setLocale(lang);
-    }
-
-    window.addEventListener("hashchange", handleHashChange);
-    return () => {
-      isCancelled = true;
-      window.removeEventListener("hashchange", handleHashChange);
-    };
-  }, [i, setLocale, setParties, setSelectedCountry, setSelectedParties]);
 
   return (
     <div>

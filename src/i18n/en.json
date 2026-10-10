@@ -71,7 +71,16 @@
     "exportToFile": "Download as file",
     "exportToText": "Copy as text",
     "exportToLink": "Copy share link",
-    "copied": "Copied"
+    "exportToEmbed": "Copy embed code",
+    "copied": "Copied",
+    "data": "Data",
+    "image": "Image",
+    "format": "Format",
+    "square": "Square",
+    "vertical": "Vertical",
+    "wide": "Wide",
+    "downloadImage": "Download image",
+    "copyImage": "Copy image"
   },
   "dialogs": {
     "clearDataConfirm": "Are you sure you want to clear all data?",
@@ -100,5 +109,9 @@
     "feelFree": "Feel free to open an issue",
     "onGitHub": "on GitHub",
     "ifYouHave": "if you have any issues or suggestions."
+  },
+  "embed": {
+    "openFullVersion": "Open in Parliament Seats",
+    "invalidData": "This chart could not be loaded."
   }
 }

@@ -71,7 +71,16 @@
     "exportToFile": "Télécharger en fichier",
     "exportToText": "Copier en texte",
     "exportToLink": "Copier le lien de partage",
-    "copied": "Copié"
+    "exportToEmbed": "Copier le code d'intégration",
+    "copied": "Copié",
+    "data": "Données",
+    "image": "Image",
+    "format": "Format",
+    "square": "Carré",
+    "vertical": "Vertical",
+    "wide": "Large",
+    "downloadImage": "Télécharger l'image",
+    "copyImage": "Copier l'image"
   },
   "dialogs": {
     "clearDataConfirm": "Voulez-vous vraiment effacer toutes les données ?",
@@ -100,5 +109,9 @@
     "feelFree": "N'hésitez pas à ouvrir un problème",
     "onGitHub": "sur GitHub",
     "ifYouHave": "si vous rencontrez des problèmes ou avez des suggestions."
+  },
+  "embed": {
+    "openFullVersion": "Ouvrir dans Parliament Seats",
+    "invalidData": "Ce graphique n'a pas pu être chargé."
   }
 }

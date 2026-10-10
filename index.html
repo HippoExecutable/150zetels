@@ -56,7 +56,11 @@
     <script>
       (function () {
         try {
-          var t = localStorage.getItem("theme");
+          var params = new URLSearchParams(location.search);
+          // Embeds use ?theme=light|dark|auto, since the host page sets the look
+          var t = params.has("embed")
+            ? params.get("theme") || "light"
+            : localStorage.getItem("theme");
           var d =
             t === "dark" ||
             (t !== "light" &&

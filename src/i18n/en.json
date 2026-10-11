@@ -9,9 +9,10 @@
   },
   "seats": "Seats",
   "header": {
-    "countries": "Countries",
+    "presets": "Polls & elections",
     "custom": "Custom",
-    "sampleCountries": "Sample countries",
+    "polls": "Polls",
+    "pastElections": "Past elections",
     "seatsForMajority": "{count} seats for majority",
     "seat": "seat",
     "seats": "seats",
@@ -30,9 +31,10 @@
     "edit": "Edit",
     "noParties": "No parties available",
     "pasteDataPlaceholder": "Paste exported data here",
-    "sampleDataUpdatedAt": "Sample data updated at",
-    "countryName": "Country/region",
-    "dataUpdatedAt": "Data updated at"
+    "pollUpdatedAt": "Poll updated at",
+    "presetName": "Name",
+    "dataUpdatedAt": "Data updated at",
+    "electionDate": "Election date"
   },
   "majority": {
     "blockingMinority": "Blocking minority",

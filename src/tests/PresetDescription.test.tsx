@@ -18,9 +18,21 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Country } from "@/types";
-import { countries } from "./countries";
-import { pastElections } from "./pastElections";
+import { expect, test } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
+import { PresetDescriptionText } from "@/components/ui/app/head/PresetDescription";
 
-// Everything that can be selected by name (sample countries + past elections)
-export const allCountries: Country[] = [...countries, ...pastElections];
+test("renders nothing without a description", () => {
+  expect(renderToStaticMarkup(<PresetDescriptionText />)).toBe("");
+  expect(renderToStaticMarkup(<PresetDescriptionText description="" />)).toBe(
+    "",
+  );
+});
+
+test("renders the description as text, keeping line breaks", () => {
+  const html = renderToStaticMarkup(
+    <PresetDescriptionText description={"Line one\n<b>Line two</b>"} />,
+  );
+  expect(html).toContain("whitespace-pre-line");
+  expect(html).toContain("Line one\n&lt;b&gt;Line two&lt;/b&gt;");
+});

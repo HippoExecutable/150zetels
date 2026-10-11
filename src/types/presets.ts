@@ -22,16 +22,19 @@ import { MajorityThreshold } from "./majority";
 import { Party } from "./party";
 import { SortByState } from "./zustand";
 
-export interface Country {
+export interface Preset {
   name: string;
   emoji?: string;
   parties: Party[];
   updateDate: string;
+  // Shown above the chart, e.g. the poll's source and sample size.
+  // Line breaks are kept.
+  description?: string;
 }
 
-export type CountryInfo = Pick<Country, "name" | "updateDate">;
+export type PresetInfo = Pick<Preset, "name" | "updateDate">;
 
-export interface CountryData extends CountryInfo {
+export interface PresetData extends PresetInfo {
   parties: Party[];
   selectedParties: Party[];
   // Left out when the importer should keep their own settings

@@ -23,19 +23,19 @@ import Body from "@/components/Body";
 import Embed from "@/components/Embed";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import LandscapeCountryListBanner from "./components/ui/app/head/LandscapeCountryListBanner";
+import PresetListSidebar from "./components/ui/app/head/PresetListSidebar";
 import { useUrlData } from "@/lib/useUrlData";
 
 // Other sites show only the chart, in an iframe pointing at ?embed
 const isEmbed = new URLSearchParams(window.location.search).has("embed");
 
 function App() {
-  const { sharedCountry, isShareLinkInvalid } = useUrlData(isEmbed);
+  const { sharedPreset, isShareLinkInvalid } = useUrlData(isEmbed);
 
   if (isEmbed) {
     return (
       <Embed
-        sharedCountry={sharedCountry}
+        sharedPreset={sharedPreset}
         isShareLinkInvalid={isShareLinkInvalid}
       />
     );
@@ -50,7 +50,7 @@ function App() {
             <Body />
           </div>
           <div className="hidden pt-4 lg:block">
-            <LandscapeCountryListBanner />
+            <PresetListSidebar />
           </div>
         </main>
         <Footer />

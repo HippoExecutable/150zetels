@@ -18,10 +18,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useI18n, exportCountryData } from "@/lib/zustandStore";
+import { useI18n, exportPresetData } from "@/lib/zustandStore";
 import { IncludeOptions } from "@/types";
 import { copyText } from "@/utils/clipboard";
-import { stringifyCountry } from "@/utils/parseCountry";
+import { stringifyPreset } from "@/utils/parsePreset";
 import {
   createEmbedCode,
   createEmbedLink,
@@ -106,7 +106,7 @@ export default function JsonShareExportButton() {
 
     if (!shouldExport) return;
 
-    const data = stringifyCountry(exportCountryData(includeOptions));
+    const data = stringifyPreset(exportPresetData(includeOptions));
     const blob = new Blob([data], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -148,7 +148,7 @@ export default function JsonShareExportButton() {
       onClick: () =>
         handleCopy(
           "text",
-          Promise.resolve(stringifyCountry(exportCountryData(includeOptions))),
+          Promise.resolve(stringifyPreset(exportPresetData(includeOptions))),
         ),
     },
     {
@@ -159,7 +159,7 @@ export default function JsonShareExportButton() {
         handleCopy(
           "link",
           createShareLink(
-            exportCountryData(includeOptions),
+            exportPresetData(includeOptions),
             window.location.href,
           ),
         ),
@@ -169,11 +169,11 @@ export default function JsonShareExportButton() {
       label: i("buttons.exportToEmbed"),
       icon: <CodeBracketIcon className="size-5 shrink-0" />,
       onClick: () => {
-        const country = exportCountryData(includeOptions);
+        const preset = exportPresetData(includeOptions);
         handleCopy(
           "embed",
-          createEmbedLink(country, window.location.href).then((embedLink) =>
-            createEmbedCode(embedLink, country),
+          createEmbedLink(preset, window.location.href).then((embedLink) =>
+            createEmbedCode(embedLink, preset),
           ),
         );
       },

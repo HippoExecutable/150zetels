@@ -19,7 +19,7 @@
 */
 
 import { supportedLocales } from "@/i18n/i18n";
-import { CountryData, MajorityThreshold, Party, SortByState } from "@/types";
+import { PresetData, MajorityThreshold, Party, SortByState } from "@/types";
 
 const sortByKeys: SortByState["sortBy"][] = ["name", "position", "seats"];
 
@@ -66,7 +66,7 @@ function isLocale(data: unknown): data is string {
   return supportedLocales.some((locale) => locale === data);
 }
 
-export function stringifyCountry(
+export function stringifyPreset(
   {
     name,
     updateDate,
@@ -76,7 +76,7 @@ export function stringifyCountry(
     allowTieBreaker,
     sortBy,
     locale,
-  }: CountryData,
+  }: PresetData,
   space = 2,
 ) {
   const isEveryPartySelected = parties.every(({ id }) =>
@@ -102,8 +102,8 @@ export function stringifyCountry(
   );
 }
 
-// Throws when the data is not JSON, and returns null when it is not a country or a list of parties
-export function parseCountry(data: string): CountryData | null {
+// Throws when the data is not JSON, and returns null when it is not a preset or a list of parties
+export function parsePreset(data: string): PresetData | null {
   const parsedData: unknown = JSON.parse(data);
 
   // Older exports are only a list of parties

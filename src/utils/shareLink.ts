@@ -18,8 +18,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { CountryData } from "@/types";
-import { parseCountry, stringifyCountry } from "@/utils/parseCountry";
+import { PresetData } from "@/types";
+import { parsePreset, stringifyPreset } from "@/utils/parsePreset";
 
 // The data lives in the URL hash, so it is never sent to the server
 const shareDataKey = "data";
@@ -53,24 +53,24 @@ function fromBase64Url(text: string) {
   return Uint8Array.from(binary, (char) => char.charCodeAt(0));
 }
 
-export async function encodeShareData(country: CountryData) {
-  return toBase64Url(await deflate(stringifyCountry(country, 0)));
+export async function encodeShareData(preset: PresetData) {
+  return toBase64Url(await deflate(stringifyPreset(preset, 0)));
 }
 
-// Returns null when the data is damaged or is not a country
+// Returns null when the data is damaged or is not a preset
 export async function decodeShareData(data: string) {
   try {
-    return parseCountry(await inflate(fromBase64Url(data)));
+    return parsePreset(await inflate(fromBase64Url(data)));
   } catch {
     return null;
   }
 }
 
-export async function createShareLink(country: CountryData, baseUrl: string) {
+export async function createShareLink(preset: PresetData, baseUrl: string) {
   const url = new URL(baseUrl);
   url.search = "";
   url.hash = new URLSearchParams({
-    [shareDataKey]: await encodeShareData(country),
+    [shareDataKey]: await encodeShareData(preset),
   }).toString();
   return url.toString();
 }
@@ -82,8 +82,8 @@ export function getShareData(hash: string) {
 // Sent by an embed so the embed code can fit the iframe to it
 export const embedHeightMessage = "parliament-seats:height";
 
-export async function createEmbedLink(country: CountryData, baseUrl: string) {
-  const url = new URL(await createShareLink(country, baseUrl));
+export async function createEmbedLink(preset: PresetData, baseUrl: string) {
+  const url = new URL(await createShareLink(preset, baseUrl));
   url.search = "embed";
   return url.toString();
 }
@@ -92,13 +92,13 @@ function escapeHtml(text: string) {
   return text.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
 }
 
-export function createEmbedCode(embedLink: string, country: CountryData) {
+export function createEmbedCode(embedLink: string, preset: PresetData) {
   const { origin } = new URL(embedLink);
-  const title = country.name
-    ? `${country.name} - Parliament Seats`
+  const title = preset.name
+    ? `${preset.name} - Parliament Seats`
     : "Parliament Seats";
   // A rough fit for a few rows of parties, until the script resizes it
-  const height = 560 + Math.ceil(country.parties.length / 3) * 60;
+  const height = 560 + Math.ceil(preset.parties.length / 3) * 60;
   const iframe = `<iframe src="${escapeHtml(embedLink)}" title="${escapeHtml(title)}" width="100%" height="${height}" style="border:0;max-width:100%" loading="lazy"></iframe>`;
   // Sites that strip scripts still show the iframe at the fixed height
   const script = `<script>window.addEventListener("message",function(e){if(e.origin!==${JSON.stringify(origin)}||!e.data||e.data.type!==${JSON.stringify(embedHeightMessage)}||typeof e.data.height!=="number")return;document.querySelectorAll("iframe").forEach(function(f){if(f.contentWindow===e.source)f.style.height=e.data.height+"px"})})</script>`;

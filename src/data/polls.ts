@@ -18,9 +18,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Country } from "@/types";
+import { Preset } from "@/types";
 
-export const countries: Country[] = [
+export const countries: Preset[] = [
   {
     name: "Netherlands (Ipsos I&O, 2 Sep 2026)",
     emoji: "🇳🇱",

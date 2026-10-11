@@ -18,28 +18,26 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { pastElections } from "@/data/pastElections";
-import { Country, CountryInfo } from "@/types";
+import { useSelectedPreset } from "@/lib/zustandStore";
 
-// The name and date line shown above a chart
-export function getCountryTitle(
-  selectedCountry: Country | null,
-  customInfo: CountryInfo,
-  i: (key: string) => string,
-) {
-  const { name, updateDate } = selectedCountry ?? customInfo;
-  const title = [name, selectedCountry?.emoji].filter(Boolean).join(" ");
-  const isPastElection = pastElections.some((c) => c.name === name);
-  const dateLabel = isPastElection
-    ? i("body.electionDate")
-    : selectedCountry
-      ? i("body.sampleDataUpdatedAt")
-      : i("body.dataUpdatedAt");
-  const subtitle = updateDate
-    ? `${dateLabel}: ${new Date(updateDate).toLocaleDateString(i("locale"), {
-        timeZone: "UTC",
-      })}`
-    : "";
+// Plain text; line breaks in the description are kept
+export function PresetDescriptionText({
+  description,
+}: {
+  description?: string;
+}) {
+  if (!description) return null;
 
-  return { title, subtitle };
+  return (
+    <p className="mt-4 rounded-2xl border-2 border-zinc-200 p-3 text-sm whitespace-pre-line dark:border-zinc-700">
+      {description}
+    </p>
+  );
+}
+
+// The `description` of the selected preset (e.g. a poll), shown above the chart
+export default function PresetDescription() {
+  const { selectedPreset } = useSelectedPreset();
+
+  return <PresetDescriptionText description={selectedPreset?.description} />;
 }

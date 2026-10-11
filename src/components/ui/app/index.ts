@@ -18,10 +18,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-export { default as CountryListDropdown } from "./head/CountryListDropdown";
+export { default as PresetListDropdown } from "./head/PresetListDropdown";
 export { default as SeatsGraph } from "./head/SeatsGraph";
 export { default as PieChart } from "./head/PieChart";
-export { default as CountryInfoEditor } from "./head/CountryInfoEditor";
+export { default as PresetInfoEditor } from "./head/PresetInfoEditor";
+export { default as PresetDescription } from "./head/PresetDescription";
 
 export { default as MajorityThresholdButton } from "./filters/MajorityThresholdButton";
 export { default as SortButton } from "./filters/SortButton";

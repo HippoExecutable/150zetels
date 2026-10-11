@@ -8,9 +8,9 @@
     "auto": "Automatisch"
   },
   "header": {
-    "countries": "Peilingen",
+    "presets": "Peilingen & verkiezingen",
     "custom": "Eigen Peilingen",
-    "sampleCountries": "Bekende Peilingen",
+    "polls": "Peilingen",
     "pastElections": "Verkiezingen",
     "majorityWithCount": "Meerderheid met {count} zetels",
     "seatsForMajority": "{count} zetels voor de meerderheid",
@@ -31,9 +31,10 @@
     "edit": "Bewerken",
     "noParties": "Geen partijen beschikbaar",
     "pasteDataPlaceholder": "Plak hier de geëxporteerde gegevens",
-    "sampleDataUpdatedAt": "Voorbeelddata bijgewerkt op",
-    "countryName": "Land/regio",
-    "dataUpdatedAt": "Data bijgewerkt op"
+    "pollUpdatedAt": "Peiling bijgewerkt op",
+    "presetName": "Naam",
+    "dataUpdatedAt": "Data bijgewerkt op",
+    "electionDate": "Verkiezingsdatum"
   },
   "majority": {
     "blockingMinority": "Blokkerende Minderheid",

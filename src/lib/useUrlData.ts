@@ -19,71 +19,71 @@
 */
 
 import { useEffect, useState } from "react";
-import { allCountries } from "@/data/allCountries";
+import { allPresets } from "@/data/allPresets";
 import { supportedLocales } from "@/i18n/i18n";
 import {
   useParties,
   useSelectedParties,
-  useSelectedCountry,
+  useSelectedPreset,
   useI18n,
-  importCountryData,
+  importPresetData,
 } from "@/lib/zustandStore";
-import { CountryData } from "@/types";
+import { PresetData } from "@/types";
 import { decodeShareData, getShareData } from "@/utils/shareLink";
 
-// Loads the sample country, shared data, and language that the URL asks for,
+// Loads the preset, shared data, and language that the URL asks for,
 // and returns the shared data and whether a share link could not be read
 export function useUrlData(isEmbed: boolean) {
   const { setParties } = useParties();
   const { setSelectedParties } = useSelectedParties();
-  const { setSelectedCountry } = useSelectedCountry();
+  const { setSelectedPreset } = useSelectedPreset();
   const { i, setLocale } = useI18n();
-  const [sharedCountry, setSharedCountry] = useState<CountryData | null>(null);
+  const [sharedPreset, setSharedPreset] = useState<PresetData | null>(null);
   const [isShareLinkInvalid, setIsShareLinkInvalid] = useState(false);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(document.location.search);
-    const countryName = queryParams.get("country");
+    const presetName = queryParams.get("preset");
     const lang = queryParams.get("lang");
     let isCancelled = false;
 
-    const loadCountry = () => {
-      const country =
-        allCountries.find((country) => country.name === countryName) ??
-        allCountries.find((country) => country.name === "European Union");
-      if (country) {
-        setSelectedCountry(country);
-        setParties(country.parties);
-        setSelectedParties(country.parties);
+    const loadPreset = () => {
+      const preset =
+        allPresets.find((preset) => preset.name === presetName) ??
+        allPresets.find((preset) => preset.name === "European Union");
+      if (preset) {
+        setSelectedPreset(preset);
+        setParties(preset.parties);
+        setSelectedParties(preset.parties);
       }
     };
 
-    const loadSharedCountry = async (data: string) => {
-      const decodedCountry = await decodeShareData(data);
+    const loadSharedPreset = async (data: string) => {
+      const decodedPreset = await decodeShareData(data);
       if (isCancelled) return;
 
-      setSharedCountry(decodedCountry);
-      setIsShareLinkInvalid(!decodedCountry);
-      if (decodedCountry) {
-        importCountryData(decodedCountry);
+      setSharedPreset(decodedPreset);
+      setIsShareLinkInvalid(!decodedPreset);
+      if (decodedPreset) {
+        importPresetData(decodedPreset);
       } else if (!isEmbed) {
         // Embeds show a message instead, since iframes block alerts
         alert(i("dialogs.invalidShareLink"));
-        loadCountry();
+        loadPreset();
       }
     };
 
     // Pasting a share link into an open tab only changes the hash
     const handleHashChange = () => {
       const data = getShareData(document.location.hash);
-      if (data) loadSharedCountry(data);
+      if (data) loadSharedPreset(data);
     };
 
     const data = getShareData(document.location.hash);
     if (data) {
-      loadSharedCountry(data);
+      loadSharedPreset(data);
     } else {
-      loadCountry();
+      loadPreset();
     }
 
     if (lang && supportedLocales.some((locale) => locale === lang)) {
@@ -100,9 +100,9 @@ export function useUrlData(isEmbed: boolean) {
     isEmbed,
     setLocale,
     setParties,
-    setSelectedCountry,
+    setSelectedPreset,
     setSelectedParties,
   ]);
 
-  return { sharedCountry, isShareLinkInvalid };
+  return { sharedPreset, isShareLinkInvalid };
 }

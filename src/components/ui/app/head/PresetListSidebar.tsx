@@ -18,57 +18,57 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { countries } from "@/data/countries";
+import { polls } from "@/data/polls";
 import { pastElections } from "@/data/pastElections";
-import { allCountries } from "@/data/allCountries";
+import { allPresets } from "@/data/allPresets";
 import {
   useI18n,
-  useSelectedCountry,
+  useSelectedPreset,
   useParties,
   useSelectedParties,
   useCustomInfo,
 } from "@/lib/zustandStore";
-import { Country } from "@/types";
+import { Preset } from "@/types";
 import CollapsibleSection from "./CollapsibleSection";
 
-export default function LandscapeCountryListBanner() {
+export default function PresetListSidebar() {
   const { i } = useI18n();
-  const { selectedCountry, setSelectedCountry } = useSelectedCountry();
+  const { selectedPreset, setSelectedPreset } = useSelectedPreset();
   const { setParties } = useParties();
   const { setSelectedParties } = useSelectedParties();
   const { customInfo, setCustomInfo } = useCustomInfo();
 
-  function select(country: Country) {
-    setSelectedCountry(country);
-    const findCountry = allCountries.find((c) => c.name === country.name);
-    if (findCountry) {
-      setParties(findCountry.parties);
-      setSelectedParties(findCountry.parties);
+  function select(preset: Preset) {
+    setSelectedPreset(preset);
+    const findPreset = allPresets.find((c) => c.name === preset.name);
+    if (findPreset) {
+      setParties(findPreset.parties);
+      setSelectedParties(findPreset.parties);
     } else {
-      setSelectedCountry(null);
+      setSelectedPreset(null);
       setParties([]);
       setSelectedParties([]);
     }
   }
 
-  function renderCountry(country: Country, dateLabelKey: string) {
+  function renderPreset(preset: Preset, dateLabelKey: string) {
     return (
-      <li key={country.name} value={country.name} id={country.name}>
+      <li key={preset.name} value={preset.name} id={preset.name}>
         <button
-          onClick={() => select(country)}
+          onClick={() => select(preset)}
           className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
-            selectedCountry === country
+            selectedPreset === preset
               ? "bg-zinc-200 dark:bg-zinc-700"
               : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
           }`}
         >
           <div className="line-clamp-1 flex gap-1">
-            <span>{country.name}</span>
-            <span>{country.emoji}</span>
+            <span>{preset.name}</span>
+            <span>{preset.emoji}</span>
           </div>
           <p className="text-xs opacity-75">
             {i(dateLabelKey)}:{" "}
-            {new Date(country.updateDate).toLocaleDateString(i("locale"), {
+            {new Date(preset.updateDate).toLocaleDateString(i("locale"), {
               timeZone: "UTC",
             })}
           </p>
@@ -80,32 +80,31 @@ export default function LandscapeCountryListBanner() {
   return (
     <>
       <div className="sticky top-4 z-100 h-[80vh] w-full overflow-auto rounded-2xl border-2 border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
-        <h2 className="p-2 text-xl font-semibold">{i("header.countries")}</h2>
+        <h2 className="p-2 text-xl font-semibold">{i("header.presets")}</h2>
         <ul>
           <CollapsibleSection title={i("header.custom")}>
             <li>
               <button
                 onClick={() => {
-                  if (selectedCountry) {
-                    setSelectedCountry(null);
+                  if (selectedPreset) {
+                    setSelectedPreset(null);
                     setParties([]);
                     setSelectedParties([]);
                     setCustomInfo({ name: "", updateDate: "" });
                   }
                 }}
                 className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
-                  !selectedCountry
+                  !selectedPreset
                     ? "bg-zinc-200 dark:bg-zinc-700"
                     : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
                 }`}
               >
                 <div className="line-clamp-1 flex gap-1">
                   <span>
-                    {(!selectedCountry && customInfo.name) ||
-                      i("header.custom")}
+                    {(!selectedPreset && customInfo.name) || i("header.custom")}
                   </span>
                 </div>
-                {!selectedCountry && customInfo.updateDate && (
+                {!selectedPreset && customInfo.updateDate && (
                   <p className="text-xs opacity-75">
                     {i("body.dataUpdatedAt")}:{" "}
                     {new Date(customInfo.updateDate).toLocaleDateString(
@@ -117,17 +116,15 @@ export default function LandscapeCountryListBanner() {
               </button>
             </li>
           </CollapsibleSection>
-          <CollapsibleSection title={i("header.sampleCountries")}>
-            {[...countries]
+          <CollapsibleSection title={i("header.polls")}>
+            {[...polls]
               .sort((a, b) => a.name.localeCompare(b.name))
-              .map((country) =>
-                renderCountry(country, "body.sampleDataUpdatedAt"),
-              )}
+              .map((preset) => renderPreset(preset, "body.pollUpdatedAt"))}
           </CollapsibleSection>
           <CollapsibleSection title={i("header.pastElections")}>
             {[...pastElections]
               .sort((a, b) => b.updateDate.localeCompare(a.updateDate))
-              .map((country) => renderCountry(country, "body.electionDate"))}
+              .map((preset) => renderPreset(preset, "body.electionDate"))}
           </CollapsibleSection>
         </ul>
       </div>

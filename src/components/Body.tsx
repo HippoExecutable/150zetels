@@ -25,7 +25,7 @@ import {
   useParties,
   useSortBy,
   useI18n,
-  useSelectedCountry,
+  useSelectedPreset,
   useMajorityThreshold,
   useCustomInfo,
 } from "@/lib/zustandStore";
@@ -37,8 +37,9 @@ import {
   CoalitionBySpectrumButtons,
   AddNewPartyButton,
   SeatsGraph,
-  CountryListDropdown,
-  CountryInfoEditor,
+  PresetListDropdown,
+  PresetInfoEditor,
+  PresetDescription,
   JsonShareExportButton,
   JsonShareImportButton,
   PieChart,
@@ -51,15 +52,16 @@ const Seats = () => {
   const { isEditMode } = useIsEditMode();
   const { sortBy } = useSortBy();
   const { i } = useI18n();
-  const { setSelectedCountry } = useSelectedCountry();
+  const { setSelectedPreset } = useSelectedPreset();
   const { majorityThreshold } = useMajorityThreshold();
   const { setCustomInfo } = useCustomInfo();
 
   return (
     <div>
       <div className="mt-4 block lg:hidden">
-        <CountryListDropdown />
+        <PresetListDropdown />
       </div>
+      <PresetDescription />
       <div className="relative z-12 mt-4 -mb-[calc(env(safe-area-inset-top))] aspect-2/1 h-full w-full">
         <PieChart
           parties={parties}
@@ -77,7 +79,7 @@ const Seats = () => {
         <SortButton />
         <SwitchViewModeButton />
       </div>
-      {isEditMode && <CountryInfoEditor />}
+      {isEditMode && <PresetInfoEditor />}
       <>
         <ul
           className={`xs:grid-cols-2 grid grid-cols-1 gap-4 transition-all sm:grid-cols-3 sm:gap-4 md:grid-cols-4`}
@@ -125,7 +127,7 @@ const Seats = () => {
 
             setParties([]);
             setSelectedParties([]);
-            setSelectedCountry(null);
+            setSelectedPreset(null);
             setCustomInfo({ name: "", updateDate: "" });
           }}
           className="w-full flex-1 rounded-full border-2 border-transparent bg-white py-1 text-rose-600 transition-colors duration-300 hover:bg-rose-600 hover:text-white dark:bg-zinc-900 dark:text-rose-500"

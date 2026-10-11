@@ -18,20 +18,20 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { countries } from "@/data/countries";
+import { polls } from "@/data/polls";
 import { defaultLocale, translate, supportedLocales } from "@/i18n/i18n";
 import {
-  DefaultCountryValueState,
+  DefaultPresetValueState,
   PartiesState,
   IsEditModeState,
   SortByState,
   AllowTieBreakerState,
   MajorityThresholdState,
   SelectedPartiesState,
-  SelectedCountryState,
+  SelectedPresetState,
   I18nState,
   CustomInfoState,
-  CountryData,
+  PresetData,
   IncludeOptions,
 } from "@/types";
 import { simpleMajority } from "@/utils/getMajority";
@@ -59,9 +59,9 @@ function getBrowserLocale() {
   return null;
 }
 
-const useDefaultCountryValue = create<DefaultCountryValueState>((set) => ({
-  defaultCountryValue: null,
-  setDefaultCountryValue: (by) => set(() => ({ defaultCountryValue: by })),
+const useDefaultPresetValue = create<DefaultPresetValueState>((set) => ({
+  defaultPresetValue: null,
+  setDefaultPresetValue: (by) => set(() => ({ defaultPresetValue: by })),
 }));
 
 const useParties = create<PartiesState>((set) => ({
@@ -111,10 +111,10 @@ const useI18n = create<I18nState>((set, get) => ({
   },
 }));
 
-const useSelectedCountry = create<SelectedCountryState>((set) => ({
-  selectedCountry: countries.find((c) => c.name === "European Union") ?? null,
-  setSelectedCountry: (by) => {
-    set(() => ({ selectedCountry: by }));
+const useSelectedPreset = create<SelectedPresetState>((set) => ({
+  selectedPreset: polls.find((c) => c.name === "European Union") ?? null,
+  setSelectedPreset: (by) => {
+    set(() => ({ selectedPreset: by }));
   },
 }));
 
@@ -124,7 +124,7 @@ const useCustomInfo = create<CustomInfoState>((set) => ({
 }));
 
 // Loads imported or shared data, and keeps the settings it leaves out
-function importCountryData({
+function importPresetData({
   name,
   updateDate,
   parties,
@@ -133,10 +133,10 @@ function importCountryData({
   allowTieBreaker,
   sortBy,
   locale,
-}: CountryData) {
+}: PresetData) {
   useParties.getState().setParties(parties);
   useSelectedParties.getState().setSelectedParties(selectedParties);
-  useSelectedCountry.getState().setSelectedCountry(null);
+  useSelectedPreset.getState().setSelectedPreset(null);
   useCustomInfo.getState().setCustomInfo({ name, updateDate });
 
   if (majorityThreshold) {
@@ -150,16 +150,16 @@ function importCountryData({
 }
 
 // Collects the current data, and leaves out the settings that are not included
-function exportCountryData(include: IncludeOptions): CountryData {
+function exportPresetData(include: IncludeOptions): PresetData {
   const { parties } = useParties.getState();
   const { selectedParties } = useSelectedParties.getState();
-  const { selectedCountry } = useSelectedCountry.getState();
+  const { selectedPreset } = useSelectedPreset.getState();
   const { customInfo } = useCustomInfo.getState();
   const { majorityThreshold } = useMajorityThreshold.getState();
   const { allowTieBreaker } = useAllowTieBreaker.getState();
   const { sortBy } = useSortBy.getState();
   const { locale } = useI18n.getState();
-  const { name, updateDate } = selectedCountry ?? customInfo;
+  const { name, updateDate } = selectedPreset ?? customInfo;
 
   return {
     name,
@@ -176,7 +176,7 @@ function exportCountryData(include: IncludeOptions): CountryData {
 }
 
 export {
-  useDefaultCountryValue,
+  useDefaultPresetValue,
   useParties,
   useSelectedParties,
   useIsEditMode,
@@ -184,8 +184,8 @@ export {
   useAllowTieBreaker,
   useMajorityThreshold,
   useI18n,
-  useSelectedCountry,
+  useSelectedPreset,
   useCustomInfo,
-  importCountryData,
-  exportCountryData,
+  importPresetData,
+  exportPresetData,
 };

@@ -21,57 +21,57 @@
 import {
   useSelectedParties,
   useParties,
-  useSelectedCountry,
+  useSelectedPreset,
   useI18n,
   useCustomInfo,
 } from "@/lib/zustandStore";
-import { countries } from "@/data/countries";
+import { polls } from "@/data/polls";
 import { pastElections } from "@/data/pastElections";
-import { allCountries } from "@/data/allCountries";
+import { allPresets } from "@/data/allPresets";
 import CollapsibleSection from "./CollapsibleSection";
 import { useEffect, useRef, useState } from "react";
-import { Country } from "@/types";
+import { Preset } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
-export default function CountryListDropdown() {
-  const { selectedCountry, setSelectedCountry } = useSelectedCountry();
+export default function PresetListDropdown() {
+  const { selectedPreset, setSelectedPreset } = useSelectedPreset();
   const { setParties } = useParties();
   const { setSelectedParties } = useSelectedParties();
   const { customInfo, setCustomInfo } = useCustomInfo();
   const { i } = useI18n();
-  const [openCountryList, setOpenCountryList] = useState<boolean>(false);
+  const [openPresetList, setOpenPresetList] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const itemRefs = useRef<Record<string, HTMLLIElement | null>>({});
 
   useEffect(() => {
-    if (openCountryList && dropdownRef.current) {
+    if (openPresetList && dropdownRef.current) {
       dropdownRef.current.focus();
     }
-  }, [openCountryList]);
+  }, [openPresetList]);
 
-  function select(country: Country) {
-    setSelectedCountry(country);
-    const findCountry = allCountries.find((c) => c.name === country.name);
-    if (findCountry) {
-      setParties(findCountry.parties);
-      setSelectedParties(findCountry.parties);
+  function select(preset: Preset) {
+    setSelectedPreset(preset);
+    const findPreset = allPresets.find((c) => c.name === preset.name);
+    if (findPreset) {
+      setParties(findPreset.parties);
+      setSelectedParties(findPreset.parties);
     } else {
-      setSelectedCountry(null);
+      setSelectedPreset(null);
       setParties([]);
       setSelectedParties([]);
     }
-    setOpenCountryList(false);
+    setOpenPresetList(false);
   }
 
   useEffect(() => {
     if (
-      openCountryList &&
-      selectedCountry &&
-      itemRefs.current[selectedCountry.name]
+      openPresetList &&
+      selectedPreset &&
+      itemRefs.current[selectedPreset.name]
     ) {
-      const itemRef = itemRefs.current[selectedCountry.name];
+      const itemRef = itemRefs.current[selectedPreset.name];
       if (itemRef) {
         itemRef.scrollIntoView({
           block: "nearest",
@@ -79,37 +79,37 @@ export default function CountryListDropdown() {
         });
       }
     }
-  }, [openCountryList, selectedCountry]);
+  }, [openPresetList, selectedPreset]);
 
   return (
     <div
       tabIndex={0}
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) {
-          setOpenCountryList(false);
+          setOpenPresetList(false);
         }
       }}
     >
       <button
         onClick={() => {
-          setOpenCountryList(!openCountryList);
+          setOpenPresetList(!openPresetList);
         }}
         className={`w-full rounded-2xl border-2 border-zinc-200 p-2 pe-1 transition-colors duration-300 dark:border-zinc-700 ${
-          openCountryList
+          openPresetList
             ? "bg-zinc-200 dark:bg-zinc-700"
             : "bg-white dark:bg-zinc-900"
         }`}
       >
         <div className="flex items-center justify-between gap-1">
-          {selectedCountry ? (
+          {selectedPreset ? (
             <div className="flex flex-col items-start gap-0 text-start">
               <div className="flex gap-1">
-                <span>{selectedCountry.name}</span>
-                <span>{selectedCountry.emoji}</span>
+                <span>{selectedPreset.name}</span>
+                <span>{selectedPreset.emoji}</span>
               </div>
               <p className="text-xs opacity-75">
-                {i("body.sampleDataUpdatedAt")}:{" "}
-                {new Date(selectedCountry.updateDate).toLocaleDateString(
+                {i("body.pollUpdatedAt")}:{" "}
+                {new Date(selectedPreset.updateDate).toLocaleDateString(
                   i("locale"),
                   { timeZone: "UTC" },
                 )}
@@ -130,13 +130,13 @@ export default function CountryListDropdown() {
             </div>
           )}
           <ChevronDownIcon
-            className={`size-5 transition-transform duration-300 ${openCountryList ? "rotate-180" : ""}`}
+            className={`size-5 transition-transform duration-300 ${openPresetList ? "rotate-180" : ""}`}
           />
         </div>
       </button>
       <div className="relative">
         <AnimatePresence>
-          {openCountryList && (
+          {openPresetList && (
             <>
               <motion.div
                 key="modal"
@@ -154,27 +154,27 @@ export default function CountryListDropdown() {
                     <li>
                       <button
                         onClick={() => {
-                          if (selectedCountry) {
-                            setSelectedCountry(null);
+                          if (selectedPreset) {
+                            setSelectedPreset(null);
                             setParties([]);
                             setSelectedParties([]);
                             setCustomInfo({ name: "", updateDate: "" });
                           }
-                          setOpenCountryList(false);
+                          setOpenPresetList(false);
                         }}
                         className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
-                          !selectedCountry
+                          !selectedPreset
                             ? "bg-zinc-200 dark:bg-zinc-700"
                             : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
                         }`}
                       >
                         <div className="flex gap-1">
                           <span>
-                            {(!selectedCountry && customInfo.name) ||
+                            {(!selectedPreset && customInfo.name) ||
                               i("header.custom")}
                           </span>
                         </div>
-                        {!selectedCountry && customInfo.updateDate && (
+                        {!selectedPreset && customInfo.updateDate && (
                           <p className="text-xs opacity-75">
                             {i("body.dataUpdatedAt")}:{" "}
                             {new Date(customInfo.updateDate).toLocaleDateString(
@@ -188,36 +188,36 @@ export default function CountryListDropdown() {
                       </button>
                     </li>
                   </CollapsibleSection>
-                  <CollapsibleSection title={i("header.sampleCountries")}>
-                    {[...countries]
+                  <CollapsibleSection title={i("header.polls")}>
+                    {[...polls]
                       .sort((a, b) => a.name.localeCompare(b.name))
-                      .map((country) => (
+                      .map((preset) => (
                         <li
-                          key={country.name}
-                          value={country.name}
-                          id={country.name}
+                          key={preset.name}
+                          value={preset.name}
+                          id={preset.name}
                           ref={(el) => {
-                            if (el) itemRefs.current[country.name] = el;
+                            if (el) itemRefs.current[preset.name] = el;
                           }}
                         >
                           <button
                             onClick={() => {
-                              select(country);
+                              select(preset);
                             }}
                             className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
-                              selectedCountry === country
+                              selectedPreset === preset
                                 ? "bg-zinc-200 dark:bg-zinc-700"
                                 : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
                             }`}
                           >
                             <div className="flex gap-1">
-                              <span>{country.name}</span>
-                              <span>{country.emoji}</span>
+                              <span>{preset.name}</span>
+                              <span>{preset.emoji}</span>
                             </div>
-                            {/* {selectedCountry === country && ( */}
+                            {/* {selectedPreset === preset && ( */}
                             <p className="text-xs opacity-75">
-                              {i("body.sampleDataUpdatedAt")}:{" "}
-                              {new Date(country.updateDate).toLocaleDateString(
+                              {i("body.pollUpdatedAt")}:{" "}
+                              {new Date(preset.updateDate).toLocaleDateString(
                                 i("locale"),
                                 {
                                   timeZone: "UTC",
@@ -232,33 +232,33 @@ export default function CountryListDropdown() {
                   <CollapsibleSection title={i("header.pastElections")}>
                     {[...pastElections]
                       .sort((a, b) => b.updateDate.localeCompare(a.updateDate))
-                      .map((country) => (
+                      .map((preset) => (
                         <li
-                          key={country.name}
-                          value={country.name}
-                          id={country.name}
+                          key={preset.name}
+                          value={preset.name}
+                          id={preset.name}
                           ref={(el) => {
-                            if (el) itemRefs.current[country.name] = el;
+                            if (el) itemRefs.current[preset.name] = el;
                           }}
                         >
                           <button
                             onClick={() => {
-                              select(country);
+                              select(preset);
                             }}
                             className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
-                              selectedCountry === country
+                              selectedPreset === preset
                                 ? "bg-zinc-200 dark:bg-zinc-700"
                                 : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
                             }`}
                           >
                             <div className="flex gap-1">
-                              <span>{country.name}</span>
-                              <span>{country.emoji}</span>
+                              <span>{preset.name}</span>
+                              <span>{preset.emoji}</span>
                             </div>
-                            {/* {selectedCountry === country && ( */}
+                            {/* {selectedPreset === preset && ( */}
                             <p className="text-xs opacity-75">
                               {i("body.electionDate")}:{" "}
-                              {new Date(country.updateDate).toLocaleDateString(
+                              {new Date(preset.updateDate).toLocaleDateString(
                                 i("locale"),
                                 {
                                   timeZone: "UTC",

@@ -19,13 +19,10 @@
 */
 
 import en from "./en.json" with { type: "json" };
-import fr from "./fr.json" with { type: "json" };
-import de from "./de.json" with { type: "json" };
 import nl from "./nl.json" with { type: "json" };
-import tr from "./tr.json" with { type: "json" };
 
 export const defaultLocale = "en";
-export const locales = { en, fr, de, nl, tr } as const;
+export const locales = { en, nl } as const;
 export const supportedLocales = Object.keys(
   locales,
 ) as (keyof typeof locales)[];

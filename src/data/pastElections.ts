@@ -18,12 +18,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Country } from "@/types";
+import { Preset } from "@/types";
 
 // Official results of past Tweede Kamer elections (newest first in the UI).
 // `name` is "<year> (<cabinet formed afterwards>)", `updateDate` is the election date.
 // Source for seats: parlement.com / CBS. Parliament had 100 seats until 1956, 150 after.
-export const pastElections: Country[] = [
+export const pastElections: Preset[] = [
   {
     name: "2025 (Jetten I)",
     emoji: "🇳🇱",

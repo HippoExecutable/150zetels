@@ -28,8 +28,8 @@ import {
   encodeShareData,
   getShareData,
 } from "@/utils/shareLink";
-import { countries } from "@/data/countries";
-import { CountryData, Party } from "@/types";
+import { polls } from "@/data/polls";
+import { PresetData, Party } from "@/types";
 
 const partyA: Party = {
   id: "a",
@@ -50,7 +50,7 @@ const partyB: Party = {
   position: 3,
 };
 
-const country: CountryData = {
+const preset: PresetData = {
   name: "Ostfriesland 🌊",
   updateDate: "2026-10-10",
   parties: [partyA, partyB],
@@ -58,39 +58,39 @@ const country: CountryData = {
   majorityThreshold: { numerator: 2, denominator: 3 },
   allowTieBreaker: true,
   sortBy: "name",
-  locale: "de",
+  locale: "nl",
 };
 
-const emptyCountry: CountryData = {
+const emptyPreset: PresetData = {
   name: "",
   updateDate: "",
   parties: [],
   selectedParties: [],
 };
 
-test("round-trips countries, including non-ASCII names", async () => {
-  const data = await encodeShareData(country);
+test("round-trips presets, including non-ASCII names", async () => {
+  const data = await encodeShareData(preset);
 
   expect(data).toMatch(/^[A-Za-z0-9_-]+$/);
-  expect(await decodeShareData(data)).toEqual(country);
-  expect(await decodeShareData(await encodeShareData(emptyCountry))).toEqual(
-    emptyCountry,
+  expect(await decodeShareData(data)).toEqual(preset);
+  expect(await decodeShareData(await encodeShareData(emptyPreset))).toEqual(
+    emptyPreset,
   );
 });
 
-test("keeps links for every country reasonably short", async () => {
-  for (const { name, updateDate, parties } of countries) {
-    const sampleCountry = {
+test("keeps links for every preset reasonably short", async () => {
+  for (const { name, updateDate, parties } of polls) {
+    const samplePreset = {
       name,
       updateDate,
       parties,
       selectedParties: parties,
     };
-    const link = await createShareLink(sampleCountry, "https://example.com/");
+    const link = await createShareLink(samplePreset, "https://example.com/");
 
     expect(link.length).toBeLessThan(2000);
     expect(await decodeShareData(getShareData(new URL(link).hash)!)).toEqual(
-      sampleCountry,
+      samplePreset,
     );
   }
 });
@@ -98,8 +98,8 @@ test("keeps links for every country reasonably short", async () => {
 test("puts the data in the hash and drops other query params", async () => {
   const link = new URL(
     await createShareLink(
-      country,
-      "https://example.com/app/?country=Germany&lang=de#old",
+      preset,
+      "https://example.com/app/?preset=Germany&lang=nl#old",
     ),
   );
 
@@ -116,39 +116,39 @@ test("reads the data from a hash", () => {
 });
 
 test("returns null for damaged or invalid data", async () => {
-  const data = await encodeShareData(country);
+  const data = await encodeShareData(preset);
 
   expect(await decodeShareData("")).toBeNull();
   expect(await decodeShareData("not base64!")).toBeNull();
   expect(await decodeShareData(data.slice(0, -4))).toBeNull();
   // Uncompressed JSON is not a valid share link
   expect(
-    await decodeShareData(btoa(JSON.stringify(country.parties))),
+    await decodeShareData(btoa(JSON.stringify(preset.parties))),
   ).toBeNull();
   expect(
     await decodeShareData(
       await encodeShareData({
-        ...country,
+        ...preset,
         parties: [{ ...partyA, seats: "20" }],
-      } as unknown as CountryData),
+      } as unknown as PresetData),
     ),
   ).toBeNull();
 });
 
 test("embed links open the embed view with the same data", async () => {
   const link = new URL(
-    await createEmbedLink(country, "https://example.com/app/?lang=de"),
+    await createEmbedLink(preset, "https://example.com/app/?lang=nl"),
   );
 
   expect(link.origin + link.pathname).toBe("https://example.com/app/");
   expect(link.searchParams.has("embed")).toBe(true);
   expect(link.searchParams.has("lang")).toBe(false);
-  expect(await decodeShareData(getShareData(link.hash)!)).toEqual(country);
+  expect(await decodeShareData(getShareData(link.hash)!)).toEqual(preset);
 });
 
 test("embed code has an iframe and a script that only trusts the app", async () => {
-  const embedLink = await createEmbedLink(country, "https://example.com/");
-  const code = createEmbedCode(embedLink, country);
+  const embedLink = await createEmbedLink(preset, "https://example.com/");
+  const code = createEmbedCode(embedLink, preset);
 
   expect(code).toContain(`<iframe src="${embedLink}"`);
   expect(code).toContain('title="Ostfriesland 🌊 - Parliament Seats"');
@@ -157,7 +157,7 @@ test("embed code has an iframe and a script that only trusts the app", async () 
 });
 
 test("embed code escapes names that would break the HTML", async () => {
-  const sneaky = { ...country, name: `"><script>alert(1)</script>` };
+  const sneaky = { ...preset, name: `"><script>alert(1)</script>` };
   const code = createEmbedCode(
     await createEmbedLink(sneaky, "https://example.com/"),
     sneaky,
@@ -175,7 +175,7 @@ test("embed code starts taller for more parties", async () => {
       id: index.toString(),
     }));
     const code = createEmbedCode("https://example.com/?embed", {
-      ...emptyCountry,
+      ...emptyPreset,
       parties,
     });
     return Number(code.match(/height="(\d+)"/)![1]);

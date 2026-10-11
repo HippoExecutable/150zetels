@@ -18,6 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { pastElections } from "@/data/pastElections";
 import { Country, CountryInfo } from "@/types";
 
 // The name and date line shown above a chart
@@ -28,9 +29,12 @@ export function getCountryTitle(
 ) {
   const { name, updateDate } = selectedCountry ?? customInfo;
   const title = [name, selectedCountry?.emoji].filter(Boolean).join(" ");
-  const dateLabel = selectedCountry
-    ? i("body.sampleDataUpdatedAt")
-    : i("body.dataUpdatedAt");
+  const isPastElection = pastElections.some((c) => c.name === name);
+  const dateLabel = isPastElection
+    ? i("body.electionDate")
+    : selectedCountry
+      ? i("body.sampleDataUpdatedAt")
+      : i("body.dataUpdatedAt");
   const subtitle = updateDate
     ? `${dateLabel}: ${new Date(updateDate).toLocaleDateString(i("locale"), {
         timeZone: "UTC",

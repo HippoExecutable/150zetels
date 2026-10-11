@@ -1,0 +1,135 @@
+diff --git a/src/i18n/de.json b/src/i18n/de.json
+index 025bcbf..dd12e2d 100644
+--- a/src/i18n/de.json
++++ b/src/i18n/de.json
+@@ -8,9 +8,9 @@
+     "auto": "Automatisch"
+   },
+   "header": {
+-    "countries": "Länder",
++    "presets": "Umfragen & Wahlen",
+     "custom": "Benutzerdefiniert",
+-    "sampleCountries": "Beispielländer",
++    "polls": "Umfragen",
+     "pastElections": "Frühere Wahlen",
+     "majorityWithCount": "Mehrheit mit {count} Sitzen",
+     "seatsForMajority": "{count} Sitze für die Mehrheit",
+@@ -31,8 +31,8 @@
+     "edit": "Bearbeiten",
+     "noParties": "Keine Parteien verfügbar",
+     "pasteDataPlaceholder": "Exportierte Daten hier einfügen",
+-    "sampleDataUpdatedAt": "Beispieldaten aktualisiert am",
+-    "countryName": "Land/Region",
++    "pollUpdatedAt": "Umfrage aktualisiert am",
++    "presetName": "Name",
+     "dataUpdatedAt": "Daten aktualisiert am",
+     "electionDate": "Wahldatum"
+   },
+diff --git a/src/i18n/en.json b/src/i18n/en.json
+index b5a54b6..ab4f3cc 100644
+--- a/src/i18n/en.json
++++ b/src/i18n/en.json
+@@ -9,9 +9,9 @@
+   },
+   "seats": "Seats",
+   "header": {
+-    "countries": "Countries",
++    "presets": "Polls & elections",
+     "custom": "Custom",
+-    "sampleCountries": "Sample countries",
++    "polls": "Polls",
+     "pastElections": "Past elections",
+     "seatsForMajority": "{count} seats for majority",
+     "seat": "seat",
+@@ -31,8 +31,8 @@
+     "edit": "Edit",
+     "noParties": "No parties available",
+     "pasteDataPlaceholder": "Paste exported data here",
+-    "sampleDataUpdatedAt": "Sample data updated at",
+-    "countryName": "Country/region",
++    "pollUpdatedAt": "Poll updated at",
++    "presetName": "Name",
+     "dataUpdatedAt": "Data updated at",
+     "electionDate": "Election date"
+   },
+diff --git a/src/i18n/fr.json b/src/i18n/fr.json
+index ac54771..606b96c 100644
+--- a/src/i18n/fr.json
++++ b/src/i18n/fr.json
+@@ -9,9 +9,9 @@
+   },
+   "seats": "Sièges",
+   "header": {
+-    "countries": "Pays",
++    "presets": "Sondages & élections",
+     "custom": "Personnalisé",
+-    "sampleCountries": "Pays exemples",
++    "polls": "Sondages",
+     "pastElections": "Élections passées",
+     "seatsForMajority": "{count} sièges pour la majorité",
+     "seat": "siège",
+@@ -31,8 +31,8 @@
+     "edit": "Modifier",
+     "noParties": "Aucun parti disponible",
+     "pasteDataPlaceholder": "Collez les données exportées ici",
+-    "sampleDataUpdatedAt": "Données d'exemple mises à jour le",
+-    "countryName": "Pays/région",
++    "pollUpdatedAt": "Sondage mis à jour le",
++    "presetName": "Nom",
+     "dataUpdatedAt": "Données mises à jour le",
+     "electionDate": "Date de l'élection"
+   },
+diff --git a/src/i18n/nl.json b/src/i18n/nl.json
+index 85eb64e..71e1740 100644
+--- a/src/i18n/nl.json
++++ b/src/i18n/nl.json
+@@ -8,9 +8,9 @@
+     "auto": "Automatisch"
+   },
+   "header": {
+-    "countries": "Landen",
++    "presets": "Peilingen & verkiezingen",
+     "custom": "Aangepast",
+-    "sampleCountries": "Voorbeeldlanden",
++    "polls": "Peilingen",
+     "pastElections": "Eerdere verkiezingen",
+     "majorityWithCount": "Meerderheid met {count} zetels",
+     "seatsForMajority": "{count} zetels voor de meerderheid",
+@@ -31,8 +31,8 @@
+     "edit": "Bewerken",
+     "noParties": "Geen partijen beschikbaar",
+     "pasteDataPlaceholder": "Plak hier de geëxporteerde gegevens",
+-    "sampleDataUpdatedAt": "Voorbeelddata bijgewerkt op",
+-    "countryName": "Land/regio",
++    "pollUpdatedAt": "Peiling bijgewerkt op",
++    "presetName": "Naam",
+     "dataUpdatedAt": "Data bijgewerkt op",
+     "electionDate": "Verkiezingsdatum"
+   },
+diff --git a/src/i18n/tr.json b/src/i18n/tr.json
+index a2fb591..56898d4 100644
+--- a/src/i18n/tr.json
++++ b/src/i18n/tr.json
+@@ -8,9 +8,9 @@
+     "auto": "Otomatik"
+   },
+   "header": {
+-    "countries": "Ülkeler",
++    "presets": "Anketler ve seçimler",
+     "custom": "Özel",
+-    "sampleCountries": "Örnek ülkeler",
++    "polls": "Anketler",
+     "pastElections": "Geçmiş seçimler",
+     "majorityWithCount": "{count} sandalyelik çoğunluk",
+     "seatsForMajority": "Çoğunluk için {count} sandalye",
+@@ -31,8 +31,8 @@
+     "edit": "Düzenle",
+     "noParties": "Kullanılabilir parti yok",
+     "pasteDataPlaceholder": "Dışa aktarılan verileri buraya yapıştırın",
+-    "sampleDataUpdatedAt": "Örnek veri güncellemesi",
+-    "countryName": "Ülke/bölge",
++    "pollUpdatedAt": "Anket güncellemesi",
++    "presetName": "Ad",
+     "dataUpdatedAt": "Veri güncellemesi",
+     "electionDate": "Seçim tarihi"
+   },

@@ -19,7 +19,7 @@
 */
 
 import { useEffect, useState } from "react";
-import { countries } from "@/data/countries";
+import { allCountries } from "@/data/allCountries";
 import { supportedLocales } from "@/i18n/i18n";
 import {
   useParties,
@@ -49,8 +49,8 @@ export function useUrlData(isEmbed: boolean) {
 
     const loadCountry = () => {
       const country =
-        countries.find((country) => country.name === countryName) ??
-        countries.find((country) => country.name === "European Union");
+        allCountries.find((country) => country.name === countryName) ??
+        allCountries.find((country) => country.name === "European Union");
       if (country) {
         setSelectedCountry(country);
         setParties(country.parties);

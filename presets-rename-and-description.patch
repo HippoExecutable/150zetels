@@ -1,0 +1,2034 @@
+diff --git a/src/App.tsx b/src/App.tsx
+index e6e753b..d546c9d 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -23,19 +23,19 @@ import Body from "@/components/Body";
+ import Embed from "@/components/Embed";
+ import Header from "@/components/Header";
+ import Footer from "@/components/Footer";
+-import LandscapeCountryListBanner from "./components/ui/app/head/LandscapeCountryListBanner";
++import PresetListSidebar from "./components/ui/app/head/PresetListSidebar";
+ import { useUrlData } from "@/lib/useUrlData";
+ 
+ // Other sites show only the chart, in an iframe pointing at ?embed
+ const isEmbed = new URLSearchParams(window.location.search).has("embed");
+ 
+ function App() {
+-  const { sharedCountry, isShareLinkInvalid } = useUrlData(isEmbed);
++  const { sharedPreset, isShareLinkInvalid } = useUrlData(isEmbed);
+ 
+   if (isEmbed) {
+     return (
+       <Embed
+-        sharedCountry={sharedCountry}
++        sharedPreset={sharedPreset}
+         isShareLinkInvalid={isShareLinkInvalid}
+       />
+     );
+@@ -50,7 +50,7 @@ function App() {
+             <Body />
+           </div>
+           <div className="hidden pt-4 lg:block">
+-            <LandscapeCountryListBanner />
++            <PresetListSidebar />
+           </div>
+         </main>
+         <Footer />
+diff --git a/src/components/Body.tsx b/src/components/Body.tsx
+index 2cad263..426b6c9 100644
+--- a/src/components/Body.tsx
++++ b/src/components/Body.tsx
+@@ -25,7 +25,7 @@ import {
+   useParties,
+   useSortBy,
+   useI18n,
+-  useSelectedCountry,
++  useSelectedPreset,
+   useMajorityThreshold,
+   useCustomInfo,
+ } from "@/lib/zustandStore";
+@@ -37,8 +37,9 @@ import {
+   CoalitionBySpectrumButtons,
+   AddNewPartyButton,
+   SeatsGraph,
+-  CountryListDropdown,
+-  CountryInfoEditor,
++  PresetListDropdown,
++  PresetInfoEditor,
++  PresetDescription,
+   JsonShareExportButton,
+   JsonShareImportButton,
+   PieChart,
+@@ -51,15 +52,16 @@ const Seats = () => {
+   const { isEditMode } = useIsEditMode();
+   const { sortBy } = useSortBy();
+   const { i } = useI18n();
+-  const { setSelectedCountry } = useSelectedCountry();
++  const { setSelectedPreset } = useSelectedPreset();
+   const { majorityThreshold } = useMajorityThreshold();
+   const { setCustomInfo } = useCustomInfo();
+ 
+   return (
+     <div>
+       <div className="mt-4 block lg:hidden">
+-        <CountryListDropdown />
++        <PresetListDropdown />
+       </div>
++      <PresetDescription />
+       <div className="relative z-12 mt-4 -mb-[calc(env(safe-area-inset-top))] aspect-2/1 h-full w-full">
+         <PieChart
+           parties={parties}
+@@ -77,7 +79,7 @@ const Seats = () => {
+         <SortButton />
+         <SwitchViewModeButton />
+       </div>
+-      {isEditMode && <CountryInfoEditor />}
++      {isEditMode && <PresetInfoEditor />}
+       <>
+         <ul
+           className={`xs:grid-cols-2 grid grid-cols-1 gap-4 transition-all sm:grid-cols-3 sm:gap-4 md:grid-cols-4`}
+@@ -125,7 +127,7 @@ const Seats = () => {
+ 
+             setParties([]);
+             setSelectedParties([]);
+-            setSelectedCountry(null);
++            setSelectedPreset(null);
+             setCustomInfo({ name: "", updateDate: "" });
+           }}
+           className="w-full flex-1 rounded-full border-2 border-transparent bg-white py-1 text-rose-600 transition-colors duration-300 hover:bg-rose-600 hover:text-white dark:bg-zinc-900 dark:text-rose-500"
+diff --git a/src/components/Embed.tsx b/src/components/Embed.tsx
+index d0d2c8d..8ab7160 100644
+--- a/src/components/Embed.tsx
++++ b/src/components/Embed.tsx
+@@ -30,16 +30,16 @@ import { Logo } from "@/components/icons/Logo";
+ import {
+   useParties,
+   useSelectedParties,
+-  useSelectedCountry,
++  useSelectedPreset,
+   useCustomInfo,
+   useMajorityThreshold,
+   useAllowTieBreaker,
+   useSortBy,
+   useI18n,
+-  exportCountryData,
++  exportPresetData,
+ } from "@/lib/zustandStore";
+-import { CountryData } from "@/types";
+-import { getCountryTitle } from "@/utils/countryTitle";
++import { PresetData } from "@/types";
++import { getPresetTitle } from "@/utils/presetTitle";
+ import { createShareLink, embedHeightMessage } from "@/utils/shareLink";
+ import { sort } from "@/utils/sort";
+ 
+@@ -51,15 +51,15 @@ interface ButtonConfig {
+ }
+ 
+ export default function Embed({
+-  sharedCountry,
++  sharedPreset,
+   isShareLinkInvalid,
+ }: {
+-  sharedCountry: CountryData | null;
++  sharedPreset: PresetData | null;
+   isShareLinkInvalid: boolean;
+ }) {
+   const { parties } = useParties();
+   const { selectedParties, setSelectedParties } = useSelectedParties();
+-  const { selectedCountry } = useSelectedCountry();
++  const { selectedPreset } = useSelectedPreset();
+   const { customInfo } = useCustomInfo();
+   const { majorityThreshold } = useMajorityThreshold();
+   const { allowTieBreaker } = useAllowTieBreaker();
+@@ -67,7 +67,7 @@ export default function Embed({
+   const { i } = useI18n();
+   const [fullVersionLink, setFullVersionLink] = useState<string>();
+   const rootRef = useRef<HTMLDivElement | null>(null);
+-  const { title, subtitle } = getCountryTitle(selectedCountry, customInfo, i);
++  const { title, subtitle } = getPresetTitle(selectedPreset, customInfo, i);
+ 
+   const buttonConfigurations: ButtonConfig[] = [
+     {
+@@ -86,7 +86,7 @@ export default function Embed({
+ 
+   // Goes back to the coalition the embed came with, unless that was everyone,
+   // which Select All already does
+-  const embeddedParties = sharedCountry?.selectedParties;
++  const embeddedParties = sharedPreset?.selectedParties;
+   if (embeddedParties && embeddedParties.length < parties.length) {
+     buttonConfigurations.push({
+       id: "reset",
+@@ -101,7 +101,7 @@ export default function Embed({
+     let isCancelled = false;
+ 
+     createShareLink(
+-      exportCountryData({
++      exportPresetData({
+         selectedParties: true,
+         majorityThreshold: true,
+         sortBy: true,
+@@ -118,7 +118,7 @@ export default function Embed({
+   }, [
+     parties,
+     selectedParties,
+-    selectedCountry,
++    selectedPreset,
+     customInfo,
+     majorityThreshold,
+     allowTieBreaker,
+diff --git a/src/components/ui/app/ExportImagePanel.tsx b/src/components/ui/app/ExportImagePanel.tsx
+index 9081ab9..d40eda3 100644
+--- a/src/components/ui/app/ExportImagePanel.tsx
++++ b/src/components/ui/app/ExportImagePanel.tsx
+@@ -21,7 +21,7 @@
+ import {
+   useParties,
+   useSelectedParties,
+-  useSelectedCountry,
++  useSelectedPreset,
+   useCustomInfo,
+   useMajorityThreshold,
+   useAllowTieBreaker,
+@@ -29,7 +29,7 @@ import {
+   useI18n,
+ } from "@/lib/zustandStore";
+ import { canCopyImage, copyImage } from "@/utils/clipboard";
+-import { getCountryTitle } from "@/utils/countryTitle";
++import { getPresetTitle } from "@/utils/presetTitle";
+ import {
+   ImageContent,
+   ImageFormat,
+@@ -58,7 +58,7 @@ interface FormatConfig {
+ export default function ExportImagePanel() {
+   const { parties } = useParties();
+   const { selectedParties } = useSelectedParties();
+-  const { selectedCountry } = useSelectedCountry();
++  const { selectedPreset } = useSelectedPreset();
+   const { customInfo } = useCustomInfo();
+   const { majorityThreshold } = useMajorityThreshold();
+   const { allowTieBreaker } = useAllowTieBreaker();
+@@ -127,7 +127,7 @@ export default function ExportImagePanel() {
+     i("header.seat"),
+     i("header.seats"),
+   );
+-  const { title, subtitle } = getCountryTitle(selectedCountry, customInfo, i);
++  const { title, subtitle } = getPresetTitle(selectedPreset, customInfo, i);
+   const content: ImageContent = {
+     title,
+     subtitle,
+diff --git a/src/components/ui/app/JsonShareExportButton.tsx b/src/components/ui/app/JsonShareExportButton.tsx
+index 1bf50ad..a9767ec 100644
+--- a/src/components/ui/app/JsonShareExportButton.tsx
++++ b/src/components/ui/app/JsonShareExportButton.tsx
+@@ -18,10 +18,10 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { useI18n, exportCountryData } from "@/lib/zustandStore";
++import { useI18n, exportPresetData } from "@/lib/zustandStore";
+ import { IncludeOptions } from "@/types";
+ import { copyText } from "@/utils/clipboard";
+-import { stringifyCountry } from "@/utils/parseCountry";
++import { stringifyPreset } from "@/utils/parsePreset";
+ import {
+   createEmbedCode,
+   createEmbedLink,
+@@ -106,7 +106,7 @@ export default function JsonShareExportButton() {
+ 
+     if (!shouldExport) return;
+ 
+-    const data = stringifyCountry(exportCountryData(includeOptions));
++    const data = stringifyPreset(exportPresetData(includeOptions));
+     const blob = new Blob([data], { type: "application/json" });
+     const url = URL.createObjectURL(blob);
+     const a = document.createElement("a");
+@@ -148,7 +148,7 @@ export default function JsonShareExportButton() {
+       onClick: () =>
+         handleCopy(
+           "text",
+-          Promise.resolve(stringifyCountry(exportCountryData(includeOptions))),
++          Promise.resolve(stringifyPreset(exportPresetData(includeOptions))),
+         ),
+     },
+     {
+@@ -159,7 +159,7 @@ export default function JsonShareExportButton() {
+         handleCopy(
+           "link",
+           createShareLink(
+-            exportCountryData(includeOptions),
++            exportPresetData(includeOptions),
+             window.location.href,
+           ),
+         ),
+@@ -169,11 +169,11 @@ export default function JsonShareExportButton() {
+       label: i("buttons.exportToEmbed"),
+       icon: <CodeBracketIcon className="size-5 shrink-0" />,
+       onClick: () => {
+-        const country = exportCountryData(includeOptions);
++        const preset = exportPresetData(includeOptions);
+         handleCopy(
+           "embed",
+-          createEmbedLink(country, window.location.href).then((embedLink) =>
+-            createEmbedCode(embedLink, country),
++          createEmbedLink(preset, window.location.href).then((embedLink) =>
++            createEmbedCode(embedLink, preset),
+           ),
+         );
+       },
+diff --git a/src/components/ui/app/JsonShareImportButton.tsx b/src/components/ui/app/JsonShareImportButton.tsx
+index 8824961..057fbde 100644
+--- a/src/components/ui/app/JsonShareImportButton.tsx
++++ b/src/components/ui/app/JsonShareImportButton.tsx
+@@ -18,8 +18,8 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { useI18n, importCountryData } from "@/lib/zustandStore";
+-import { parseCountry } from "@/utils/parseCountry";
++import { useI18n, importPresetData } from "@/lib/zustandStore";
++import { parsePreset } from "@/utils/parsePreset";
+ import {
+   ArrowDownTrayIcon,
+   ChevronDownIcon,
+@@ -45,10 +45,10 @@ export default function JsonShareImportButton() {
+ 
+   // Throws when the data is not JSON, and returns whether it was imported
+   const importParties = (data: string) => {
+-    const parsedCountry = parseCountry(data);
+-    if (!parsedCountry) return false;
++    const parsedPreset = parsePreset(data);
++    if (!parsedPreset) return false;
+ 
+-    importCountryData(parsedCountry);
++    importPresetData(parsedPreset);
+     return true;
+   };
+ 
+diff --git a/src/components/ui/app/head/PresetDescription.tsx b/src/components/ui/app/head/PresetDescription.tsx
+new file mode 100644
+index 0000000..5b78206
+--- /dev/null
++++ b/src/components/ui/app/head/PresetDescription.tsx
+@@ -0,0 +1,43 @@
++/*
++    Parliament (parliament-seats) is a tool for visualizing and calculating
++    the distribution of seats in a parliamentary system.
++
++    Copyright (C) 2025 @disfordave
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU Affero General Public License as published
++    by the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU Affero General Public License for more details.
++
++    You should have received a copy of the GNU Affero General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++import { useSelectedPreset } from "@/lib/zustandStore";
++
++// Plain text; line breaks in the description are kept
++export function PresetDescriptionText({
++  description,
++}: {
++  description?: string;
++}) {
++  if (!description) return null;
++
++  return (
++    <p className="mt-4 rounded-2xl border-2 border-zinc-200 p-3 text-sm whitespace-pre-line dark:border-zinc-700">
++      {description}
++    </p>
++  );
++}
++
++// The `description` of the selected preset (e.g. a poll), shown above the chart
++export default function PresetDescription() {
++  const { selectedPreset } = useSelectedPreset();
++
++  return <PresetDescriptionText description={selectedPreset?.description} />;
++}
+diff --git a/src/components/ui/app/head/CountryInfoEditor.tsx b/src/components/ui/app/head/PresetInfoEditor.tsx
+similarity index 78%
+rename from src/components/ui/app/head/CountryInfoEditor.tsx
+rename to src/components/ui/app/head/PresetInfoEditor.tsx
+index 5e6b690..2b4fb6a 100644
+--- a/src/components/ui/app/head/CountryInfoEditor.tsx
++++ b/src/components/ui/app/head/PresetInfoEditor.tsx
+@@ -18,27 +18,27 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { useCustomInfo, useI18n, useSelectedCountry } from "@/lib/zustandStore";
+-import { CountryInfo } from "@/types";
++import { useCustomInfo, useI18n, useSelectedPreset } from "@/lib/zustandStore";
++import { PresetInfo } from "@/types";
+ 
+-export default function CountryInfoEditor() {
+-  const { selectedCountry, setSelectedCountry } = useSelectedCountry();
++export default function PresetInfoEditor() {
++  const { selectedPreset, setSelectedPreset } = useSelectedPreset();
+   const { customInfo, setCustomInfo } = useCustomInfo();
+   const { i } = useI18n();
+-  const { name, updateDate } = selectedCountry ?? customInfo;
++  const { name, updateDate } = selectedPreset ?? customInfo;
+ 
+-  // Editing a sample country turns it into custom data
+-  const updateInfo = (info: Partial<CountryInfo>) => {
++  // Editing a preset turns it into custom data
++  const updateInfo = (info: Partial<PresetInfo>) => {
+     setCustomInfo({ name, updateDate, ...info });
+-    setSelectedCountry(null);
++    setSelectedPreset(null);
+   };
+ 
+   return (
+     <div className="mb-4 flex flex-wrap gap-4 rounded-2xl border-2 border-zinc-200 bg-white p-2 shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
+       <label className="flex min-w-48 flex-1 flex-col gap-1">
+-        <span className="text-xs opacity-75">{i("body.countryName")}</span>
++        <span className="text-xs opacity-75">{i("body.presetName")}</span>
+         <input
+-          name="countryName"
++          name="presetName"
+           type="text"
+           placeholder={i("header.custom")}
+           className="w-full border-b border-zinc-200 bg-transparent outline-hidden dark:border-zinc-700"
+diff --git a/src/components/ui/app/head/CountryListDropdown.tsx b/src/components/ui/app/head/PresetListDropdown.tsx
+similarity index 71%
+rename from src/components/ui/app/head/CountryListDropdown.tsx
+rename to src/components/ui/app/head/PresetListDropdown.tsx
+index ea5e471..4e5f84b 100644
+--- a/src/components/ui/app/head/CountryListDropdown.tsx
++++ b/src/components/ui/app/head/PresetListDropdown.tsx
+@@ -21,57 +21,57 @@
+ import {
+   useSelectedParties,
+   useParties,
+-  useSelectedCountry,
++  useSelectedPreset,
+   useI18n,
+   useCustomInfo,
+ } from "@/lib/zustandStore";
+-import { countries } from "@/data/countries";
++import { polls } from "@/data/polls";
+ import { pastElections } from "@/data/pastElections";
+-import { allCountries } from "@/data/allCountries";
++import { allPresets } from "@/data/allPresets";
+ import CollapsibleSection from "./CollapsibleSection";
+ import { useEffect, useRef, useState } from "react";
+-import { Country } from "@/types";
++import { Preset } from "@/types";
+ import { AnimatePresence, motion } from "motion/react";
+ import { ChevronDownIcon } from "@heroicons/react/20/solid";
+ 
+-export default function CountryListDropdown() {
+-  const { selectedCountry, setSelectedCountry } = useSelectedCountry();
++export default function PresetListDropdown() {
++  const { selectedPreset, setSelectedPreset } = useSelectedPreset();
+   const { setParties } = useParties();
+   const { setSelectedParties } = useSelectedParties();
+   const { customInfo, setCustomInfo } = useCustomInfo();
+   const { i } = useI18n();
+-  const [openCountryList, setOpenCountryList] = useState<boolean>(false);
++  const [openPresetList, setOpenPresetList] = useState<boolean>(false);
+   const dropdownRef = useRef<HTMLDivElement | null>(null);
+ 
+   const itemRefs = useRef<Record<string, HTMLLIElement | null>>({});
+ 
+   useEffect(() => {
+-    if (openCountryList && dropdownRef.current) {
++    if (openPresetList && dropdownRef.current) {
+       dropdownRef.current.focus();
+     }
+-  }, [openCountryList]);
++  }, [openPresetList]);
+ 
+-  function select(country: Country) {
+-    setSelectedCountry(country);
+-    const findCountry = allCountries.find((c) => c.name === country.name);
+-    if (findCountry) {
+-      setParties(findCountry.parties);
+-      setSelectedParties(findCountry.parties);
++  function select(preset: Preset) {
++    setSelectedPreset(preset);
++    const findPreset = allPresets.find((c) => c.name === preset.name);
++    if (findPreset) {
++      setParties(findPreset.parties);
++      setSelectedParties(findPreset.parties);
+     } else {
+-      setSelectedCountry(null);
++      setSelectedPreset(null);
+       setParties([]);
+       setSelectedParties([]);
+     }
+-    setOpenCountryList(false);
++    setOpenPresetList(false);
+   }
+ 
+   useEffect(() => {
+     if (
+-      openCountryList &&
+-      selectedCountry &&
+-      itemRefs.current[selectedCountry.name]
++      openPresetList &&
++      selectedPreset &&
++      itemRefs.current[selectedPreset.name]
+     ) {
+-      const itemRef = itemRefs.current[selectedCountry.name];
++      const itemRef = itemRefs.current[selectedPreset.name];
+       if (itemRef) {
+         itemRef.scrollIntoView({
+           block: "nearest",
+@@ -79,37 +79,37 @@ export default function CountryListDropdown() {
+         });
+       }
+     }
+-  }, [openCountryList, selectedCountry]);
++  }, [openPresetList, selectedPreset]);
+ 
+   return (
+     <div
+       tabIndex={0}
+       onBlur={(e) => {
+         if (!e.currentTarget.contains(e.relatedTarget)) {
+-          setOpenCountryList(false);
++          setOpenPresetList(false);
+         }
+       }}
+     >
+       <button
+         onClick={() => {
+-          setOpenCountryList(!openCountryList);
++          setOpenPresetList(!openPresetList);
+         }}
+         className={`w-full rounded-2xl border-2 border-zinc-200 p-2 pe-1 transition-colors duration-300 dark:border-zinc-700 ${
+-          openCountryList
++          openPresetList
+             ? "bg-zinc-200 dark:bg-zinc-700"
+             : "bg-white dark:bg-zinc-900"
+         }`}
+       >
+         <div className="flex items-center justify-between gap-1">
+-          {selectedCountry ? (
++          {selectedPreset ? (
+             <div className="flex flex-col items-start gap-0 text-start">
+               <div className="flex gap-1">
+-                <span>{selectedCountry.name}</span>
+-                <span>{selectedCountry.emoji}</span>
++                <span>{selectedPreset.name}</span>
++                <span>{selectedPreset.emoji}</span>
+               </div>
+               <p className="text-xs opacity-75">
+-                {i("body.sampleDataUpdatedAt")}:{" "}
+-                {new Date(selectedCountry.updateDate).toLocaleDateString(
++                {i("body.pollUpdatedAt")}:{" "}
++                {new Date(selectedPreset.updateDate).toLocaleDateString(
+                   i("locale"),
+                   { timeZone: "UTC" },
+                 )}
+@@ -130,13 +130,13 @@ export default function CountryListDropdown() {
+             </div>
+           )}
+           <ChevronDownIcon
+-            className={`size-5 transition-transform duration-300 ${openCountryList ? "rotate-180" : ""}`}
++            className={`size-5 transition-transform duration-300 ${openPresetList ? "rotate-180" : ""}`}
+           />
+         </div>
+       </button>
+       <div className="relative">
+         <AnimatePresence>
+-          {openCountryList && (
++          {openPresetList && (
+             <>
+               <motion.div
+                 key="modal"
+@@ -154,27 +154,27 @@ export default function CountryListDropdown() {
+                     <li>
+                       <button
+                         onClick={() => {
+-                          if (selectedCountry) {
+-                            setSelectedCountry(null);
++                          if (selectedPreset) {
++                            setSelectedPreset(null);
+                             setParties([]);
+                             setSelectedParties([]);
+                             setCustomInfo({ name: "", updateDate: "" });
+                           }
+-                          setOpenCountryList(false);
++                          setOpenPresetList(false);
+                         }}
+                         className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+-                          !selectedCountry
++                          !selectedPreset
+                             ? "bg-zinc-200 dark:bg-zinc-700"
+                             : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                         }`}
+                       >
+                         <div className="flex gap-1">
+                           <span>
+-                            {(!selectedCountry && customInfo.name) ||
++                            {(!selectedPreset && customInfo.name) ||
+                               i("header.custom")}
+                           </span>
+                         </div>
+-                        {!selectedCountry && customInfo.updateDate && (
++                        {!selectedPreset && customInfo.updateDate && (
+                           <p className="text-xs opacity-75">
+                             {i("body.dataUpdatedAt")}:{" "}
+                             {new Date(customInfo.updateDate).toLocaleDateString(
+@@ -188,36 +188,36 @@ export default function CountryListDropdown() {
+                       </button>
+                     </li>
+                   </CollapsibleSection>
+-                  <CollapsibleSection title={i("header.sampleCountries")}>
+-                    {[...countries]
++                  <CollapsibleSection title={i("header.polls")}>
++                    {[...polls]
+                       .sort((a, b) => a.name.localeCompare(b.name))
+-                      .map((country) => (
++                      .map((preset) => (
+                         <li
+-                          key={country.name}
+-                          value={country.name}
+-                          id={country.name}
++                          key={preset.name}
++                          value={preset.name}
++                          id={preset.name}
+                           ref={(el) => {
+-                            if (el) itemRefs.current[country.name] = el;
++                            if (el) itemRefs.current[preset.name] = el;
+                           }}
+                         >
+                           <button
+                             onClick={() => {
+-                              select(country);
++                              select(preset);
+                             }}
+                             className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+-                              selectedCountry === country
++                              selectedPreset === preset
+                                 ? "bg-zinc-200 dark:bg-zinc-700"
+                                 : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                             }`}
+                           >
+                             <div className="flex gap-1">
+-                              <span>{country.name}</span>
+-                              <span>{country.emoji}</span>
++                              <span>{preset.name}</span>
++                              <span>{preset.emoji}</span>
+                             </div>
+-                            {/* {selectedCountry === country && ( */}
++                            {/* {selectedPreset === preset && ( */}
+                             <p className="text-xs opacity-75">
+-                              {i("body.sampleDataUpdatedAt")}:{" "}
+-                              {new Date(country.updateDate).toLocaleDateString(
++                              {i("body.pollUpdatedAt")}:{" "}
++                              {new Date(preset.updateDate).toLocaleDateString(
+                                 i("locale"),
+                                 {
+                                   timeZone: "UTC",
+@@ -232,33 +232,33 @@ export default function CountryListDropdown() {
+                   <CollapsibleSection title={i("header.pastElections")}>
+                     {[...pastElections]
+                       .sort((a, b) => b.updateDate.localeCompare(a.updateDate))
+-                      .map((country) => (
++                      .map((preset) => (
+                         <li
+-                          key={country.name}
+-                          value={country.name}
+-                          id={country.name}
++                          key={preset.name}
++                          value={preset.name}
++                          id={preset.name}
+                           ref={(el) => {
+-                            if (el) itemRefs.current[country.name] = el;
++                            if (el) itemRefs.current[preset.name] = el;
+                           }}
+                         >
+                           <button
+                             onClick={() => {
+-                              select(country);
++                              select(preset);
+                             }}
+                             className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+-                              selectedCountry === country
++                              selectedPreset === preset
+                                 ? "bg-zinc-200 dark:bg-zinc-700"
+                                 : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                             }`}
+                           >
+                             <div className="flex gap-1">
+-                              <span>{country.name}</span>
+-                              <span>{country.emoji}</span>
++                              <span>{preset.name}</span>
++                              <span>{preset.emoji}</span>
+                             </div>
+-                            {/* {selectedCountry === country && ( */}
++                            {/* {selectedPreset === preset && ( */}
+                             <p className="text-xs opacity-75">
+                               {i("body.electionDate")}:{" "}
+-                              {new Date(country.updateDate).toLocaleDateString(
++                              {new Date(preset.updateDate).toLocaleDateString(
+                                 i("locale"),
+                                 {
+                                   timeZone: "UTC",
+diff --git a/src/components/ui/app/head/LandscapeCountryListBanner.tsx b/src/components/ui/app/head/PresetListSidebar.tsx
+similarity index 68%
+rename from src/components/ui/app/head/LandscapeCountryListBanner.tsx
+rename to src/components/ui/app/head/PresetListSidebar.tsx
+index 4882a90..6ceef6c 100644
+--- a/src/components/ui/app/head/LandscapeCountryListBanner.tsx
++++ b/src/components/ui/app/head/PresetListSidebar.tsx
+@@ -18,57 +18,57 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { countries } from "@/data/countries";
++import { polls } from "@/data/polls";
+ import { pastElections } from "@/data/pastElections";
+-import { allCountries } from "@/data/allCountries";
++import { allPresets } from "@/data/allPresets";
+ import {
+   useI18n,
+-  useSelectedCountry,
++  useSelectedPreset,
+   useParties,
+   useSelectedParties,
+   useCustomInfo,
+ } from "@/lib/zustandStore";
+-import { Country } from "@/types";
++import { Preset } from "@/types";
+ import CollapsibleSection from "./CollapsibleSection";
+ 
+-export default function LandscapeCountryListBanner() {
++export default function PresetListSidebar() {
+   const { i } = useI18n();
+-  const { selectedCountry, setSelectedCountry } = useSelectedCountry();
++  const { selectedPreset, setSelectedPreset } = useSelectedPreset();
+   const { setParties } = useParties();
+   const { setSelectedParties } = useSelectedParties();
+   const { customInfo, setCustomInfo } = useCustomInfo();
+ 
+-  function select(country: Country) {
+-    setSelectedCountry(country);
+-    const findCountry = allCountries.find((c) => c.name === country.name);
+-    if (findCountry) {
+-      setParties(findCountry.parties);
+-      setSelectedParties(findCountry.parties);
++  function select(preset: Preset) {
++    setSelectedPreset(preset);
++    const findPreset = allPresets.find((c) => c.name === preset.name);
++    if (findPreset) {
++      setParties(findPreset.parties);
++      setSelectedParties(findPreset.parties);
+     } else {
+-      setSelectedCountry(null);
++      setSelectedPreset(null);
+       setParties([]);
+       setSelectedParties([]);
+     }
+   }
+ 
+-  function renderCountry(country: Country, dateLabelKey: string) {
++  function renderPreset(preset: Preset, dateLabelKey: string) {
+     return (
+-      <li key={country.name} value={country.name} id={country.name}>
++      <li key={preset.name} value={preset.name} id={preset.name}>
+         <button
+-          onClick={() => select(country)}
++          onClick={() => select(preset)}
+           className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+-            selectedCountry === country
++            selectedPreset === preset
+               ? "bg-zinc-200 dark:bg-zinc-700"
+               : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+           }`}
+         >
+           <div className="line-clamp-1 flex gap-1">
+-            <span>{country.name}</span>
+-            <span>{country.emoji}</span>
++            <span>{preset.name}</span>
++            <span>{preset.emoji}</span>
+           </div>
+           <p className="text-xs opacity-75">
+             {i(dateLabelKey)}:{" "}
+-            {new Date(country.updateDate).toLocaleDateString(i("locale"), {
++            {new Date(preset.updateDate).toLocaleDateString(i("locale"), {
+               timeZone: "UTC",
+             })}
+           </p>
+@@ -80,32 +80,31 @@ export default function LandscapeCountryListBanner() {
+   return (
+     <>
+       <div className="sticky top-4 z-100 h-[80vh] w-full overflow-auto rounded-2xl border-2 border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
+-        <h2 className="p-2 text-xl font-semibold">{i("header.countries")}</h2>
++        <h2 className="p-2 text-xl font-semibold">{i("header.presets")}</h2>
+         <ul>
+           <CollapsibleSection title={i("header.custom")}>
+             <li>
+               <button
+                 onClick={() => {
+-                  if (selectedCountry) {
+-                    setSelectedCountry(null);
++                  if (selectedPreset) {
++                    setSelectedPreset(null);
+                     setParties([]);
+                     setSelectedParties([]);
+                     setCustomInfo({ name: "", updateDate: "" });
+                   }
+                 }}
+                 className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+-                  !selectedCountry
++                  !selectedPreset
+                     ? "bg-zinc-200 dark:bg-zinc-700"
+                     : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                 }`}
+               >
+                 <div className="line-clamp-1 flex gap-1">
+                   <span>
+-                    {(!selectedCountry && customInfo.name) ||
+-                      i("header.custom")}
++                    {(!selectedPreset && customInfo.name) || i("header.custom")}
+                   </span>
+                 </div>
+-                {!selectedCountry && customInfo.updateDate && (
++                {!selectedPreset && customInfo.updateDate && (
+                   <p className="text-xs opacity-75">
+                     {i("body.dataUpdatedAt")}:{" "}
+                     {new Date(customInfo.updateDate).toLocaleDateString(
+@@ -117,17 +116,15 @@ export default function LandscapeCountryListBanner() {
+               </button>
+             </li>
+           </CollapsibleSection>
+-          <CollapsibleSection title={i("header.sampleCountries")}>
+-            {[...countries]
++          <CollapsibleSection title={i("header.polls")}>
++            {[...polls]
+               .sort((a, b) => a.name.localeCompare(b.name))
+-              .map((country) =>
+-                renderCountry(country, "body.sampleDataUpdatedAt"),
+-              )}
++              .map((preset) => renderPreset(preset, "body.pollUpdatedAt"))}
+           </CollapsibleSection>
+           <CollapsibleSection title={i("header.pastElections")}>
+             {[...pastElections]
+               .sort((a, b) => b.updateDate.localeCompare(a.updateDate))
+-              .map((country) => renderCountry(country, "body.electionDate"))}
++              .map((preset) => renderPreset(preset, "body.electionDate"))}
+           </CollapsibleSection>
+         </ul>
+       </div>
+diff --git a/src/components/ui/app/index.ts b/src/components/ui/app/index.ts
+index bfeb0df..5cbc6b1 100644
+--- a/src/components/ui/app/index.ts
++++ b/src/components/ui/app/index.ts
+@@ -18,10 +18,11 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-export { default as CountryListDropdown } from "./head/CountryListDropdown";
++export { default as PresetListDropdown } from "./head/PresetListDropdown";
+ export { default as SeatsGraph } from "./head/SeatsGraph";
+ export { default as PieChart } from "./head/PieChart";
+-export { default as CountryInfoEditor } from "./head/CountryInfoEditor";
++export { default as PresetInfoEditor } from "./head/PresetInfoEditor";
++export { default as PresetDescription } from "./head/PresetDescription";
+ 
+ export { default as MajorityThresholdButton } from "./filters/MajorityThresholdButton";
+ export { default as SortButton } from "./filters/SortButton";
+diff --git a/src/data/allCountries.ts b/src/data/allPresets.ts
+similarity index 79%
+rename from src/data/allCountries.ts
+rename to src/data/allPresets.ts
+index 1ba922e..8cb66da 100644
+--- a/src/data/allCountries.ts
++++ b/src/data/allPresets.ts
+@@ -18,9 +18,9 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { Country } from "@/types";
+-import { countries } from "./countries";
++import { Preset } from "@/types";
++import { polls } from "./polls";
+ import { pastElections } from "./pastElections";
+ 
+-// Everything that can be selected by name (sample countries + past elections)
+-export const allCountries: Country[] = [...countries, ...pastElections];
++// Everything that can be selected by name (polls + past elections)
++export const allPresets: Preset[] = [...polls, ...pastElections];
+diff --git a/src/data/pastElections.ts b/src/data/pastElections.ts
+index 0d363d2..d7e1a5b 100644
+--- a/src/data/pastElections.ts
++++ b/src/data/pastElections.ts
+@@ -18,12 +18,12 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { Country } from "@/types";
++import { Preset } from "@/types";
+ 
+ // Official results of past Tweede Kamer elections (newest first in the UI).
+ // `name` is "<year> (<cabinet formed afterwards>)", `updateDate` is the election date.
+ // Source for seats: parlement.com / CBS. Parliament had 100 seats until 1956, 150 after.
+-export const pastElections: Country[] = [
++export const pastElections: Preset[] = [
+   {
+     name: "2025 (Jetten I)",
+     emoji: "🇳🇱",
+diff --git a/src/data/countries.ts b/src/data/polls.ts
+similarity index 99%
+rename from src/data/countries.ts
+rename to src/data/polls.ts
+index 8459570..417c101 100644
+--- a/src/data/countries.ts
++++ b/src/data/polls.ts
+@@ -18,9 +18,9 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { Country } from "@/types";
++import { Preset } from "@/types";
+ 
+-export const countries: Country[] = [
++export const polls: Preset[] = [
+   {
+     name: "European Union",
+     emoji: "🇪🇺",
+diff --git a/src/lib/useUrlData.ts b/src/lib/useUrlData.ts
+index ca476f6..1b9ef01 100644
+--- a/src/lib/useUrlData.ts
++++ b/src/lib/useUrlData.ts
+@@ -19,71 +19,71 @@
+ */
+ 
+ import { useEffect, useState } from "react";
+-import { allCountries } from "@/data/allCountries";
++import { allPresets } from "@/data/allPresets";
+ import { supportedLocales } from "@/i18n/i18n";
+ import {
+   useParties,
+   useSelectedParties,
+-  useSelectedCountry,
++  useSelectedPreset,
+   useI18n,
+-  importCountryData,
++  importPresetData,
+ } from "@/lib/zustandStore";
+-import { CountryData } from "@/types";
++import { PresetData } from "@/types";
+ import { decodeShareData, getShareData } from "@/utils/shareLink";
+ 
+-// Loads the sample country, shared data, and language that the URL asks for,
++// Loads the preset, shared data, and language that the URL asks for,
+ // and returns the shared data and whether a share link could not be read
+ export function useUrlData(isEmbed: boolean) {
+   const { setParties } = useParties();
+   const { setSelectedParties } = useSelectedParties();
+-  const { setSelectedCountry } = useSelectedCountry();
++  const { setSelectedPreset } = useSelectedPreset();
+   const { i, setLocale } = useI18n();
+-  const [sharedCountry, setSharedCountry] = useState<CountryData | null>(null);
++  const [sharedPreset, setSharedPreset] = useState<PresetData | null>(null);
+   const [isShareLinkInvalid, setIsShareLinkInvalid] = useState(false);
+ 
+   useEffect(() => {
+     const queryParams = new URLSearchParams(document.location.search);
+-    const countryName = queryParams.get("country");
++    const presetName = queryParams.get("preset");
+     const lang = queryParams.get("lang");
+     let isCancelled = false;
+ 
+-    const loadCountry = () => {
+-      const country =
+-        allCountries.find((country) => country.name === countryName) ??
+-        allCountries.find((country) => country.name === "European Union");
+-      if (country) {
+-        setSelectedCountry(country);
+-        setParties(country.parties);
+-        setSelectedParties(country.parties);
++    const loadPreset = () => {
++      const preset =
++        allPresets.find((preset) => preset.name === presetName) ??
++        allPresets.find((preset) => preset.name === "European Union");
++      if (preset) {
++        setSelectedPreset(preset);
++        setParties(preset.parties);
++        setSelectedParties(preset.parties);
+       }
+     };
+ 
+-    const loadSharedCountry = async (data: string) => {
+-      const decodedCountry = await decodeShareData(data);
++    const loadSharedPreset = async (data: string) => {
++      const decodedPreset = await decodeShareData(data);
+       if (isCancelled) return;
+ 
+-      setSharedCountry(decodedCountry);
+-      setIsShareLinkInvalid(!decodedCountry);
+-      if (decodedCountry) {
+-        importCountryData(decodedCountry);
++      setSharedPreset(decodedPreset);
++      setIsShareLinkInvalid(!decodedPreset);
++      if (decodedPreset) {
++        importPresetData(decodedPreset);
+       } else if (!isEmbed) {
+         // Embeds show a message instead, since iframes block alerts
+         alert(i("dialogs.invalidShareLink"));
+-        loadCountry();
++        loadPreset();
+       }
+     };
+ 
+     // Pasting a share link into an open tab only changes the hash
+     const handleHashChange = () => {
+       const data = getShareData(document.location.hash);
+-      if (data) loadSharedCountry(data);
++      if (data) loadSharedPreset(data);
+     };
+ 
+     const data = getShareData(document.location.hash);
+     if (data) {
+-      loadSharedCountry(data);
++      loadSharedPreset(data);
+     } else {
+-      loadCountry();
++      loadPreset();
+     }
+ 
+     if (lang && supportedLocales.some((locale) => locale === lang)) {
+@@ -100,9 +100,9 @@ export function useUrlData(isEmbed: boolean) {
+     isEmbed,
+     setLocale,
+     setParties,
+-    setSelectedCountry,
++    setSelectedPreset,
+     setSelectedParties,
+   ]);
+ 
+-  return { sharedCountry, isShareLinkInvalid };
++  return { sharedPreset, isShareLinkInvalid };
+ }
+diff --git a/src/lib/zustandStore.ts b/src/lib/zustandStore.ts
+index 4e2a7a3..632608e 100644
+--- a/src/lib/zustandStore.ts
++++ b/src/lib/zustandStore.ts
+@@ -18,20 +18,20 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { countries } from "@/data/countries";
++import { polls } from "@/data/polls";
+ import { defaultLocale, translate, supportedLocales } from "@/i18n/i18n";
+ import {
+-  DefaultCountryValueState,
++  DefaultPresetValueState,
+   PartiesState,
+   IsEditModeState,
+   SortByState,
+   AllowTieBreakerState,
+   MajorityThresholdState,
+   SelectedPartiesState,
+-  SelectedCountryState,
++  SelectedPresetState,
+   I18nState,
+   CustomInfoState,
+-  CountryData,
++  PresetData,
+   IncludeOptions,
+ } from "@/types";
+ import { simpleMajority } from "@/utils/getMajority";
+@@ -59,9 +59,9 @@ function getBrowserLocale() {
+   return null;
+ }
+ 
+-const useDefaultCountryValue = create<DefaultCountryValueState>((set) => ({
+-  defaultCountryValue: null,
+-  setDefaultCountryValue: (by) => set(() => ({ defaultCountryValue: by })),
++const useDefaultPresetValue = create<DefaultPresetValueState>((set) => ({
++  defaultPresetValue: null,
++  setDefaultPresetValue: (by) => set(() => ({ defaultPresetValue: by })),
+ }));
+ 
+ const useParties = create<PartiesState>((set) => ({
+@@ -111,10 +111,10 @@ const useI18n = create<I18nState>((set, get) => ({
+   },
+ }));
+ 
+-const useSelectedCountry = create<SelectedCountryState>((set) => ({
+-  selectedCountry: countries.find((c) => c.name === "European Union") ?? null,
+-  setSelectedCountry: (by) => {
+-    set(() => ({ selectedCountry: by }));
++const useSelectedPreset = create<SelectedPresetState>((set) => ({
++  selectedPreset: polls.find((c) => c.name === "European Union") ?? null,
++  setSelectedPreset: (by) => {
++    set(() => ({ selectedPreset: by }));
+   },
+ }));
+ 
+@@ -124,7 +124,7 @@ const useCustomInfo = create<CustomInfoState>((set) => ({
+ }));
+ 
+ // Loads imported or shared data, and keeps the settings it leaves out
+-function importCountryData({
++function importPresetData({
+   name,
+   updateDate,
+   parties,
+@@ -133,10 +133,10 @@ function importCountryData({
+   allowTieBreaker,
+   sortBy,
+   locale,
+-}: CountryData) {
++}: PresetData) {
+   useParties.getState().setParties(parties);
+   useSelectedParties.getState().setSelectedParties(selectedParties);
+-  useSelectedCountry.getState().setSelectedCountry(null);
++  useSelectedPreset.getState().setSelectedPreset(null);
+   useCustomInfo.getState().setCustomInfo({ name, updateDate });
+ 
+   if (majorityThreshold) {
+@@ -150,16 +150,16 @@ function importCountryData({
+ }
+ 
+ // Collects the current data, and leaves out the settings that are not included
+-function exportCountryData(include: IncludeOptions): CountryData {
++function exportPresetData(include: IncludeOptions): PresetData {
+   const { parties } = useParties.getState();
+   const { selectedParties } = useSelectedParties.getState();
+-  const { selectedCountry } = useSelectedCountry.getState();
++  const { selectedPreset } = useSelectedPreset.getState();
+   const { customInfo } = useCustomInfo.getState();
+   const { majorityThreshold } = useMajorityThreshold.getState();
+   const { allowTieBreaker } = useAllowTieBreaker.getState();
+   const { sortBy } = useSortBy.getState();
+   const { locale } = useI18n.getState();
+-  const { name, updateDate } = selectedCountry ?? customInfo;
++  const { name, updateDate } = selectedPreset ?? customInfo;
+ 
+   return {
+     name,
+@@ -176,7 +176,7 @@ function exportCountryData(include: IncludeOptions): CountryData {
+ }
+ 
+ export {
+-  useDefaultCountryValue,
++  useDefaultPresetValue,
+   useParties,
+   useSelectedParties,
+   useIsEditMode,
+@@ -184,8 +184,8 @@ export {
+   useAllowTieBreaker,
+   useMajorityThreshold,
+   useI18n,
+-  useSelectedCountry,
++  useSelectedPreset,
+   useCustomInfo,
+-  importCountryData,
+-  exportCountryData,
++  importPresetData,
++  exportPresetData,
+ };
+diff --git a/src/tests/PresetDescription.test.tsx b/src/tests/PresetDescription.test.tsx
+new file mode 100644
+index 0000000..59f3acb
+--- /dev/null
++++ b/src/tests/PresetDescription.test.tsx
+@@ -0,0 +1,38 @@
++/*
++    Parliament (parliament-seats) is a tool for visualizing and calculating
++    the distribution of seats in a parliamentary system.
++
++    Copyright (C) 2025 @disfordave
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU Affero General Public License as published
++    by the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU Affero General Public License for more details.
++
++    You should have received a copy of the GNU Affero General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++import { expect, test } from "vitest";
++import { renderToStaticMarkup } from "react-dom/server";
++import { PresetDescriptionText } from "@/components/ui/app/head/PresetDescription";
++
++test("renders nothing without a description", () => {
++  expect(renderToStaticMarkup(<PresetDescriptionText />)).toBe("");
++  expect(renderToStaticMarkup(<PresetDescriptionText description="" />)).toBe(
++    "",
++  );
++});
++
++test("renders the description as text, keeping line breaks", () => {
++  const html = renderToStaticMarkup(
++    <PresetDescriptionText description={"Line one\n<b>Line two</b>"} />,
++  );
++  expect(html).toContain("whitespace-pre-line");
++  expect(html).toContain("Line one\n&lt;b&gt;Line two&lt;/b&gt;");
++});
+diff --git a/src/tests/parseCountry.test.ts b/src/tests/parseCountry.test.ts
+deleted file mode 100644
+index 9da6509..0000000
+--- a/src/tests/parseCountry.test.ts
++++ /dev/null
+@@ -1,221 +0,0 @@
+-/*
+-    Parliament (parliament-seats) is a tool for visualizing and calculating
+-    the distribution of seats in a parliamentary system.
+-
+-    Copyright (C) 2025 @disfordave
+-
+-    This program is free software: you can redistribute it and/or modify
+-    it under the terms of the GNU Affero General Public License as published
+-    by the Free Software Foundation, either version 3 of the License, or
+-    (at your option) any later version.
+-
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU Affero General Public License for more details.
+-
+-    You should have received a copy of the GNU Affero General Public License
+-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-*/
+-
+-import { expect, test } from "vitest";
+-import { parseCountry, stringifyCountry } from "@/utils/parseCountry";
+-import { CountryData, Party } from "@/types";
+-
+-const partyA: Party = {
+-  id: "a",
+-  name: "Alpha Party",
+-  shortName: "Alpha",
+-  seats: 20,
+-  colour: "#ff0000",
+-  position: -2,
+-  isIndependent: false,
+-};
+-
+-const partyB: Party = {
+-  id: "b",
+-  name: "Beta Party",
+-  shortName: "Beta",
+-  seats: 15,
+-  colour: "#0000ff",
+-  position: 3,
+-};
+-
+-const country: CountryData = {
+-  name: "Alphaland",
+-  updateDate: "2026-10-10",
+-  parties: [partyA, partyB],
+-  selectedParties: [partyB],
+-};
+-
+-const emptyCountry: CountryData = {
+-  name: "",
+-  updateDate: "",
+-  parties: [],
+-  selectedParties: [],
+-};
+-
+-test("round-trips exported countries", () => {
+-  expect(parseCountry(stringifyCountry(country))).toEqual(country);
+-  expect(
+-    parseCountry(stringifyCountry({ ...country, selectedParties: [] })),
+-  ).toEqual({ ...country, selectedParties: [] });
+-  expect(parseCountry(stringifyCountry(emptyCountry))).toEqual(emptyCountry);
+-});
+-
+-test("exports the selected parties as ids", () => {
+-  expect(JSON.parse(stringifyCountry(country)).selectedPartyIds).toEqual(["b"]);
+-});
+-
+-test("leaves the ids out when every party is selected", () => {
+-  const allSelected = { ...country, selectedParties: [partyB, partyA] };
+-
+-  expect(JSON.parse(stringifyCountry(allSelected))).not.toHaveProperty(
+-    "selectedPartyIds",
+-  );
+-  expect(parseCountry(stringifyCountry(allSelected))?.selectedParties).toEqual([
+-    partyA,
+-    partyB,
+-  ]);
+-});
+-
+-test("ignores selected ids that match no party", () => {
+-  expect(
+-    parseCountry(
+-      JSON.stringify({
+-        parties: [partyA, partyB],
+-        selectedPartyIds: ["b", "missing"],
+-      }),
+-    )?.selectedParties,
+-  ).toEqual([partyB]);
+-});
+-
+-test("round-trips the majority threshold and tie breaker", () => {
+-  const twoThirds = {
+-    ...country,
+-    majorityThreshold: { numerator: 2, denominator: 3 },
+-    allowTieBreaker: false,
+-  };
+-  const customHalf = {
+-    ...country,
+-    majorityThreshold: { numerator: 5000, denominator: 10000 },
+-    allowTieBreaker: true,
+-  };
+-
+-  expect(parseCountry(stringifyCountry(twoThirds))).toEqual(twoThirds);
+-  expect(parseCountry(stringifyCountry(customHalf))).toEqual(customHalf);
+-});
+-
+-test("leaves the majority settings out when they are not included", () => {
+-  const exported = JSON.parse(stringifyCountry(country));
+-
+-  expect(exported).not.toHaveProperty("majorityThreshold");
+-  expect(exported).not.toHaveProperty("allowTieBreaker");
+-  expect(
+-    parseCountry(stringifyCountry(country))?.majorityThreshold,
+-  ).toBeUndefined();
+-});
+-
+-test("returns null for invalid majority settings", () => {
+-  const withThreshold = (numerator: unknown, denominator: unknown) =>
+-    JSON.stringify({
+-      ...country,
+-      majorityThreshold: { numerator, denominator },
+-    });
+-
+-  expect(parseCountry(withThreshold(0, 2))).toBeNull();
+-  expect(parseCountry(withThreshold(3, 2))).toBeNull();
+-  expect(parseCountry(withThreshold(1.5, 2))).toBeNull();
+-  expect(parseCountry(withThreshold(1, 20000))).toBeNull();
+-  expect(parseCountry(withThreshold("1", "2"))).toBeNull();
+-  expect(
+-    parseCountry(JSON.stringify({ ...country, majorityThreshold: 0.5 })),
+-  ).toBeNull();
+-  expect(
+-    parseCountry(JSON.stringify({ ...country, allowTieBreaker: "yes" })),
+-  ).toBeNull();
+-});
+-
+-test("round-trips the sort order and language", () => {
+-  const withSettings: CountryData = {
+-    ...country,
+-    sortBy: "position",
+-    locale: "nl",
+-  };
+-
+-  expect(parseCountry(stringifyCountry(withSettings))).toEqual(withSettings);
+-  expect(JSON.parse(stringifyCountry(country))).not.toHaveProperty("sortBy");
+-  expect(JSON.parse(stringifyCountry(country))).not.toHaveProperty("locale");
+-});
+-
+-test("returns null for unknown sort orders and languages", () => {
+-  expect(
+-    parseCountry(JSON.stringify({ ...country, sortBy: "colour" })),
+-  ).toBeNull();
+-  expect(parseCountry(JSON.stringify({ ...country, locale: "xx" }))).toBeNull();
+-  expect(parseCountry(JSON.stringify({ ...country, locale: 1 }))).toBeNull();
+-});
+-
+-test("accepts older exports that are only a list of parties", () => {
+-  expect(parseCountry(JSON.stringify([partyA, partyB], null, 2))).toEqual({
+-    name: "",
+-    updateDate: "",
+-    parties: [partyA, partyB],
+-    selectedParties: [partyA, partyB],
+-  });
+-  expect(parseCountry("[]")).toEqual(emptyCountry);
+-});
+-
+-test("fills in a missing name, update date, and selection", () => {
+-  expect(parseCountry(JSON.stringify({ parties: [partyA] }))).toEqual({
+-    name: "",
+-    updateDate: "",
+-    parties: [partyA],
+-    selectedParties: [partyA],
+-  });
+-});
+-
+-test("accepts compact and pasted whitespace", () => {
+-  expect(parseCountry(stringifyCountry(country, 0))).toEqual(country);
+-  expect(parseCountry(`\n  ${stringifyCountry(country)}  \n`)).toEqual(country);
+-});
+-
+-test("returns null for JSON that is not a country or a list of parties", () => {
+-  expect(parseCountry("{}")).toBeNull();
+-  expect(parseCountry("null")).toBeNull();
+-  expect(parseCountry('"Alpha Party"')).toBeNull();
+-  expect(parseCountry(JSON.stringify(partyA))).toBeNull();
+-  expect(parseCountry(JSON.stringify([partyA, null]))).toBeNull();
+-  expect(parseCountry(JSON.stringify([{ ...partyA, seats: "20" }]))).toBeNull();
+-  expect(
+-    parseCountry(JSON.stringify([{ ...partyA, isIndependent: "no" }])),
+-  ).toBeNull();
+-  expect(
+-    parseCountry(JSON.stringify({ ...country, parties: [partyA, null] })),
+-  ).toBeNull();
+-  expect(parseCountry(JSON.stringify({ ...country, name: 1 }))).toBeNull();
+-  expect(
+-    parseCountry(JSON.stringify({ parties: [partyA], selectedPartyIds: "a" })),
+-  ).toBeNull();
+-  expect(
+-    parseCountry(JSON.stringify({ parties: [partyA], selectedPartyIds: [1] })),
+-  ).toBeNull();
+-});
+-
+-test("returns null for update dates that are not YYYY-MM-DD", () => {
+-  expect(
+-    parseCountry(JSON.stringify({ ...country, updateDate: "10/10/2026" })),
+-  ).toBeNull();
+-  expect(
+-    parseCountry(JSON.stringify({ ...country, updateDate: "yesterday" })),
+-  ).toBeNull();
+-  expect(
+-    parseCountry(JSON.stringify({ ...country, updateDate: 20261010 })),
+-  ).toBeNull();
+-});
+-
+-test("throws for text that is not JSON", () => {
+-  expect(() => parseCountry("")).toThrow();
+-  expect(() => parseCountry("[{")).toThrow();
+-  expect(() => parseCountry("Alpha Party")).toThrow();
+-});
+diff --git a/src/tests/parsePreset.test.ts b/src/tests/parsePreset.test.ts
+new file mode 100644
+index 0000000..9c77965
+--- /dev/null
++++ b/src/tests/parsePreset.test.ts
+@@ -0,0 +1,221 @@
++/*
++    Parliament (parliament-seats) is a tool for visualizing and calculating
++    the distribution of seats in a parliamentary system.
++
++    Copyright (C) 2025 @disfordave
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU Affero General Public License as published
++    by the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU Affero General Public License for more details.
++
++    You should have received a copy of the GNU Affero General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++import { expect, test } from "vitest";
++import { parsePreset, stringifyPreset } from "@/utils/parsePreset";
++import { PresetData, Party } from "@/types";
++
++const partyA: Party = {
++  id: "a",
++  name: "Alpha Party",
++  shortName: "Alpha",
++  seats: 20,
++  colour: "#ff0000",
++  position: -2,
++  isIndependent: false,
++};
++
++const partyB: Party = {
++  id: "b",
++  name: "Beta Party",
++  shortName: "Beta",
++  seats: 15,
++  colour: "#0000ff",
++  position: 3,
++};
++
++const preset: PresetData = {
++  name: "Alphaland",
++  updateDate: "2026-10-10",
++  parties: [partyA, partyB],
++  selectedParties: [partyB],
++};
++
++const emptyPreset: PresetData = {
++  name: "",
++  updateDate: "",
++  parties: [],
++  selectedParties: [],
++};
++
++test("round-trips exported presets", () => {
++  expect(parsePreset(stringifyPreset(preset))).toEqual(preset);
++  expect(
++    parsePreset(stringifyPreset({ ...preset, selectedParties: [] })),
++  ).toEqual({ ...preset, selectedParties: [] });
++  expect(parsePreset(stringifyPreset(emptyPreset))).toEqual(emptyPreset);
++});
++
++test("exports the selected parties as ids", () => {
++  expect(JSON.parse(stringifyPreset(preset)).selectedPartyIds).toEqual(["b"]);
++});
++
++test("leaves the ids out when every party is selected", () => {
++  const allSelected = { ...preset, selectedParties: [partyB, partyA] };
++
++  expect(JSON.parse(stringifyPreset(allSelected))).not.toHaveProperty(
++    "selectedPartyIds",
++  );
++  expect(parsePreset(stringifyPreset(allSelected))?.selectedParties).toEqual([
++    partyA,
++    partyB,
++  ]);
++});
++
++test("ignores selected ids that match no party", () => {
++  expect(
++    parsePreset(
++      JSON.stringify({
++        parties: [partyA, partyB],
++        selectedPartyIds: ["b", "missing"],
++      }),
++    )?.selectedParties,
++  ).toEqual([partyB]);
++});
++
++test("round-trips the majority threshold and tie breaker", () => {
++  const twoThirds = {
++    ...preset,
++    majorityThreshold: { numerator: 2, denominator: 3 },
++    allowTieBreaker: false,
++  };
++  const customHalf = {
++    ...preset,
++    majorityThreshold: { numerator: 5000, denominator: 10000 },
++    allowTieBreaker: true,
++  };
++
++  expect(parsePreset(stringifyPreset(twoThirds))).toEqual(twoThirds);
++  expect(parsePreset(stringifyPreset(customHalf))).toEqual(customHalf);
++});
++
++test("leaves the majority settings out when they are not included", () => {
++  const exported = JSON.parse(stringifyPreset(preset));
++
++  expect(exported).not.toHaveProperty("majorityThreshold");
++  expect(exported).not.toHaveProperty("allowTieBreaker");
++  expect(
++    parsePreset(stringifyPreset(preset))?.majorityThreshold,
++  ).toBeUndefined();
++});
++
++test("returns null for invalid majority settings", () => {
++  const withThreshold = (numerator: unknown, denominator: unknown) =>
++    JSON.stringify({
++      ...preset,
++      majorityThreshold: { numerator, denominator },
++    });
++
++  expect(parsePreset(withThreshold(0, 2))).toBeNull();
++  expect(parsePreset(withThreshold(3, 2))).toBeNull();
++  expect(parsePreset(withThreshold(1.5, 2))).toBeNull();
++  expect(parsePreset(withThreshold(1, 20000))).toBeNull();
++  expect(parsePreset(withThreshold("1", "2"))).toBeNull();
++  expect(
++    parsePreset(JSON.stringify({ ...preset, majorityThreshold: 0.5 })),
++  ).toBeNull();
++  expect(
++    parsePreset(JSON.stringify({ ...preset, allowTieBreaker: "yes" })),
++  ).toBeNull();
++});
++
++test("round-trips the sort order and language", () => {
++  const withSettings: PresetData = {
++    ...preset,
++    sortBy: "position",
++    locale: "nl",
++  };
++
++  expect(parsePreset(stringifyPreset(withSettings))).toEqual(withSettings);
++  expect(JSON.parse(stringifyPreset(preset))).not.toHaveProperty("sortBy");
++  expect(JSON.parse(stringifyPreset(preset))).not.toHaveProperty("locale");
++});
++
++test("returns null for unknown sort orders and languages", () => {
++  expect(
++    parsePreset(JSON.stringify({ ...preset, sortBy: "colour" })),
++  ).toBeNull();
++  expect(parsePreset(JSON.stringify({ ...preset, locale: "xx" }))).toBeNull();
++  expect(parsePreset(JSON.stringify({ ...preset, locale: 1 }))).toBeNull();
++});
++
++test("accepts older exports that are only a list of parties", () => {
++  expect(parsePreset(JSON.stringify([partyA, partyB], null, 2))).toEqual({
++    name: "",
++    updateDate: "",
++    parties: [partyA, partyB],
++    selectedParties: [partyA, partyB],
++  });
++  expect(parsePreset("[]")).toEqual(emptyPreset);
++});
++
++test("fills in a missing name, update date, and selection", () => {
++  expect(parsePreset(JSON.stringify({ parties: [partyA] }))).toEqual({
++    name: "",
++    updateDate: "",
++    parties: [partyA],
++    selectedParties: [partyA],
++  });
++});
++
++test("accepts compact and pasted whitespace", () => {
++  expect(parsePreset(stringifyPreset(preset, 0))).toEqual(preset);
++  expect(parsePreset(`\n  ${stringifyPreset(preset)}  \n`)).toEqual(preset);
++});
++
++test("returns null for JSON that is not a preset or a list of parties", () => {
++  expect(parsePreset("{}")).toBeNull();
++  expect(parsePreset("null")).toBeNull();
++  expect(parsePreset('"Alpha Party"')).toBeNull();
++  expect(parsePreset(JSON.stringify(partyA))).toBeNull();
++  expect(parsePreset(JSON.stringify([partyA, null]))).toBeNull();
++  expect(parsePreset(JSON.stringify([{ ...partyA, seats: "20" }]))).toBeNull();
++  expect(
++    parsePreset(JSON.stringify([{ ...partyA, isIndependent: "no" }])),
++  ).toBeNull();
++  expect(
++    parsePreset(JSON.stringify({ ...preset, parties: [partyA, null] })),
++  ).toBeNull();
++  expect(parsePreset(JSON.stringify({ ...preset, name: 1 }))).toBeNull();
++  expect(
++    parsePreset(JSON.stringify({ parties: [partyA], selectedPartyIds: "a" })),
++  ).toBeNull();
++  expect(
++    parsePreset(JSON.stringify({ parties: [partyA], selectedPartyIds: [1] })),
++  ).toBeNull();
++});
++
++test("returns null for update dates that are not YYYY-MM-DD", () => {
++  expect(
++    parsePreset(JSON.stringify({ ...preset, updateDate: "10/10/2026" })),
++  ).toBeNull();
++  expect(
++    parsePreset(JSON.stringify({ ...preset, updateDate: "yesterday" })),
++  ).toBeNull();
++  expect(
++    parsePreset(JSON.stringify({ ...preset, updateDate: 20261010 })),
++  ).toBeNull();
++});
++
++test("throws for text that is not JSON", () => {
++  expect(() => parsePreset("")).toThrow();
++  expect(() => parsePreset("[{")).toThrow();
++  expect(() => parsePreset("Alpha Party")).toThrow();
++});
+diff --git a/src/tests/shareLink.test.ts b/src/tests/shareLink.test.ts
+index 0311472..2800631 100644
+--- a/src/tests/shareLink.test.ts
++++ b/src/tests/shareLink.test.ts
+@@ -28,8 +28,8 @@ import {
+   encodeShareData,
+   getShareData,
+ } from "@/utils/shareLink";
+-import { countries } from "@/data/countries";
+-import { CountryData, Party } from "@/types";
++import { polls } from "@/data/polls";
++import { PresetData, Party } from "@/types";
+ 
+ const partyA: Party = {
+   id: "a",
+@@ -50,7 +50,7 @@ const partyB: Party = {
+   position: 3,
+ };
+ 
+-const country: CountryData = {
++const preset: PresetData = {
+   name: "Ostfriesland 🌊",
+   updateDate: "2026-10-10",
+   parties: [partyA, partyB],
+@@ -61,36 +61,36 @@ const country: CountryData = {
+   locale: "de",
+ };
+ 
+-const emptyCountry: CountryData = {
++const emptyPreset: PresetData = {
+   name: "",
+   updateDate: "",
+   parties: [],
+   selectedParties: [],
+ };
+ 
+-test("round-trips countries, including non-ASCII names", async () => {
+-  const data = await encodeShareData(country);
++test("round-trips presets, including non-ASCII names", async () => {
++  const data = await encodeShareData(preset);
+ 
+   expect(data).toMatch(/^[A-Za-z0-9_-]+$/);
+-  expect(await decodeShareData(data)).toEqual(country);
+-  expect(await decodeShareData(await encodeShareData(emptyCountry))).toEqual(
+-    emptyCountry,
++  expect(await decodeShareData(data)).toEqual(preset);
++  expect(await decodeShareData(await encodeShareData(emptyPreset))).toEqual(
++    emptyPreset,
+   );
+ });
+ 
+-test("keeps links for every country reasonably short", async () => {
+-  for (const { name, updateDate, parties } of countries) {
+-    const sampleCountry = {
++test("keeps links for every preset reasonably short", async () => {
++  for (const { name, updateDate, parties } of polls) {
++    const samplePreset = {
+       name,
+       updateDate,
+       parties,
+       selectedParties: parties,
+     };
+-    const link = await createShareLink(sampleCountry, "https://example.com/");
++    const link = await createShareLink(samplePreset, "https://example.com/");
+ 
+     expect(link.length).toBeLessThan(2000);
+     expect(await decodeShareData(getShareData(new URL(link).hash)!)).toEqual(
+-      sampleCountry,
++      samplePreset,
+     );
+   }
+ });
+@@ -98,8 +98,8 @@ test("keeps links for every country reasonably short", async () => {
+ test("puts the data in the hash and drops other query params", async () => {
+   const link = new URL(
+     await createShareLink(
+-      country,
+-      "https://example.com/app/?country=Germany&lang=de#old",
++      preset,
++      "https://example.com/app/?preset=Germany&lang=de#old",
+     ),
+   );
+ 
+@@ -116,39 +116,39 @@ test("reads the data from a hash", () => {
+ });
+ 
+ test("returns null for damaged or invalid data", async () => {
+-  const data = await encodeShareData(country);
++  const data = await encodeShareData(preset);
+ 
+   expect(await decodeShareData("")).toBeNull();
+   expect(await decodeShareData("not base64!")).toBeNull();
+   expect(await decodeShareData(data.slice(0, -4))).toBeNull();
+   // Uncompressed JSON is not a valid share link
+   expect(
+-    await decodeShareData(btoa(JSON.stringify(country.parties))),
++    await decodeShareData(btoa(JSON.stringify(preset.parties))),
+   ).toBeNull();
+   expect(
+     await decodeShareData(
+       await encodeShareData({
+-        ...country,
++        ...preset,
+         parties: [{ ...partyA, seats: "20" }],
+-      } as unknown as CountryData),
++      } as unknown as PresetData),
+     ),
+   ).toBeNull();
+ });
+ 
+ test("embed links open the embed view with the same data", async () => {
+   const link = new URL(
+-    await createEmbedLink(country, "https://example.com/app/?lang=de"),
++    await createEmbedLink(preset, "https://example.com/app/?lang=de"),
+   );
+ 
+   expect(link.origin + link.pathname).toBe("https://example.com/app/");
+   expect(link.searchParams.has("embed")).toBe(true);
+   expect(link.searchParams.has("lang")).toBe(false);
+-  expect(await decodeShareData(getShareData(link.hash)!)).toEqual(country);
++  expect(await decodeShareData(getShareData(link.hash)!)).toEqual(preset);
+ });
+ 
+ test("embed code has an iframe and a script that only trusts the app", async () => {
+-  const embedLink = await createEmbedLink(country, "https://example.com/");
+-  const code = createEmbedCode(embedLink, country);
++  const embedLink = await createEmbedLink(preset, "https://example.com/");
++  const code = createEmbedCode(embedLink, preset);
+ 
+   expect(code).toContain(`<iframe src="${embedLink}"`);
+   expect(code).toContain('title="Ostfriesland 🌊 - Parliament Seats"');
+@@ -157,7 +157,7 @@ test("embed code has an iframe and a script that only trusts the app", async ()
+ });
+ 
+ test("embed code escapes names that would break the HTML", async () => {
+-  const sneaky = { ...country, name: `"><script>alert(1)</script>` };
++  const sneaky = { ...preset, name: `"><script>alert(1)</script>` };
+   const code = createEmbedCode(
+     await createEmbedLink(sneaky, "https://example.com/"),
+     sneaky,
+@@ -175,7 +175,7 @@ test("embed code starts taller for more parties", async () => {
+       id: index.toString(),
+     }));
+     const code = createEmbedCode("https://example.com/?embed", {
+-      ...emptyCountry,
++      ...emptyPreset,
+       parties,
+     });
+     return Number(code.match(/height="(\d+)"/)![1]);
+diff --git a/src/types/index.d.ts b/src/types/index.d.ts
+index e39bceb..d5a7ec8 100644
+--- a/src/types/index.d.ts
++++ b/src/types/index.d.ts
+@@ -20,5 +20,5 @@
+ 
+ export * from "./party";
+ export * from "./zustand";
+-export * from "./countries";
++export * from "./presets";
+ export * from "./majority";
+diff --git a/src/types/countries.ts b/src/types/presets.ts
+similarity index 85%
+rename from src/types/countries.ts
+rename to src/types/presets.ts
+index 18ea177..1ed4fdf 100644
+--- a/src/types/countries.ts
++++ b/src/types/presets.ts
+@@ -22,16 +22,19 @@ import { MajorityThreshold } from "./majority";
+ import { Party } from "./party";
+ import { SortByState } from "./zustand";
+ 
+-export interface Country {
++export interface Preset {
+   name: string;
+   emoji?: string;
+   parties: Party[];
+   updateDate: string;
++  // Shown above the chart, e.g. the poll's source and sample size.
++  // Line breaks are kept.
++  description?: string;
+ }
+ 
+-export type CountryInfo = Pick<Country, "name" | "updateDate">;
++export type PresetInfo = Pick<Preset, "name" | "updateDate">;
+ 
+-export interface CountryData extends CountryInfo {
++export interface PresetData extends PresetInfo {
+   parties: Party[];
+   selectedParties: Party[];
+   // Left out when the importer should keep their own settings
+diff --git a/src/types/zustand.ts b/src/types/zustand.ts
+index 4ef72bc..2f2b3ba 100644
+--- a/src/types/zustand.ts
++++ b/src/types/zustand.ts
+@@ -18,11 +18,11 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { Country, CountryInfo, MajorityThreshold, Party } from "@/types";
++import { Preset, PresetInfo, MajorityThreshold, Party } from "@/types";
+ 
+-interface DefaultCountryValueState {
+-  defaultCountryValue: string | null;
+-  setDefaultCountryValue: (by: string) => void;
++interface DefaultPresetValueState {
++  defaultPresetValue: string | null;
++  setDefaultPresetValue: (by: string) => void;
+ }
+ 
+ interface PartiesState {
+@@ -61,18 +61,18 @@ interface I18nState {
+   setLocale: (by: string) => void;
+ }
+ 
+-interface SelectedCountryState {
+-  selectedCountry: Country | null;
+-  setSelectedCountry: (by: Country | null) => void;
++interface SelectedPresetState {
++  selectedPreset: Preset | null;
++  setSelectedPreset: (by: Preset | null) => void;
+ }
+ 
+ interface CustomInfoState {
+-  customInfo: CountryInfo;
+-  setCustomInfo: (by: CountryInfo) => void;
++  customInfo: PresetInfo;
++  setCustomInfo: (by: PresetInfo) => void;
+ }
+ 
+ export type {
+-  DefaultCountryValueState,
++  DefaultPresetValueState,
+   PartiesState,
+   SelectedPartiesState,
+   IsEditModeState,
+@@ -80,6 +80,6 @@ export type {
+   AllowTieBreakerState,
+   MajorityThresholdState,
+   I18nState,
+-  SelectedCountryState,
++  SelectedPresetState,
+   CustomInfoState,
+ };
+diff --git a/src/utils/parseCountry.ts b/src/utils/parsePreset.ts
+similarity index 95%
+rename from src/utils/parseCountry.ts
+rename to src/utils/parsePreset.ts
+index 78df98c..b85ab59 100644
+--- a/src/utils/parseCountry.ts
++++ b/src/utils/parsePreset.ts
+@@ -19,7 +19,7 @@
+ */
+ 
+ import { supportedLocales } from "@/i18n/i18n";
+-import { CountryData, MajorityThreshold, Party, SortByState } from "@/types";
++import { PresetData, MajorityThreshold, Party, SortByState } from "@/types";
+ 
+ const sortByKeys: SortByState["sortBy"][] = ["name", "position", "seats"];
+ 
+@@ -66,7 +66,7 @@ function isLocale(data: unknown): data is string {
+   return supportedLocales.some((locale) => locale === data);
+ }
+ 
+-export function stringifyCountry(
++export function stringifyPreset(
+   {
+     name,
+     updateDate,
+@@ -76,7 +76,7 @@ export function stringifyCountry(
+     allowTieBreaker,
+     sortBy,
+     locale,
+-  }: CountryData,
++  }: PresetData,
+   space = 2,
+ ) {
+   const isEveryPartySelected = parties.every(({ id }) =>
+@@ -102,8 +102,8 @@ export function stringifyCountry(
+   );
+ }
+ 
+-// Throws when the data is not JSON, and returns null when it is not a country or a list of parties
+-export function parseCountry(data: string): CountryData | null {
++// Throws when the data is not JSON, and returns null when it is not a preset or a list of parties
++export function parsePreset(data: string): PresetData | null {
+   const parsedData: unknown = JSON.parse(data);
+ 
+   // Older exports are only a list of parties
+diff --git a/src/utils/countryTitle.ts b/src/utils/presetTitle.ts
+similarity index 79%
+rename from src/utils/countryTitle.ts
+rename to src/utils/presetTitle.ts
+index a4cb0dc..76f0f43 100644
+--- a/src/utils/countryTitle.ts
++++ b/src/utils/presetTitle.ts
+@@ -19,21 +19,21 @@
+ */
+ 
+ import { pastElections } from "@/data/pastElections";
+-import { Country, CountryInfo } from "@/types";
++import { Preset, PresetInfo } from "@/types";
+ 
+ // The name and date line shown above a chart
+-export function getCountryTitle(
+-  selectedCountry: Country | null,
+-  customInfo: CountryInfo,
++export function getPresetTitle(
++  selectedPreset: Preset | null,
++  customInfo: PresetInfo,
+   i: (key: string) => string,
+ ) {
+-  const { name, updateDate } = selectedCountry ?? customInfo;
+-  const title = [name, selectedCountry?.emoji].filter(Boolean).join(" ");
++  const { name, updateDate } = selectedPreset ?? customInfo;
++  const title = [name, selectedPreset?.emoji].filter(Boolean).join(" ");
+   const isPastElection = pastElections.some((c) => c.name === name);
+   const dateLabel = isPastElection
+     ? i("body.electionDate")
+-    : selectedCountry
+-      ? i("body.sampleDataUpdatedAt")
++    : selectedPreset
++      ? i("body.pollUpdatedAt")
+       : i("body.dataUpdatedAt");
+   const subtitle = updateDate
+     ? `${dateLabel}: ${new Date(updateDate).toLocaleDateString(i("locale"), {
+diff --git a/src/utils/shareLink.ts b/src/utils/shareLink.ts
+index 47db5a0..4994755 100644
+--- a/src/utils/shareLink.ts
++++ b/src/utils/shareLink.ts
+@@ -18,8 +18,8 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { CountryData } from "@/types";
+-import { parseCountry, stringifyCountry } from "@/utils/parseCountry";
++import { PresetData } from "@/types";
++import { parsePreset, stringifyPreset } from "@/utils/parsePreset";
+ 
+ // The data lives in the URL hash, so it is never sent to the server
+ const shareDataKey = "data";
+@@ -53,24 +53,24 @@ function fromBase64Url(text: string) {
+   return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+ }
+ 
+-export async function encodeShareData(country: CountryData) {
+-  return toBase64Url(await deflate(stringifyCountry(country, 0)));
++export async function encodeShareData(preset: PresetData) {
++  return toBase64Url(await deflate(stringifyPreset(preset, 0)));
+ }
+ 
+-// Returns null when the data is damaged or is not a country
++// Returns null when the data is damaged or is not a preset
+ export async function decodeShareData(data: string) {
+   try {
+-    return parseCountry(await inflate(fromBase64Url(data)));
++    return parsePreset(await inflate(fromBase64Url(data)));
+   } catch {
+     return null;
+   }
+ }
+ 
+-export async function createShareLink(country: CountryData, baseUrl: string) {
++export async function createShareLink(preset: PresetData, baseUrl: string) {
+   const url = new URL(baseUrl);
+   url.search = "";
+   url.hash = new URLSearchParams({
+-    [shareDataKey]: await encodeShareData(country),
++    [shareDataKey]: await encodeShareData(preset),
+   }).toString();
+   return url.toString();
+ }
+@@ -82,8 +82,8 @@ export function getShareData(hash: string) {
+ // Sent by an embed so the embed code can fit the iframe to it
+ export const embedHeightMessage = "parliament-seats:height";
+ 
+-export async function createEmbedLink(country: CountryData, baseUrl: string) {
+-  const url = new URL(await createShareLink(country, baseUrl));
++export async function createEmbedLink(preset: PresetData, baseUrl: string) {
++  const url = new URL(await createShareLink(preset, baseUrl));
+   url.search = "embed";
+   return url.toString();
+ }
+@@ -92,13 +92,13 @@ function escapeHtml(text: string) {
+   return text.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
+ }
+ 
+-export function createEmbedCode(embedLink: string, country: CountryData) {
++export function createEmbedCode(embedLink: string, preset: PresetData) {
+   const { origin } = new URL(embedLink);
+-  const title = country.name
+-    ? `${country.name} - Parliament Seats`
++  const title = preset.name
++    ? `${preset.name} - Parliament Seats`
+     : "Parliament Seats";
+   // A rough fit for a few rows of parties, until the script resizes it
+-  const height = 560 + Math.ceil(country.parties.length / 3) * 60;
++  const height = 560 + Math.ceil(preset.parties.length / 3) * 60;
+   const iframe = `<iframe src="${escapeHtml(embedLink)}" title="${escapeHtml(title)}" width="100%" height="${height}" style="border:0;max-width:100%" loading="lazy"></iframe>`;
+   // Sites that strip scripts still show the iframe at the fixed height
+   const script = `<script>window.addEventListener("message",function(e){if(e.origin!==${JSON.stringify(origin)}||!e.data||e.data.type!==${JSON.stringify(embedHeightMessage)}||typeof e.data.height!=="number")return;document.querySelectorAll("iframe").forEach(function(f){if(f.contentWindow===e.source)f.style.height=e.data.height+"px"})})</script>`;

@@ -1,0 +1,886 @@
+diff --git a/src/components/ui/app/head/CollapsibleSection.tsx b/src/components/ui/app/head/CollapsibleSection.tsx
+new file mode 100644
+index 0000000..f87a4ee
+--- /dev/null
++++ b/src/components/ui/app/head/CollapsibleSection.tsx
+@@ -0,0 +1,67 @@
++/*
++    Parliament (parliament-seats) is a tool for visualizing and calculating
++    the distribution of seats in a parliamentary system.
++
++    Copyright (C) 2025 @disfordave
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU Affero General Public License as published
++    by the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU Affero General Public License for more details.
++
++    You should have received a copy of the GNU Affero General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++import { ReactNode, useState } from "react";
++import { AnimatePresence, motion } from "motion/react";
++import { ChevronDownIcon } from "@heroicons/react/20/solid";
++
++interface CollapsibleSectionProps {
++  title: string;
++  defaultOpen?: boolean;
++  children: ReactNode;
++}
++
++export default function CollapsibleSection({
++  title,
++  defaultOpen = true,
++  children,
++}: CollapsibleSectionProps) {
++  const [open, setOpen] = useState(defaultOpen);
++
++  return (
++    <li>
++      <button
++        type="button"
++        onClick={() => setOpen((o) => !o)}
++        aria-expanded={open}
++        className="flex w-full items-center justify-between px-2 py-1 text-start text-sm opacity-75 transition-colors duration-300 hover:bg-zinc-200 dark:hover:bg-zinc-700"
++      >
++        <span>{title}</span>
++        <ChevronDownIcon
++          className={`size-4 transition-transform duration-300 ${open ? "" : "-rotate-90"}`}
++        />
++      </button>
++      <AnimatePresence initial={false}>
++        {open && (
++          <motion.ul
++            key="content"
++            initial={{ height: 0, opacity: 0 }}
++            animate={{ height: "auto", opacity: 1 }}
++            exit={{ height: 0, opacity: 0 }}
++            transition={{ duration: 0.2 }}
++            className="overflow-hidden"
++          >
++            {children}
++          </motion.ul>
++        )}
++      </AnimatePresence>
++    </li>
++  );
++}
+diff --git a/src/components/ui/app/head/CountryListDropdown.tsx b/src/components/ui/app/head/CountryListDropdown.tsx
+index 5a19968..ea5e471 100644
+--- a/src/components/ui/app/head/CountryListDropdown.tsx
++++ b/src/components/ui/app/head/CountryListDropdown.tsx
+@@ -26,6 +26,9 @@ import {
+   useCustomInfo,
+ } from "@/lib/zustandStore";
+ import { countries } from "@/data/countries";
++import { pastElections } from "@/data/pastElections";
++import { allCountries } from "@/data/allCountries";
++import CollapsibleSection from "./CollapsibleSection";
+ import { useEffect, useRef, useState } from "react";
+ import { Country } from "@/types";
+ import { AnimatePresence, motion } from "motion/react";
+@@ -50,7 +53,7 @@ export default function CountryListDropdown() {
+ 
+   function select(country: Country) {
+     setSelectedCountry(country);
+-    const findCountry = countries.find((c) => c.name === country.name);
++    const findCountry = allCountries.find((c) => c.name === country.name);
+     if (findCountry) {
+       setParties(findCountry.parties);
+       setSelectedParties(findCountry.parties);
+@@ -147,93 +150,126 @@ export default function CountryListDropdown() {
+                 ref={dropdownRef}
+               >
+                 <ul>
+-                  <li>
+-                    <span className="px-2 py-1 text-sm opacity-75">
+-                      {i("header.custom")}
+-                    </span>
+-                    <ul>
+-                      <li>
+-                        <button
+-                          onClick={() => {
+-                            if (selectedCountry) {
+-                              setSelectedCountry(null);
+-                              setParties([]);
+-                              setSelectedParties([]);
+-                              setCustomInfo({ name: "", updateDate: "" });
+-                            }
+-                            setOpenCountryList(false);
++                  <CollapsibleSection title={i("header.custom")}>
++                    <li>
++                      <button
++                        onClick={() => {
++                          if (selectedCountry) {
++                            setSelectedCountry(null);
++                            setParties([]);
++                            setSelectedParties([]);
++                            setCustomInfo({ name: "", updateDate: "" });
++                          }
++                          setOpenCountryList(false);
++                        }}
++                        className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
++                          !selectedCountry
++                            ? "bg-zinc-200 dark:bg-zinc-700"
++                            : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
++                        }`}
++                      >
++                        <div className="flex gap-1">
++                          <span>
++                            {(!selectedCountry && customInfo.name) ||
++                              i("header.custom")}
++                          </span>
++                        </div>
++                        {!selectedCountry && customInfo.updateDate && (
++                          <p className="text-xs opacity-75">
++                            {i("body.dataUpdatedAt")}:{" "}
++                            {new Date(customInfo.updateDate).toLocaleDateString(
++                              i("locale"),
++                              {
++                                timeZone: "UTC",
++                              },
++                            )}
++                          </p>
++                        )}
++                      </button>
++                    </li>
++                  </CollapsibleSection>
++                  <CollapsibleSection title={i("header.sampleCountries")}>
++                    {[...countries]
++                      .sort((a, b) => a.name.localeCompare(b.name))
++                      .map((country) => (
++                        <li
++                          key={country.name}
++                          value={country.name}
++                          id={country.name}
++                          ref={(el) => {
++                            if (el) itemRefs.current[country.name] = el;
+                           }}
+-                          className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+-                            !selectedCountry
+-                              ? "bg-zinc-200 dark:bg-zinc-700"
+-                              : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+-                          }`}
+                         >
+-                          <div className="flex gap-1">
+-                            <span>
+-                              {(!selectedCountry && customInfo.name) ||
+-                                i("header.custom")}
+-                            </span>
+-                          </div>
+-                          {!selectedCountry && customInfo.updateDate && (
++                          <button
++                            onClick={() => {
++                              select(country);
++                            }}
++                            className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
++                              selectedCountry === country
++                                ? "bg-zinc-200 dark:bg-zinc-700"
++                                : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
++                            }`}
++                          >
++                            <div className="flex gap-1">
++                              <span>{country.name}</span>
++                              <span>{country.emoji}</span>
++                            </div>
++                            {/* {selectedCountry === country && ( */}
+                             <p className="text-xs opacity-75">
+-                              {i("body.dataUpdatedAt")}:{" "}
+-                              {new Date(
+-                                customInfo.updateDate,
+-                              ).toLocaleDateString(i("locale"), {
+-                                timeZone: "UTC",
+-                              })}
++                              {i("body.sampleDataUpdatedAt")}:{" "}
++                              {new Date(country.updateDate).toLocaleDateString(
++                                i("locale"),
++                                {
++                                  timeZone: "UTC",
++                                },
++                              )}
+                             </p>
+-                          )}
+-                        </button>
+-                      </li>
+-                    </ul>
+-                  </li>
+-                  <li>
+-                    <span className="px-2 py-1 text-sm opacity-75">
+-                      {i("header.sampleCountries")}
+-                    </span>
+-                    <ul>
+-                      {[...countries]
+-                        .sort((a, b) => a.name.localeCompare(b.name))
+-                        .map((country) => (
+-                          <li
+-                            key={country.name}
+-                            value={country.name}
+-                            id={country.name}
+-                            ref={(el) => {
+-                              if (el) itemRefs.current[country.name] = el;
++                            {/* )} */}
++                          </button>
++                        </li>
++                      ))}
++                  </CollapsibleSection>
++                  <CollapsibleSection title={i("header.pastElections")}>
++                    {[...pastElections]
++                      .sort((a, b) => b.updateDate.localeCompare(a.updateDate))
++                      .map((country) => (
++                        <li
++                          key={country.name}
++                          value={country.name}
++                          id={country.name}
++                          ref={(el) => {
++                            if (el) itemRefs.current[country.name] = el;
++                          }}
++                        >
++                          <button
++                            onClick={() => {
++                              select(country);
+                             }}
++                            className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
++                              selectedCountry === country
++                                ? "bg-zinc-200 dark:bg-zinc-700"
++                                : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
++                            }`}
+                           >
+-                            <button
+-                              onClick={() => {
+-                                select(country);
+-                              }}
+-                              className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+-                                selectedCountry === country
+-                                  ? "bg-zinc-200 dark:bg-zinc-700"
+-                                  : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+-                              }`}
+-                            >
+-                              <div className="flex gap-1">
+-                                <span>{country.name}</span>
+-                                <span>{country.emoji}</span>
+-                              </div>
+-                              {/* {selectedCountry === country && ( */}
+-                              <p className="text-xs opacity-75">
+-                                {i("body.sampleDataUpdatedAt")}:{" "}
+-                                {new Date(
+-                                  country.updateDate,
+-                                ).toLocaleDateString(i("locale"), {
++                            <div className="flex gap-1">
++                              <span>{country.name}</span>
++                              <span>{country.emoji}</span>
++                            </div>
++                            {/* {selectedCountry === country && ( */}
++                            <p className="text-xs opacity-75">
++                              {i("body.electionDate")}:{" "}
++                              {new Date(country.updateDate).toLocaleDateString(
++                                i("locale"),
++                                {
+                                   timeZone: "UTC",
+-                                })}
+-                              </p>
+-                              {/* )} */}
+-                            </button>
+-                          </li>
+-                        ))}
+-                    </ul>
+-                  </li>
++                                },
++                              )}
++                            </p>
++                            {/* )} */}
++                          </button>
++                        </li>
++                      ))}
++                  </CollapsibleSection>
+                 </ul>
+               </motion.div>
+             </>
+diff --git a/src/components/ui/app/head/LandscapeCountryListBanner.tsx b/src/components/ui/app/head/LandscapeCountryListBanner.tsx
+index 975108e..4882a90 100644
+--- a/src/components/ui/app/head/LandscapeCountryListBanner.tsx
++++ b/src/components/ui/app/head/LandscapeCountryListBanner.tsx
+@@ -19,6 +19,8 @@
+ */
+ 
+ import { countries } from "@/data/countries";
++import { pastElections } from "@/data/pastElections";
++import { allCountries } from "@/data/allCountries";
+ import {
+   useI18n,
+   useSelectedCountry,
+@@ -27,6 +29,7 @@ import {
+   useCustomInfo,
+ } from "@/lib/zustandStore";
+ import { Country } from "@/types";
++import CollapsibleSection from "./CollapsibleSection";
+ 
+ export default function LandscapeCountryListBanner() {
+   const { i } = useI18n();
+@@ -34,103 +37,98 @@ export default function LandscapeCountryListBanner() {
+   const { setParties } = useParties();
+   const { setSelectedParties } = useSelectedParties();
+   const { customInfo, setCustomInfo } = useCustomInfo();
++
++  function select(country: Country) {
++    setSelectedCountry(country);
++    const findCountry = allCountries.find((c) => c.name === country.name);
++    if (findCountry) {
++      setParties(findCountry.parties);
++      setSelectedParties(findCountry.parties);
++    } else {
++      setSelectedCountry(null);
++      setParties([]);
++      setSelectedParties([]);
++    }
++  }
++
++  function renderCountry(country: Country, dateLabelKey: string) {
++    return (
++      <li key={country.name} value={country.name} id={country.name}>
++        <button
++          onClick={() => select(country)}
++          className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
++            selectedCountry === country
++              ? "bg-zinc-200 dark:bg-zinc-700"
++              : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
++          }`}
++        >
++          <div className="line-clamp-1 flex gap-1">
++            <span>{country.name}</span>
++            <span>{country.emoji}</span>
++          </div>
++          <p className="text-xs opacity-75">
++            {i(dateLabelKey)}:{" "}
++            {new Date(country.updateDate).toLocaleDateString(i("locale"), {
++              timeZone: "UTC",
++            })}
++          </p>
++        </button>
++      </li>
++    );
++  }
++
+   return (
+     <>
+       <div className="sticky top-4 z-100 h-[80vh] w-full overflow-auto rounded-2xl border-2 border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
+         <h2 className="p-2 text-xl font-semibold">{i("header.countries")}</h2>
+         <ul>
+-          <li>
+-            <span className="px-2 py-1 text-sm opacity-75">
+-              {i("header.custom")}
+-            </span>
+-            <ul>
+-              <li>
+-                <button
+-                  onClick={() => {
+-                    if (selectedCountry) {
+-                      setSelectedCountry(null);
+-                      setParties([]);
+-                      setSelectedParties([]);
+-                      setCustomInfo({ name: "", updateDate: "" });
+-                    }
+-                  }}
+-                  className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+-                    !selectedCountry
+-                      ? "bg-zinc-200 dark:bg-zinc-700"
+-                      : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+-                  }`}
+-                >
+-                  <div className="line-clamp-1 flex gap-1">
+-                    <span>
+-                      {(!selectedCountry && customInfo.name) ||
+-                        i("header.custom")}
+-                    </span>
+-                  </div>
+-                  {!selectedCountry && customInfo.updateDate && (
+-                    <p className="text-xs opacity-75">
+-                      {i("body.dataUpdatedAt")}:{" "}
+-                      {new Date(customInfo.updateDate).toLocaleDateString(
+-                        i("locale"),
+-                        { timeZone: "UTC" },
+-                      )}
+-                    </p>
+-                  )}
+-                </button>
+-              </li>
+-            </ul>
+-          </li>
+-          <li>
+-            <span className="px-2 py-1 text-sm opacity-75">
+-              {i("header.sampleCountries")}
+-            </span>
+-            <ul>
+-              {[...countries]
+-                .sort((a, b) => a.name.localeCompare(b.name))
+-                .map((country) => (
+-                  <li key={country.name} value={country.name} id={country.name}>
+-                    <button
+-                      onClick={() => {
+-                        function select(country: Country) {
+-                          setSelectedCountry(country);
+-                          const findCountry = countries.find(
+-                            (c) => c.name === country.name,
+-                          );
+-                          if (findCountry) {
+-                            setParties(findCountry.parties);
+-                            setSelectedParties(findCountry.parties);
+-                          } else {
+-                            setSelectedCountry(null);
+-                            setParties([]);
+-                            setSelectedParties([]);
+-                          }
+-                        }
+-
+-                        select(country);
+-                      }}
+-                      className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+-                        selectedCountry === country
+-                          ? "bg-zinc-200 dark:bg-zinc-700"
+-                          : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+-                      }`}
+-                    >
+-                      <div className="line-clamp-1 flex gap-1">
+-                        <span>{country.name}</span>
+-                        <span>{country.emoji}</span>
+-                      </div>
+-                      {/* {selectedCountry === country && ( */}
+-                      <p className="text-xs opacity-75">
+-                        {i("body.sampleDataUpdatedAt")}:{" "}
+-                        {new Date(country.updateDate).toLocaleDateString(
+-                          i("locale"),
+-                          { timeZone: "UTC" },
+-                        )}
+-                      </p>
+-                      {/* )} */}
+-                    </button>
+-                  </li>
+-                ))}
+-            </ul>
+-          </li>
++          <CollapsibleSection title={i("header.custom")}>
++            <li>
++              <button
++                onClick={() => {
++                  if (selectedCountry) {
++                    setSelectedCountry(null);
++                    setParties([]);
++                    setSelectedParties([]);
++                    setCustomInfo({ name: "", updateDate: "" });
++                  }
++                }}
++                className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
++                  !selectedCountry
++                    ? "bg-zinc-200 dark:bg-zinc-700"
++                    : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
++                }`}
++              >
++                <div className="line-clamp-1 flex gap-1">
++                  <span>
++                    {(!selectedCountry && customInfo.name) ||
++                      i("header.custom")}
++                  </span>
++                </div>
++                {!selectedCountry && customInfo.updateDate && (
++                  <p className="text-xs opacity-75">
++                    {i("body.dataUpdatedAt")}:{" "}
++                    {new Date(customInfo.updateDate).toLocaleDateString(
++                      i("locale"),
++                      { timeZone: "UTC" },
++                    )}
++                  </p>
++                )}
++              </button>
++            </li>
++          </CollapsibleSection>
++          <CollapsibleSection title={i("header.sampleCountries")}>
++            {[...countries]
++              .sort((a, b) => a.name.localeCompare(b.name))
++              .map((country) =>
++                renderCountry(country, "body.sampleDataUpdatedAt"),
++              )}
++          </CollapsibleSection>
++          <CollapsibleSection title={i("header.pastElections")}>
++            {[...pastElections]
++              .sort((a, b) => b.updateDate.localeCompare(a.updateDate))
++              .map((country) => renderCountry(country, "body.electionDate"))}
++          </CollapsibleSection>
+         </ul>
+       </div>
+     </>
+diff --git a/src/data/allCountries.ts b/src/data/allCountries.ts
+new file mode 100644
+index 0000000..1ba922e
+--- /dev/null
++++ b/src/data/allCountries.ts
+@@ -0,0 +1,26 @@
++/*
++    Parliament (parliament-seats) is a tool for visualizing and calculating
++    the distribution of seats in a parliamentary system.
++
++    Copyright (C) 2025 @disfordave
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU Affero General Public License as published
++    by the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU Affero General Public License for more details.
++
++    You should have received a copy of the GNU Affero General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++import { Country } from "@/types";
++import { countries } from "./countries";
++import { pastElections } from "./pastElections";
++
++// Everything that can be selected by name (sample countries + past elections)
++export const allCountries: Country[] = [...countries, ...pastElections];
+diff --git a/src/data/pastElections.ts b/src/data/pastElections.ts
+new file mode 100644
+index 0000000..76ee8fe
+--- /dev/null
++++ b/src/data/pastElections.ts
+@@ -0,0 +1,309 @@
++/*
++    Parliament (parliament-seats) is a tool for visualizing and calculating
++    the distribution of seats in a parliamentary system.
++
++    Copyright (C) 2025 @disfordave
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU Affero General Public License as published
++    by the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU Affero General Public License for more details.
++
++    You should have received a copy of the GNU Affero General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++import { Country } from "@/types";
++
++// Official results of past elections. `updateDate` is the election date.
++export const pastElections: Country[] = [
++  {
++    name: "Netherlands 2025",
++    emoji: "🇳🇱",
++    updateDate: "2025-10-29",
++    parties: [
++      {
++        id: "nl2025-d66",
++        name: "Democraten 66",
++        shortName: "D66",
++        seats: 26,
++        colour: "#00AE41",
++        position: -25,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-pvv",
++        name: "Partij voor de Vrijheid",
++        shortName: "PVV",
++        seats: 26,
++        colour: "#012758",
++        position: 100,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-vvd",
++        name: "Volkspartij voor Vrijheid en Democratie",
++        shortName: "VVD",
++        seats: 22,
++        colour: "#0A2CCA",
++        position: 50,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-glpvda",
++        name: "GroenLinks-PvdA",
++        shortName: "GL-PvdA",
++        seats: 20,
++        colour: "#E2001A",
++        position: -50,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-cda",
++        name: "Christen-Democratisch Appèl",
++        shortName: "CDA",
++        seats: 18,
++        colour: "#2CC84D",
++        position: 25,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-ja21",
++        name: "JA21",
++        shortName: "JA21",
++        seats: 9,
++        colour: "#242B57",
++        position: 75,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-fvd",
++        name: "Forum voor Democratie",
++        shortName: "FvD",
++        seats: 7,
++        colour: "#841818",
++        position: 100,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-bbb",
++        name: "BoerBurgerBeweging",
++        shortName: "BBB",
++        seats: 4,
++        colour: "#94C11F",
++        position: 50,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-denk",
++        name: "Denk",
++        shortName: "Denk",
++        seats: 3,
++        colour: "#00B7B2",
++        position: -50,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-sgp",
++        name: "Staatkundig Gereformeerde Partij",
++        shortName: "SGP",
++        seats: 3,
++        colour: "#EA5B0B",
++        position: 75,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-pvdd",
++        name: "Partij voor de Dieren",
++        shortName: "PvdD",
++        seats: 3,
++        colour: "#006B2D",
++        position: -75,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-cu",
++        name: "ChristenUnie",
++        shortName: "CU",
++        seats: 3,
++        colour: "#00A7EE",
++        position: 25,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-sp",
++        name: "Socialistische Partij",
++        shortName: "SP",
++        seats: 3,
++        colour: "#F60000",
++        position: -75,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-50plus",
++        name: "50PLUS",
++        shortName: "50PLUS",
++        seats: 2,
++        colour: "#92107D",
++        position: 0,
++        isIndependent: false,
++      },
++      {
++        id: "nl2025-volt",
++        name: "Volt",
++        shortName: "Volt",
++        seats: 1,
++        colour: "#582c83",
++        position: -25,
++        isIndependent: false,
++      },
++    ],
++  },
++  {
++    name: "Netherlands 2023",
++    emoji: "🇳🇱",
++    updateDate: "2023-11-22",
++    parties: [
++      {
++        id: "nl2023-pvv",
++        name: "Partij voor de Vrijheid",
++        shortName: "PVV",
++        seats: 37,
++        colour: "#012758",
++        position: 100,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-glpvda",
++        name: "GroenLinks-PvdA",
++        shortName: "GL-PvdA",
++        seats: 25,
++        colour: "#E2001A",
++        position: -50,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-vvd",
++        name: "Volkspartij voor Vrijheid en Democratie",
++        shortName: "VVD",
++        seats: 24,
++        colour: "#0A2CCA",
++        position: 50,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-nsc",
++        name: "Nieuw Sociaal Contract",
++        shortName: "NSC",
++        seats: 20,
++        colour: "#1B3A57",
++        position: 25,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-d66",
++        name: "Democraten 66",
++        shortName: "D66",
++        seats: 9,
++        colour: "#00AE41",
++        position: -25,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-bbb",
++        name: "BoerBurgerBeweging",
++        shortName: "BBB",
++        seats: 7,
++        colour: "#94C11F",
++        position: 50,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-cda",
++        name: "Christen-Democratisch Appèl",
++        shortName: "CDA",
++        seats: 5,
++        colour: "#2CC84D",
++        position: 25,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-sp",
++        name: "Socialistische Partij",
++        shortName: "SP",
++        seats: 5,
++        colour: "#F60000",
++        position: -75,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-denk",
++        name: "Denk",
++        shortName: "Denk",
++        seats: 3,
++        colour: "#00B7B2",
++        position: -50,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-pvdd",
++        name: "Partij voor de Dieren",
++        shortName: "PvdD",
++        seats: 3,
++        colour: "#006B2D",
++        position: -75,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-fvd",
++        name: "Forum voor Democratie",
++        shortName: "FvD",
++        seats: 3,
++        colour: "#841818",
++        position: 100,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-sgp",
++        name: "Staatkundig Gereformeerde Partij",
++        shortName: "SGP",
++        seats: 3,
++        colour: "#EA5B0B",
++        position: 75,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-cu",
++        name: "ChristenUnie",
++        shortName: "CU",
++        seats: 3,
++        colour: "#00A7EE",
++        position: 25,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-volt",
++        name: "Volt",
++        shortName: "Volt",
++        seats: 2,
++        colour: "#582c83",
++        position: -25,
++        isIndependent: false,
++      },
++      {
++        id: "nl2023-ja21",
++        name: "JA21",
++        shortName: "JA21",
++        seats: 1,
++        colour: "#242B57",
++        position: 75,
++        isIndependent: false,
++      },
++    ],
++  },
++];
+diff --git a/src/lib/useUrlData.ts b/src/lib/useUrlData.ts
+index 8843b7e..ca476f6 100644
+--- a/src/lib/useUrlData.ts
++++ b/src/lib/useUrlData.ts
+@@ -19,7 +19,7 @@
+ */
+ 
+ import { useEffect, useState } from "react";
+-import { countries } from "@/data/countries";
++import { allCountries } from "@/data/allCountries";
+ import { supportedLocales } from "@/i18n/i18n";
+ import {
+   useParties,
+@@ -49,8 +49,8 @@ export function useUrlData(isEmbed: boolean) {
+ 
+     const loadCountry = () => {
+       const country =
+-        countries.find((country) => country.name === countryName) ??
+-        countries.find((country) => country.name === "European Union");
++        allCountries.find((country) => country.name === countryName) ??
++        allCountries.find((country) => country.name === "European Union");
+       if (country) {
+         setSelectedCountry(country);
+         setParties(country.parties);

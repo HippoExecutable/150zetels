@@ -19,6 +19,8 @@
 */
 
 import { countries } from "@/data/countries";
+import { pastElections } from "@/data/pastElections";
+import { allCountries } from "@/data/allCountries";
 import {
   useI18n,
   useSelectedCountry,
@@ -27,6 +29,7 @@ import {
   useCustomInfo,
 } from "@/lib/zustandStore";
 import { Country } from "@/types";
+import CollapsibleSection from "./CollapsibleSection";
 
 export default function LandscapeCountryListBanner() {
   const { i } = useI18n();
@@ -34,103 +37,98 @@ export default function LandscapeCountryListBanner() {
   const { setParties } = useParties();
   const { setSelectedParties } = useSelectedParties();
   const { customInfo, setCustomInfo } = useCustomInfo();
+
+  function select(country: Country) {
+    setSelectedCountry(country);
+    const findCountry = allCountries.find((c) => c.name === country.name);
+    if (findCountry) {
+      setParties(findCountry.parties);
+      setSelectedParties(findCountry.parties);
+    } else {
+      setSelectedCountry(null);
+      setParties([]);
+      setSelectedParties([]);
+    }
+  }
+
+  function renderCountry(country: Country, dateLabelKey: string) {
+    return (
+      <li key={country.name} value={country.name} id={country.name}>
+        <button
+          onClick={() => select(country)}
+          className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+            selectedCountry === country
+              ? "bg-zinc-200 dark:bg-zinc-700"
+              : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+          }`}
+        >
+          <div className="line-clamp-1 flex gap-1">
+            <span>{country.name}</span>
+            <span>{country.emoji}</span>
+          </div>
+          <p className="text-xs opacity-75">
+            {i(dateLabelKey)}:{" "}
+            {new Date(country.updateDate).toLocaleDateString(i("locale"), {
+              timeZone: "UTC",
+            })}
+          </p>
+        </button>
+      </li>
+    );
+  }
+
   return (
     <>
       <div className="sticky top-4 z-100 h-[80vh] w-full overflow-auto rounded-2xl border-2 border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
         <h2 className="p-2 text-xl font-semibold">{i("header.countries")}</h2>
         <ul>
-          <li>
-            <span className="px-2 py-1 text-sm opacity-75">
-              {i("header.custom")}
-            </span>
-            <ul>
-              <li>
-                <button
-                  onClick={() => {
-                    if (selectedCountry) {
-                      setSelectedCountry(null);
-                      setParties([]);
-                      setSelectedParties([]);
-                      setCustomInfo({ name: "", updateDate: "" });
-                    }
-                  }}
-                  className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
-                    !selectedCountry
-                      ? "bg-zinc-200 dark:bg-zinc-700"
-                      : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                  }`}
-                >
-                  <div className="line-clamp-1 flex gap-1">
-                    <span>
-                      {(!selectedCountry && customInfo.name) ||
-                        i("header.custom")}
-                    </span>
-                  </div>
-                  {!selectedCountry && customInfo.updateDate && (
-                    <p className="text-xs opacity-75">
-                      {i("body.dataUpdatedAt")}:{" "}
-                      {new Date(customInfo.updateDate).toLocaleDateString(
-                        i("locale"),
-                        { timeZone: "UTC" },
-                      )}
-                    </p>
-                  )}
-                </button>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <span className="px-2 py-1 text-sm opacity-75">
-              {i("header.sampleCountries")}
-            </span>
-            <ul>
-              {[...countries]
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .map((country) => (
-                  <li key={country.name} value={country.name} id={country.name}>
-                    <button
-                      onClick={() => {
-                        function select(country: Country) {
-                          setSelectedCountry(country);
-                          const findCountry = countries.find(
-                            (c) => c.name === country.name,
-                          );
-                          if (findCountry) {
-                            setParties(findCountry.parties);
-                            setSelectedParties(findCountry.parties);
-                          } else {
-                            setSelectedCountry(null);
-                            setParties([]);
-                            setSelectedParties([]);
-                          }
-                        }
-
-                        select(country);
-                      }}
-                      className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
-                        selectedCountry === country
-                          ? "bg-zinc-200 dark:bg-zinc-700"
-                          : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                      }`}
-                    >
-                      <div className="line-clamp-1 flex gap-1">
-                        <span>{country.name}</span>
-                        <span>{country.emoji}</span>
-                      </div>
-                      {/* {selectedCountry === country && ( */}
-                      <p className="text-xs opacity-75">
-                        {i("body.sampleDataUpdatedAt")}:{" "}
-                        {new Date(country.updateDate).toLocaleDateString(
-                          i("locale"),
-                          { timeZone: "UTC" },
-                        )}
-                      </p>
-                      {/* )} */}
-                    </button>
-                  </li>
-                ))}
-            </ul>
-          </li>
+          <CollapsibleSection title={i("header.custom")}>
+            <li>
+              <button
+                onClick={() => {
+                  if (selectedCountry) {
+                    setSelectedCountry(null);
+                    setParties([]);
+                    setSelectedParties([]);
+                    setCustomInfo({ name: "", updateDate: "" });
+                  }
+                }}
+                className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+                  !selectedCountry
+                    ? "bg-zinc-200 dark:bg-zinc-700"
+                    : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                }`}
+              >
+                <div className="line-clamp-1 flex gap-1">
+                  <span>
+                    {(!selectedCountry && customInfo.name) ||
+                      i("header.custom")}
+                  </span>
+                </div>
+                {!selectedCountry && customInfo.updateDate && (
+                  <p className="text-xs opacity-75">
+                    {i("body.dataUpdatedAt")}:{" "}
+                    {new Date(customInfo.updateDate).toLocaleDateString(
+                      i("locale"),
+                      { timeZone: "UTC" },
+                    )}
+                  </p>
+                )}
+              </button>
+            </li>
+          </CollapsibleSection>
+          <CollapsibleSection title={i("header.sampleCountries")}>
+            {[...countries]
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((country) =>
+                renderCountry(country, "body.sampleDataUpdatedAt"),
+              )}
+          </CollapsibleSection>
+          <CollapsibleSection title={i("header.pastElections")}>
+            {[...pastElections]
+              .sort((a, b) => b.updateDate.localeCompare(a.updateDate))
+              .map((country) => renderCountry(country, "body.electionDate"))}
+          </CollapsibleSection>
         </ul>
       </div>
     </>

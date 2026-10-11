@@ -11,6 +11,7 @@
     "countries": "Peilingen",
     "custom": "Eigen Peilingen",
     "sampleCountries": "Bekende Peilingen",
+    "pastElections": "Verkiezingen",
     "majorityWithCount": "Meerderheid met {count} zetels",
     "seatsForMajority": "{count} zetels voor de meerderheid",
     "seat": "Zetel",

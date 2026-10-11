@@ -26,6 +26,9 @@ import {
   useCustomInfo,
 } from "@/lib/zustandStore";
 import { countries } from "@/data/countries";
+import { pastElections } from "@/data/pastElections";
+import { allCountries } from "@/data/allCountries";
+import CollapsibleSection from "./CollapsibleSection";
 import { useEffect, useRef, useState } from "react";
 import { Country } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
@@ -50,7 +53,7 @@ export default function CountryListDropdown() {
 
   function select(country: Country) {
     setSelectedCountry(country);
-    const findCountry = countries.find((c) => c.name === country.name);
+    const findCountry = allCountries.find((c) => c.name === country.name);
     if (findCountry) {
       setParties(findCountry.parties);
       setSelectedParties(findCountry.parties);
@@ -147,93 +150,126 @@ export default function CountryListDropdown() {
                 ref={dropdownRef}
               >
                 <ul>
-                  <li>
-                    <span className="px-2 py-1 text-sm opacity-75">
-                      {i("header.custom")}
-                    </span>
-                    <ul>
-                      <li>
-                        <button
-                          onClick={() => {
-                            if (selectedCountry) {
-                              setSelectedCountry(null);
-                              setParties([]);
-                              setSelectedParties([]);
-                              setCustomInfo({ name: "", updateDate: "" });
-                            }
-                            setOpenCountryList(false);
-                          }}
-                          className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
-                            !selectedCountry
-                              ? "bg-zinc-200 dark:bg-zinc-700"
-                              : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                          }`}
-                        >
-                          <div className="flex gap-1">
-                            <span>
-                              {(!selectedCountry && customInfo.name) ||
-                                i("header.custom")}
-                            </span>
-                          </div>
-                          {!selectedCountry && customInfo.updateDate && (
-                            <p className="text-xs opacity-75">
-                              {i("body.dataUpdatedAt")}:{" "}
-                              {new Date(
-                                customInfo.updateDate,
-                              ).toLocaleDateString(i("locale"), {
+                  <CollapsibleSection title={i("header.custom")}>
+                    <li>
+                      <button
+                        onClick={() => {
+                          if (selectedCountry) {
+                            setSelectedCountry(null);
+                            setParties([]);
+                            setSelectedParties([]);
+                            setCustomInfo({ name: "", updateDate: "" });
+                          }
+                          setOpenCountryList(false);
+                        }}
+                        className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+                          !selectedCountry
+                            ? "bg-zinc-200 dark:bg-zinc-700"
+                            : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                        }`}
+                      >
+                        <div className="flex gap-1">
+                          <span>
+                            {(!selectedCountry && customInfo.name) ||
+                              i("header.custom")}
+                          </span>
+                        </div>
+                        {!selectedCountry && customInfo.updateDate && (
+                          <p className="text-xs opacity-75">
+                            {i("body.dataUpdatedAt")}:{" "}
+                            {new Date(customInfo.updateDate).toLocaleDateString(
+                              i("locale"),
+                              {
                                 timeZone: "UTC",
-                              })}
-                            </p>
-                          )}
-                        </button>
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    <span className="px-2 py-1 text-sm opacity-75">
-                      {i("header.sampleCountries")}
-                    </span>
-                    <ul>
-                      {[...countries]
-                        .sort((a, b) => a.name.localeCompare(b.name))
-                        .map((country) => (
-                          <li
-                            key={country.name}
-                            value={country.name}
-                            id={country.name}
-                            ref={(el) => {
-                              if (el) itemRefs.current[country.name] = el;
+                              },
+                            )}
+                          </p>
+                        )}
+                      </button>
+                    </li>
+                  </CollapsibleSection>
+                  <CollapsibleSection title={i("header.sampleCountries")}>
+                    {[...countries]
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map((country) => (
+                        <li
+                          key={country.name}
+                          value={country.name}
+                          id={country.name}
+                          ref={(el) => {
+                            if (el) itemRefs.current[country.name] = el;
+                          }}
+                        >
+                          <button
+                            onClick={() => {
+                              select(country);
                             }}
+                            className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+                              selectedCountry === country
+                                ? "bg-zinc-200 dark:bg-zinc-700"
+                                : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                            }`}
                           >
-                            <button
-                              onClick={() => {
-                                select(country);
-                              }}
-                              className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
-                                selectedCountry === country
-                                  ? "bg-zinc-200 dark:bg-zinc-700"
-                                  : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                              }`}
-                            >
-                              <div className="flex gap-1">
-                                <span>{country.name}</span>
-                                <span>{country.emoji}</span>
-                              </div>
-                              {/* {selectedCountry === country && ( */}
-                              <p className="text-xs opacity-75">
-                                {i("body.sampleDataUpdatedAt")}:{" "}
-                                {new Date(
-                                  country.updateDate,
-                                ).toLocaleDateString(i("locale"), {
+                            <div className="flex gap-1">
+                              <span>{country.name}</span>
+                              <span>{country.emoji}</span>
+                            </div>
+                            {/* {selectedCountry === country && ( */}
+                            <p className="text-xs opacity-75">
+                              {i("body.sampleDataUpdatedAt")}:{" "}
+                              {new Date(country.updateDate).toLocaleDateString(
+                                i("locale"),
+                                {
                                   timeZone: "UTC",
-                                })}
-                              </p>
-                              {/* )} */}
-                            </button>
-                          </li>
-                        ))}
-                    </ul>
-                  </li>
+                                },
+                              )}
+                            </p>
+                            {/* )} */}
+                          </button>
+                        </li>
+                      ))}
+                  </CollapsibleSection>
+                  <CollapsibleSection title={i("header.pastElections")}>
+                    {[...pastElections]
+                      .sort((a, b) => b.updateDate.localeCompare(a.updateDate))
+                      .map((country) => (
+                        <li
+                          key={country.name}
+                          value={country.name}
+                          id={country.name}
+                          ref={(el) => {
+                            if (el) itemRefs.current[country.name] = el;
+                          }}
+                        >
+                          <button
+                            onClick={() => {
+                              select(country);
+                            }}
+                            className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+                              selectedCountry === country
+                                ? "bg-zinc-200 dark:bg-zinc-700"
+                                : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                            }`}
+                          >
+                            <div className="flex gap-1">
+                              <span>{country.name}</span>
+                              <span>{country.emoji}</span>
+                            </div>
+                            {/* {selectedCountry === country && ( */}
+                            <p className="text-xs opacity-75">
+                              {i("body.electionDate")}:{" "}
+                              {new Date(country.updateDate).toLocaleDateString(
+                                i("locale"),
+                                {
+                                  timeZone: "UTC",
+                                },
+                              )}
+                            </p>
+                            {/* )} */}
+                          </button>
+                        </li>
+                      ))}
+                  </CollapsibleSection>
                 </ul>
               </motion.div>
             </>

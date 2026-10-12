@@ -112,7 +112,7 @@ const useI18n = create<I18nState>((set, get) => ({
 }));
 
 const useSelectedPreset = create<SelectedPresetState>((set) => ({
-  selectedPreset: polls.find((c) => c.name === "European Union") ?? null,
+  selectedPreset: polls.find((c) => c.name === "Ipsos I&O") ?? null,
   setSelectedPreset: (by) => {
     set(() => ({ selectedPreset: by }));
   },

@@ -26,7 +26,7 @@ import { Preset } from "@/types";
 export const pastElections: Preset[] = [
   {
     name: "2025 (Jetten I)",
-    emoji: "🇳🇱",
+    emoji: "⭐",
     updateDate: "2025-10-29",
     parties: [
       {
@@ -168,7 +168,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "2023 (Schoof)",
-    emoji: "🇳🇱",
     updateDate: "2023-11-22",
     parties: [
       {
@@ -310,7 +309,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "2021 (Rutte IV)",
-    emoji: "🇳🇱",
     updateDate: "2021-03-17",
     parties: [
       {
@@ -470,7 +468,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "2017 (Rutte III)",
-    emoji: "🇳🇱",
     updateDate: "2017-03-15",
     parties: [
       {
@@ -594,7 +591,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "2012 (Rutte II)",
-    emoji: "🇳🇱",
     updateDate: "2012-09-12",
     parties: [
       {
@@ -700,7 +696,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "2010 (Rutte I)",
-    emoji: "🇳🇱",
     updateDate: "2010-06-09",
     parties: [
       {
@@ -797,7 +792,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "2006 (Balkenende IV)",
-    emoji: "🇳🇱",
     updateDate: "2006-11-22",
     parties: [
       {
@@ -894,7 +888,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "2003 (Balkenende II)",
-    emoji: "🇳🇱",
     updateDate: "2003-01-22",
     parties: [
       {
@@ -982,7 +975,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "2002 (Balkenende I)",
-    emoji: "🇳🇱",
     updateDate: "2002-05-15",
     parties: [
       {
@@ -1079,7 +1071,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1998 (Kok II)",
-    emoji: "🇳🇱",
     updateDate: "1998-05-06",
     parties: [
       {
@@ -1167,7 +1158,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1994 (Kok I)",
-    emoji: "🇳🇱",
     updateDate: "1994-05-03",
     parties: [
       {
@@ -1282,7 +1272,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1989 (Lubbers III)",
-    emoji: "🇳🇱",
     updateDate: "1989-09-06",
     parties: [
       {
@@ -1370,7 +1359,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1986 (Lubbers II)",
-    emoji: "🇳🇱",
     updateDate: "1986-05-21",
     parties: [
       {
@@ -1458,7 +1446,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1982 (Lubbers I)",
-    emoji: "🇳🇱",
     updateDate: "1982-09-08",
     parties: [
       {
@@ -1573,7 +1560,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1981 (Van Agt II)",
-    emoji: "🇳🇱",
     updateDate: "1981-05-26",
     parties: [
       {
@@ -1670,7 +1656,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1977 (Van Agt I)",
-    emoji: "🇳🇱",
     updateDate: "1977-05-25",
     parties: [
       {
@@ -1776,7 +1761,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1972 (Den Uyl)",
-    emoji: "🇳🇱",
     updateDate: "1972-11-29",
     parties: [
       {
@@ -1909,7 +1893,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1971 (Biesheuvel I)",
-    emoji: "🇳🇱",
     updateDate: "1971-04-28",
     parties: [
       {
@@ -2042,7 +2025,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1967 (De Jong)",
-    emoji: "🇳🇱",
     updateDate: "1967-02-15",
     parties: [
       {
@@ -2148,7 +2130,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1963 (Marijnen)",
-    emoji: "🇳🇱",
     updateDate: "1963-05-15",
     parties: [
       {
@@ -2245,7 +2226,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1959 (De Quay)",
-    emoji: "🇳🇱",
     updateDate: "1959-03-12",
     parties: [
       {
@@ -2324,7 +2304,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1956 (Drees III)",
-    emoji: "🇳🇱",
     updateDate: "1956-06-13",
     parties: [
       {
@@ -2394,7 +2373,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1952 (Drees II)",
-    emoji: "🇳🇱",
     updateDate: "1952-06-25",
     parties: [
       {
@@ -2473,7 +2451,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1948 (Drees-Van Schaik)",
-    emoji: "🇳🇱",
     updateDate: "1948-07-07",
     parties: [
       {
@@ -2552,7 +2529,6 @@ export const pastElections: Preset[] = [
   },
   {
     name: "1946 (Beel I)",
-    emoji: "🇳🇱",
     updateDate: "1946-05-17",
     parties: [
       {

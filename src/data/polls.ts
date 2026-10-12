@@ -20,11 +20,11 @@
 
 import { Preset } from "@/types";
 
-export const countries: Preset[] = [
+export const polls: Preset[] = [
   {
-    name: "Netherlands (Ipsos I&O, 2 Sep 2026)",
-    emoji: "🇳🇱",
+    name: "Ipsos I&O",
     updateDate: "2026-09-02",
+    description: "<b>Zetelpeiling</b> van Ipsos I&O van 2 september 2026.\ntest",
     parties: [
       {
         id: "nl-ipsos-pvv",
@@ -164,8 +164,7 @@ export const countries: Preset[] = [
     ],
   },
   {
-    name: "Netherlands (Verian, 24 Aug 2026)",
-    emoji: "🇳🇱",
+    name: "Verian/EenVandaag",
     updateDate: "2026-08-24",
     parties: [
       {
@@ -306,8 +305,7 @@ export const countries: Preset[] = [
     ],
   },
   {
-    name: "Netherlands (Peil.nl, 29 Aug 2026)",
-    emoji: "🇳🇱",
+    name: "Maurice de Hond",
     updateDate: "2026-08-29",
     parties: [
       {
@@ -444,166 +442,6 @@ export const countries: Preset[] = [
         colour: "#92107D",
         position: 0,
         isIndependent: false,
-      },
-    ],
-  },
-  {
-    name: "Netherlands (Tweede Kamer)",
-    emoji: "🇳🇱",
-    updateDate: "2026-07-21",
-    parties: [
-      {
-        id: "nl-pvv",
-        name: "Partij voor de Vrijheid",
-        shortName: "PVV",
-        seats: 19,
-        colour: "#012758",
-        position: 100,
-        isIndependent: false,
-      }, // Far-right
-      {
-        id: "nl-vvd",
-        name: "Volkspartij voor Vrijheid en Democratie",
-        shortName: "VVD",
-        seats: 22,
-        colour: "#0A2CCA",
-        position: 50,
-        isIndependent: false,
-      }, // Centre-right
-      {
-        id: "nl-pro",
-        name: "Progressief Nederland",
-        shortName: "PRO",
-        seats: 20,
-        colour: "#ff0000",
-        position: -50,
-        isIndependent: false,
-      }, // Centre-left
-      {
-        id: "nl-d66",
-        name: "Democraten 66",
-        shortName: "D66",
-        seats: 26,
-        colour: "#00AE41",
-        position: -25,
-        isIndependent: false,
-      }, // Lean left
-      {
-        id: "nl-cda",
-        name: "Christen-Democratisch Appèl",
-        shortName: "CDA",
-        seats: 18,
-        colour: "#2CC84D",
-        position: 25,
-        isIndependent: false,
-      }, // Centre
-      {
-        id: "nl-bbb",
-        name: "BoerBurgerBeweging",
-        shortName: "BBB",
-        seats: 3,
-        colour: "#94C11F",
-        position: 50,
-        isIndependent: false,
-      }, // Lean right
-      {
-        id: "nl-volt",
-        name: "Volt",
-        shortName: "Volt",
-        seats: 1,
-        colour: "#582c83",
-        position: -25,
-        isIndependent: false,
-      }, // Lean left
-      {
-        id: "nl-pvdd",
-        name: "Partij voor de Dieren",
-        shortName: "PvdD",
-        seats: 3,
-        colour: "#006B2D",
-        position: -75,
-        isIndependent: false,
-      }, // Centre-left
-      {
-        id: "nl-cu",
-        name: "ChristenUnie",
-        shortName: "CU",
-        seats: 3,
-        colour: "#00A7EE",
-        position: 25,
-        isIndependent: false,
-      }, // Centre
-      {
-        id: "nl-sgp",
-        name: "Staatkundig Gereformeerde Partij",
-        shortName: "SGP",
-        seats: 3,
-        colour: "#EA5B0B",
-        position: 75,
-        isIndependent: false,
-      }, // Right-wing
-      {
-        id: "nl-dna",
-        name: "De Nederlandse Alliantie",
-        shortName: "DNA",
-        seats: 7,
-        colour: "#354050",
-        position: 100,
-        isIndependent: false,
-      }, // Right-wing
-      {
-        id: "nl-fvd",
-        name: "Forum voor Democratie",
-        shortName: "FvD",
-        seats: 7,
-        colour: "#841818",
-        position: 100,
-        isIndependent: false,
-      }, // Right-wing
-      {
-        id: "nl-sp",
-        name: "Socialistische Partij",
-        shortName: "SP",
-        seats: 3,
-        colour: "#F60000",
-        position: -75,
-        isIndependent: false,
-      }, // Left-wing
-      {
-        id: "nl-denk",
-        name: "Denk",
-        shortName: "Denk",
-        seats: 3,
-        colour: "#00B7B2",
-        position: -50,
-        isIndependent: false,
-      }, // Lean left
-      {
-        id: "nl-ja21",
-        name: "JA21",
-        shortName: "JA21",
-        seats: 9,
-        colour: "#242B57",
-        position: 75,
-        isIndependent: false,
-      },
-      {
-        id: "nl-50plus",
-        name: "50PLUS",
-        shortName: "50PLUS",
-        seats: 2,
-        colour: "#92107D",
-        position: 0,
-        isIndependent: false,
-      },
-      {
-        id: "nl-lidkeijzer",
-        name: "Lid Keijzer",
-        shortName: "LK",
-        seats: 1,
-        colour: "#71717a",
-        position: 50,
-        isIndependent: true,
       },
     ],
   },

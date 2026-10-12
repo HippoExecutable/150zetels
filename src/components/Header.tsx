@@ -30,7 +30,7 @@ export default function Header() {
           <div className={"flex items-center gap-2"}>
             <Logo className="size-12 shrink-0" />
             <div className="flex flex-col justify-start">
-              <h1 className="text-2xl font-bold">Parliament Seats</h1>
+              <h1 className="text-2xl font-bold">150zetels.nl</h1>
               <p className="text-sm leading-4 opacity-75">{i("subtitle")}</p>
             </div>
           </div>

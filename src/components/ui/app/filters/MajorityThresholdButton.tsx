@@ -204,7 +204,7 @@ export default function MajorityThresholdButton() {
                         !selectedConfig ? "bg-zinc-200 dark:bg-zinc-700" : ""
                       }`}
                     >
-                      <span>{i("header.custom")}</span>
+                      <span>{i("majority.customAmount")}</span>
                       <span className="flex items-center gap-1 tabular-nums">
                         <input
                           name="majorityThreshold"

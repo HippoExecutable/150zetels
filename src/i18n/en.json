@@ -41,7 +41,8 @@
     "simple": "Simple majority",
     "threeFifths": "Three-fifths majority",
     "twoThirds": "Two-thirds majority",
-    "threeQuarters": "Three-quarters majority"
+    "threeQuarters": "Three-quarters majority",
+    "customAmount": "Custom Majority"
   },
   "controls": {
     "politicalSpectrum": "Political Spectrum",

@@ -41,7 +41,8 @@
     "simple": "Gewone Meerderheid",
     "threeFifths": "Drievijfdse Meerderheid",
     "twoThirds": "Tweederde Meederheid",
-    "threeQuarters": "Driekwart Meerderheid"
+    "threeQuarters": "Driekwart Meerderheid",
+    "customAmount": "Eigen Meerderheid"
   },
   "controls": {
     "politicalSpectrum": "Politiek spectrum",

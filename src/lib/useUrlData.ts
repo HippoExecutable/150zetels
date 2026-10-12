@@ -50,7 +50,7 @@ export function useUrlData(isEmbed: boolean) {
     const loadPreset = () => {
       const preset =
         allPresets.find((preset) => preset.name === presetName) ??
-        allPresets.find((preset) => preset.name === "European Union");
+        allPresets.find((preset) => preset.name === "Ipsos I&O");
       if (preset) {
         setSelectedPreset(preset);
         setParties(preset.parties);

@@ -46,6 +46,20 @@
     "threeQuarters": "Driekwart Meerderheid",
     "customAmount": "Eigen Meerderheid"
   },
+  "allocation": {
+    "title": "Zetels uit stemmen",
+    "votes": "Stemmen of %",
+    "totalSeats": "Totaal aantal zetels",
+    "method": "Methode",
+    "threshold": "Kiesdrempel",
+    "totalVotes": "Totaal stemmen of %",
+    "thresholdExempt": "Vrijgesteld van drempel",
+    "hint": "Vul de stemmen of het stempercentage van elke partij in en bereken dan de zetels. De drempel telt alle stemmen mee, ook die voor partijen die niet in de lijst staan.",
+    "calculate": "Zetels berekenen",
+    "dHondt": "D'Hondt",
+    "sainteLague": "Sainte-Laguë",
+    "largestRemainder": "Grootste overschot"
+  },
   "controls": {
     "politicalSpectrum": "Politiek spectrum",
     "selectAll": "Alles Selecteren",

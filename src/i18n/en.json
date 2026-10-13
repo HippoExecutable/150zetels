@@ -46,6 +46,20 @@
     "threeQuarters": "Three-quarters majority",
     "customAmount": "Custom Majority"
   },
+  "allocation": {
+    "title": "Seats from votes",
+    "votes": "Votes or %",
+    "totalSeats": "Total seats",
+    "method": "Method",
+    "threshold": "Electoral threshold",
+    "totalVotes": "Total votes or %",
+    "thresholdExempt": "Exempt from threshold",
+    "hint": "Enter each party's votes or vote share, then calculate the seats. The threshold counts all votes, including those for parties not listed.",
+    "calculate": "Calculate seats",
+    "dHondt": "D'Hondt",
+    "sainteLague": "Sainte-Laguë",
+    "largestRemainder": "Largest remainder"
+  },
   "controls": {
     "politicalSpectrum": "Political Spectrum",
     "selectAll": "Select All",

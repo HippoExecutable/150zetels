@@ -85,7 +85,17 @@ Seat distributions are displayed using:
 - pie charts for seat distribution
 - majority threshold indicators
 
+Hovering over (or tapping) the half pie shows each party's short name and seat count.
+
 Visualizations update instantly when party data changes.
+
+---
+
+## Seats from Votes
+
+In edit mode, each party can be given a vote count or a vote share, and the seats are calculated from them with the **D'Hondt**, **Sainte-Laguë**, or **largest remainder** (Hare) method.
+
+Set the total number of seats and, optionally, an **electoral threshold**: parties below that percentage of the votes get no seats, and their seats go to the parties that pass it. As in Germany, the threshold counts all votes, so a party with 4.98% misses a 5% threshold even when the parties that won no seats are not listed. Vote shares are out of 100, and for vote counts the total votes can be set to include the parties that are not listed. Parties can be marked **exempt from the threshold**, like national minority parties such as the SSW in Germany.
 
 ---
 

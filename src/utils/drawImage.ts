@@ -24,6 +24,7 @@ import {
   pieChartLightColor,
 } from "@/components/colors";
 import { Party } from "@/types";
+import { getPartyLabel } from "@/utils/partyLabel";
 
 export type ImageFormat = "square" | "portrait" | "vertical" | "wide";
 
@@ -181,13 +182,6 @@ function fitText(
   }
 
   return `${characters.join("").trimEnd()}…`;
-}
-
-function getPartyLabel(party: Party) {
-  if (party.isIndependent) {
-    return party.shortName ? `${party.shortName} (I)` : "Independent";
-  }
-  return party.shortName || party.name;
 }
 
 function drawHalfPie(

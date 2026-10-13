@@ -63,6 +63,19 @@ test("round-trips exported presets", () => {
   expect(parsePreset(stringifyPreset(emptyPreset))).toEqual(emptyPreset);
 });
 
+test("round-trips party votes", () => {
+  const withVotes = {
+    ...preset,
+    parties: [
+      { ...partyA, votes: 120000 },
+      { ...partyB, votes: 14.5, isThresholdExempt: true },
+    ],
+    selectedParties: [{ ...partyB, votes: 14.5, isThresholdExempt: true }],
+  };
+
+  expect(parsePreset(stringifyPreset(withVotes))).toEqual(withVotes);
+});
+
 test("exports the selected parties as ids", () => {
   expect(JSON.parse(stringifyPreset(preset)).selectedPartyIds).toEqual(["b"]);
 });
@@ -189,6 +202,12 @@ test("returns null for JSON that is not a preset or a list of parties", () => {
   expect(parsePreset(JSON.stringify([{ ...partyA, seats: "20" }]))).toBeNull();
   expect(
     parsePreset(JSON.stringify([{ ...partyA, isIndependent: "no" }])),
+  ).toBeNull();
+  expect(
+    parsePreset(JSON.stringify([{ ...partyA, votes: "12000" }])),
+  ).toBeNull();
+  expect(
+    parsePreset(JSON.stringify([{ ...partyA, isThresholdExempt: 1 }])),
   ).toBeNull();
   expect(
     parsePreset(JSON.stringify({ ...preset, parties: [partyA, null] })),

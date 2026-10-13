@@ -19,16 +19,50 @@
 */
 
 import { pieChartDarkColor, pieChartLightColor } from "@/components/colors";
+import { useI18n } from "@/lib/zustandStore";
 import {
   IsEditModeState,
   MajorityThresholdState,
+  Party,
   PartiesState,
   SelectedPartiesState,
   SortByState,
 } from "@/types";
+import { getPartyLabel } from "@/utils/partyLabel";
+import { pluralize } from "@/utils/pluralize";
 import { sort } from "@/utils/sort";
-import { ResponsivePie } from "@nivo/pie";
+import { PieTooltipProps, ResponsivePie } from "@nivo/pie";
 import { useState, useEffect } from "react";
+
+interface PieDatum {
+  id: string;
+  label: string;
+  value: number;
+  color: string;
+  // Left out for the empty slice of unselected seats
+  party?: Party;
+}
+
+const emptyId = "empty";
+
+function PartyTooltip({ datum }: PieTooltipProps<PieDatum>) {
+  const { i } = useI18n();
+  const { party } = datum.data;
+  if (!party) return null;
+
+  return (
+    <div className="flex items-center gap-2 rounded-2xl border-2 border-zinc-200 bg-white px-2.5 py-1 text-sm text-nowrap text-zinc-950 shadow-lg dark:border-zinc-700 dark:bg-zinc-900 dark:text-white">
+      <span
+        className="size-3 shrink-0 rounded-full"
+        style={{ backgroundColor: party.colour }}
+      ></span>
+      <span>{getPartyLabel(party)}</span>
+      <span className="font-semibold tabular-nums">
+        {pluralize(party.seats, i("header.seat"), i("header.seats"))}
+      </span>
+    </div>
+  );
+}
 
 export default function PieChart({
   parties,
@@ -46,6 +80,7 @@ export default function PieChart({
   const [isDarkMode, setIsDarkMode] = useState(
     document.documentElement.classList.contains("dark"),
   );
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
     const observer = new MutationObserver(() => {
@@ -61,19 +96,20 @@ export default function PieChart({
   }, []);
   return (
     <>
-      <ResponsivePie
+      <ResponsivePie<PieDatum>
         data={[
           ...selectedParties
             .sort((a, b) => sort(a, b, isEditMode, sortBy))
             .map((party) => ({
-              id: party.name.length < 1 ? party.shortName : party.name,
+              id: party.id,
               label: party.name.length < 1 ? party.shortName : party.name,
               value: party.seats,
               color: party.colour,
+              party,
             })),
           {
-            id: "empty",
-            label: "empty",
+            id: emptyId,
+            label: emptyId,
             value:
               parties.reduce((acc, party) => acc + party.seats, 0) -
               selectedParties.reduce((acc, party) => acc + party.seats, 0),
@@ -87,7 +123,13 @@ export default function PieChart({
         sortByValue={false}
         innerRadius={0.35}
         colors={{ datum: "data.color" }}
-        activeOuterRadiusOffset={8}
+        // Grows inwards, since the margin leaves no room to grow outwards
+        activeInnerRadiusOffset={8}
+        activeId={activeId}
+        onActiveIdChange={(id) =>
+          setActiveId(id === null || id === emptyId ? null : String(id))
+        }
+        tooltip={PartyTooltip}
         enableArcLinkLabels={false}
         arcLinkLabelsSkipAngle={10}
         arcLinkLabelsTextColor="#333333"
@@ -96,14 +138,14 @@ export default function PieChart({
         enableArcLabels={false}
         arcLabelsSkipAngle={10}
         arcLabelsTextColor={{ from: "color", modifiers: [["darker", 2]] }}
-        isInteractive={false}
+        isInteractive={true}
         transitionMode="innerRadius"
         motionConfig="default"
       />
       {parties.length > 0 && (
         // Rotates around the centre of the half pie, from -90deg (0%) to 90deg (100%)
         <div
-          className="absolute top-px left-[calc(50%-1px)] h-full w-0.5 origin-bottom transition-transform duration-300"
+          className="pointer-events-none absolute top-px left-[calc(50%-1px)] h-full w-0.5 origin-bottom transition-transform duration-300"
           style={{
             transform: `rotate(${
               (majorityThreshold.numerator / majorityThreshold.denominator) *

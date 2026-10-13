@@ -26,4 +26,8 @@ export interface Party {
   colour: string;
   position: number;
   isIndependent?: boolean;
+  // Vote count or vote share, which seats can be calculated from
+  votes?: number;
+  // Wins seats from votes even below the electoral threshold
+  isThresholdExempt?: boolean;
 }

@@ -36,7 +36,10 @@ function isParties(data: unknown): data is Party[] {
         typeof item.colour === "string" &&
         typeof item.position === "number" &&
         (typeof item.isIndependent === "boolean" ||
-          item.isIndependent === undefined),
+          item.isIndependent === undefined) &&
+        (typeof item.votes === "number" || item.votes === undefined) &&
+        (typeof item.isThresholdExempt === "boolean" ||
+          item.isThresholdExempt === undefined),
     )
   );
 }

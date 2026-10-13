@@ -29,6 +29,7 @@ import { polls } from "@/data/polls";
 import { pastElections } from "@/data/pastElections";
 import { allPresets } from "@/data/allPresets";
 import CollapsibleSection from "./CollapsibleSection";
+import PresetSubtitle from "./PresetSubtitle";
 import { useEffect, useRef, useState } from "react";
 import { Preset } from "@/types";
 import { AnimatePresence, motion } from "motion/react";
@@ -107,13 +108,10 @@ export default function PresetListDropdown() {
                 <span>{selectedPreset.name}</span>
                 <span>{selectedPreset.emoji}</span>
               </div>
-              <p className="text-xs opacity-75">
-                {i("body.pollUpdatedAt")}:{" "}
-                {new Date(selectedPreset.updateDate).toLocaleDateString(
-                  i("locale"),
-                  { timeZone: "UTC" },
-                )}
-              </p>
+              <PresetSubtitle
+                preset={selectedPreset}
+                dateLabelKey="body.pollUpdatedAt"
+              />
             </div>
           ) : (
             <div className="flex flex-col items-start gap-0 text-start">
@@ -215,15 +213,10 @@ export default function PresetListDropdown() {
                               <span>{preset.emoji}</span>
                             </div>
                             {/* {selectedPreset === preset && ( */}
-                            <p className="text-xs opacity-75">
-                              {i("body.pollUpdatedAt")}:{" "}
-                              {new Date(preset.updateDate).toLocaleDateString(
-                                i("locale"),
-                                {
-                                  timeZone: "UTC",
-                                },
-                              )}
-                            </p>
+                            <PresetSubtitle
+                              preset={preset}
+                              dateLabelKey="body.pollUpdatedAt"
+                            />
                             {/* )} */}
                           </button>
                         </li>
@@ -256,15 +249,10 @@ export default function PresetListDropdown() {
                               <span>{preset.emoji}</span>
                             </div>
                             {/* {selectedPreset === preset && ( */}
-                            <p className="text-xs opacity-75">
-                              {i("body.electionDate")}:{" "}
-                              {new Date(preset.updateDate).toLocaleDateString(
-                                i("locale"),
-                                {
-                                  timeZone: "UTC",
-                                },
-                              )}
-                            </p>
+                            <PresetSubtitle
+                              preset={preset}
+                              dateLabelKey="body.electionDate"
+                            />
                             {/* )} */}
                           </button>
                         </li>

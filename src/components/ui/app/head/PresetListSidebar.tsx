@@ -30,6 +30,7 @@ import {
 } from "@/lib/zustandStore";
 import { Preset } from "@/types";
 import CollapsibleSection from "./CollapsibleSection";
+import PresetSubtitle from "./PresetSubtitle";
 
 export default function PresetListSidebar() {
   const { i } = useI18n();
@@ -66,12 +67,7 @@ export default function PresetListSidebar() {
             <span>{preset.name}</span>
             <span>{preset.emoji}</span>
           </div>
-          <p className="text-xs opacity-75">
-            {i(dateLabelKey)}:{" "}
-            {new Date(preset.updateDate).toLocaleDateString(i("locale"), {
-              timeZone: "UTC",
-            })}
-          </p>
+          <PresetSubtitle preset={preset} dateLabelKey={dateLabelKey} />
         </button>
       </li>
     );

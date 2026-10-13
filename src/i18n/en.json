@@ -34,7 +34,8 @@
     "pollUpdatedAt": "Poll updated at",
     "presetName": "Name",
     "dataUpdatedAt": "Data updated at",
-    "electionDate": "Election date"
+    "electionDate": "Election date",
+    "coalition": "Coalition"
   },
   "majority": {
     "blockingMinority": "Blocking minority",
@@ -48,6 +49,7 @@
     "politicalSpectrum": "Political Spectrum",
     "selectAll": "Select All",
     "deselectAll": "Deselect All",
+    "coalition": "Coalition",
     "left": "Left",
     "right": "Right",
     "leftWithoutFarLeft": "Left (without far-left)",
@@ -110,9 +112,9 @@
     "independent": "Independent"
   },
   "footer": {
-    "feelFree": "Feel free to open an issue",
-    "onGitHub": "on GitHub",
-    "ifYouHave": "if you have any issues or suggestions."
+    "originalText": "Original project:",
+    "clickHere": "parl.hws.is",
+    "restText": "150zetels is created by HippoEXE"
   },
   "embed": {
     "openFullVersion": "Open in Parliament Seats",

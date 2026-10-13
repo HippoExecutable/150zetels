@@ -36,24 +36,24 @@ export default function Footer() {
               &copy; {new Date().getFullYear()}{" "}
               <a
                 className={"no-underline hover:underline"}
-                href={"https://hsw.is"}
+                href={"https://150zetels.nl/"}
                 rel={"noreferrer noopener"}
                 target={"_blank"}
               >
-                HSW.is
+                150zetels.nl
               </a>{" "}
             </p>
             <p className={"text-sm opacity-75"}>
-              {i("footer.feelFree")}{" "}
+              {i("footer.originalText")}{" "}
               <a
                 className={"underline hover:no-underline"}
-                href={"https://git.hsw.is/parliament-seats"}
+                href={"https://parl.hsw.is/"}
                 rel={"noreferrer noopener"}
                 target={"_blank"}
               >
-                {i("footer.onGitHub")}
-              </a>{" "}
-              {i("footer.ifYouHave")}
+                {i("footer.clickHere")}
+              </a>{" | "}
+              {i("footer.restText")}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">

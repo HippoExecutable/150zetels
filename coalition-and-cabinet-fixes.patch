@@ -1,0 +1,646 @@
+diff --git a/src/components/ui/app/filters/CoalitionBySpectrumButtons.tsx b/src/components/ui/app/filters/CoalitionBySpectrumButtons.tsx
+index 86d6663..c9c7bcd 100644
+--- a/src/components/ui/app/filters/CoalitionBySpectrumButtons.tsx
++++ b/src/components/ui/app/filters/CoalitionBySpectrumButtons.tsx
+@@ -18,8 +18,18 @@
+     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+ 
+-import { useParties, useSelectedParties, useI18n } from "@/lib/zustandStore";
+-import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/20/solid";
++import {
++  useParties,
++  useSelectedParties,
++  useSelectedPreset,
++  useI18n,
++} from "@/lib/zustandStore";
++import { getCoalitionParties } from "@/utils/coalition";
++import {
++  PlusCircleIcon,
++  MinusCircleIcon,
++  UserGroupIcon,
++} from "@heroicons/react/20/solid";
+ 
+ interface ButtonConfig {
+   id: string;
+@@ -30,7 +40,12 @@ interface ButtonConfig {
+ export default function CoalitionBySpectrumButtons() {
+   const { parties } = useParties();
+   const { setSelectedParties } = useSelectedParties();
++  const { selectedPreset } = useSelectedPreset();
+   const { i } = useI18n();
++  // Only past elections have a coalition
++  const coalitionIds = new Set(
++    getCoalitionParties(selectedPreset).map((party) => party.id),
++  );
+   const primaryButtonConfigurations: ButtonConfig[] = [
+     {
+       id: "selectAll",
+@@ -42,6 +57,18 @@ export default function CoalitionBySpectrumButtons() {
+       label: i("controls.deselectAll"),
+       onClick: () => setSelectedParties([]),
+     },
++    ...(coalitionIds.size > 0
++      ? [
++          {
++            id: "coalition",
++            label: i("controls.coalition"),
++            onClick: () =>
++              setSelectedParties(
++                parties.filter((party) => coalitionIds.has(party.id)),
++              ),
++          },
++        ]
++      : []),
+   ];
+   const buttonConfigurations: ButtonConfig[] = [
+     {
+@@ -142,7 +169,7 @@ export default function CoalitionBySpectrumButtons() {
+           <button
+             key={buttonConfig.id}
+             onClick={buttonConfig.onClick}
+-            className={`w-full flex-1 rounded-full border-2 border-transparent bg-white px-3 py-1 text-nowrap transition-colors hover:bg-zinc-700 hover:text-white dark:bg-zinc-900 dark:hover:bg-zinc-200 dark:hover:text-zinc-950`}
++            className={`rounded-full border-2 border-transparent bg-white px-3 py-1 text-nowrap transition-colors hover:bg-zinc-700 hover:text-white dark:bg-zinc-900 dark:hover:bg-zinc-200 dark:hover:text-zinc-950 ${buttonConfig.id === "coalition" ? "w-full flex-none" : "w-full flex-1"}`}
+             type="button"
+             title={buttonConfig.label}
+             aria-label={buttonConfig.label}
+@@ -152,6 +179,8 @@ export default function CoalitionBySpectrumButtons() {
+             <span className="flex items-center justify-center gap-1">
+               {buttonConfig.id === "selectAll" ? (
+                 <PlusCircleIcon className="size-5 shrink-0" />
++              ) : buttonConfig.id === "coalition" ? (
++                <UserGroupIcon className="size-5 shrink-0" />
+               ) : (
+                 <MinusCircleIcon className="size-5 shrink-0" />
+               )}
+diff --git a/src/components/ui/app/head/PresetListDropdown.tsx b/src/components/ui/app/head/PresetListDropdown.tsx
+index 4e5f84b..4f04812 100644
+--- a/src/components/ui/app/head/PresetListDropdown.tsx
++++ b/src/components/ui/app/head/PresetListDropdown.tsx
+@@ -29,6 +29,7 @@ import { polls } from "@/data/polls";
+ import { pastElections } from "@/data/pastElections";
+ import { allPresets } from "@/data/allPresets";
+ import CollapsibleSection from "./CollapsibleSection";
++import PresetSubtitle from "./PresetSubtitle";
+ import { useEffect, useRef, useState } from "react";
+ import { Preset } from "@/types";
+ import { AnimatePresence, motion } from "motion/react";
+@@ -107,13 +108,10 @@ export default function PresetListDropdown() {
+                 <span>{selectedPreset.name}</span>
+                 <span>{selectedPreset.emoji}</span>
+               </div>
+-              <p className="text-xs opacity-75">
+-                {i("body.pollUpdatedAt")}:{" "}
+-                {new Date(selectedPreset.updateDate).toLocaleDateString(
+-                  i("locale"),
+-                  { timeZone: "UTC" },
+-                )}
+-              </p>
++              <PresetSubtitle
++                preset={selectedPreset}
++                dateLabelKey="body.pollUpdatedAt"
++              />
+             </div>
+           ) : (
+             <div className="flex flex-col items-start gap-0 text-start">
+@@ -215,15 +213,10 @@ export default function PresetListDropdown() {
+                               <span>{preset.emoji}</span>
+                             </div>
+                             {/* {selectedPreset === preset && ( */}
+-                            <p className="text-xs opacity-75">
+-                              {i("body.pollUpdatedAt")}:{" "}
+-                              {new Date(preset.updateDate).toLocaleDateString(
+-                                i("locale"),
+-                                {
+-                                  timeZone: "UTC",
+-                                },
+-                              )}
+-                            </p>
++                            <PresetSubtitle
++                              preset={preset}
++                              dateLabelKey="body.pollUpdatedAt"
++                            />
+                             {/* )} */}
+                           </button>
+                         </li>
+@@ -256,15 +249,10 @@ export default function PresetListDropdown() {
+                               <span>{preset.emoji}</span>
+                             </div>
+                             {/* {selectedPreset === preset && ( */}
+-                            <p className="text-xs opacity-75">
+-                              {i("body.electionDate")}:{" "}
+-                              {new Date(preset.updateDate).toLocaleDateString(
+-                                i("locale"),
+-                                {
+-                                  timeZone: "UTC",
+-                                },
+-                              )}
+-                            </p>
++                            <PresetSubtitle
++                              preset={preset}
++                              dateLabelKey="body.electionDate"
++                            />
+                             {/* )} */}
+                           </button>
+                         </li>
+diff --git a/src/components/ui/app/head/PresetListSidebar.tsx b/src/components/ui/app/head/PresetListSidebar.tsx
+index 6ceef6c..0bc2796 100644
+--- a/src/components/ui/app/head/PresetListSidebar.tsx
++++ b/src/components/ui/app/head/PresetListSidebar.tsx
+@@ -30,6 +30,7 @@ import {
+ } from "@/lib/zustandStore";
+ import { Preset } from "@/types";
+ import CollapsibleSection from "./CollapsibleSection";
++import PresetSubtitle from "./PresetSubtitle";
+ 
+ export default function PresetListSidebar() {
+   const { i } = useI18n();
+@@ -66,12 +67,7 @@ export default function PresetListSidebar() {
+             <span>{preset.name}</span>
+             <span>{preset.emoji}</span>
+           </div>
+-          <p className="text-xs opacity-75">
+-            {i(dateLabelKey)}:{" "}
+-            {new Date(preset.updateDate).toLocaleDateString(i("locale"), {
+-              timeZone: "UTC",
+-            })}
+-          </p>
++          <PresetSubtitle preset={preset} dateLabelKey={dateLabelKey} />
+         </button>
+       </li>
+     );
+diff --git a/src/components/ui/app/head/PresetSubtitle.tsx b/src/components/ui/app/head/PresetSubtitle.tsx
+new file mode 100644
+index 0000000..6a08b37
+--- /dev/null
++++ b/src/components/ui/app/head/PresetSubtitle.tsx
+@@ -0,0 +1,47 @@
++/*
++    Parliament (parliament-seats) is a tool for visualizing and calculating
++    the distribution of seats in a parliamentary system.
++
++    Copyright (C) 2025 @disfordave
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU Affero General Public License as published
++    by the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU Affero General Public License for more details.
++
++    You should have received a copy of the GNU Affero General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++import { getCoalitionLabel } from "@/utils/coalition";
++import { useI18n } from "@/lib/zustandStore";
++import { Preset } from "@/types";
++
++// The small line under a preset's name: its coalition (past elections),
++// or otherwise its date
++export default function PresetSubtitle({
++  preset,
++  dateLabelKey,
++}: {
++  preset: Preset;
++  dateLabelKey: string;
++}) {
++  const { i } = useI18n();
++  const coalition = getCoalitionLabel(preset);
++
++  return (
++    <p className="text-xs opacity-75">
++      {coalition
++        ? `${i("body.coalition")}: ${coalition}`
++        : `${i(dateLabelKey)}: ${new Date(preset.updateDate).toLocaleDateString(
++            i("locale"),
++            { timeZone: "UTC" },
++          )}`}
++    </p>
++  );
++}
+diff --git a/src/data/pastElections.ts b/src/data/pastElections.ts
+index b21129c..ca8b196 100644
+--- a/src/data/pastElections.ts
++++ b/src/data/pastElections.ts
+@@ -28,6 +28,9 @@ export const pastElections: Preset[] = [
+     name: "2025 (Jetten I)",
+     emoji: "⭐",
+     updateDate: "2025-10-29",
++    description:
++      "Kabinet van D66, VVD en CDA, aangetreden op 23 februari 2026.",
++    coalition: ["nl2025-d66", "nl2025-vvd", "nl2025-cda"],
+     parties: [
+       {
+         id: "nl2025-d66",
+@@ -169,6 +172,9 @@ export const pastElections: Preset[] = [
+   {
+     name: "2023 (Schoof)",
+     updateDate: "2023-11-22",
++    description:
++      "Kabinet van PVV, VVD, NSC en BBB, aangetreden op 2 juli 2024, zeven maanden na de verkiezingen. In juni 2025 stapte de PVV uit de coalitie en viel het kabinet.",
++    coalition: ["nl2023-pvv", "nl2023-vvd", "nl2023-nsc", "nl2023-bbb"],
+     parties: [
+       {
+         id: "nl2023-pvv",
+@@ -310,6 +316,9 @@ export const pastElections: Preset[] = [
+   {
+     name: "2021 (Rutte IV)",
+     updateDate: "2021-03-17",
++    description:
++      "Kwam tot stand na de langste formatie sinds de Tweede Wereldoorlog: negen maanden na de verkiezingen.",
++    coalition: ["nl2021-vvd", "nl2021-d66", "nl2021-cda", "nl2021-cu"],
+     parties: [
+       {
+         id: "nl2021-vvd",
+@@ -469,6 +478,7 @@ export const pastElections: Preset[] = [
+   {
+     name: "2017 (Rutte III)",
+     updateDate: "2017-03-15",
++    coalition: ["nl2017-vvd", "nl2017-d66", "nl2017-cda", "nl2017-cu"],
+     parties: [
+       {
+         id: "nl2017-vvd",
+@@ -592,6 +602,7 @@ export const pastElections: Preset[] = [
+   {
+     name: "2012 (Rutte II)",
+     updateDate: "2012-09-12",
++    coalition: ["nl2012-vvd", "nl2012-pvda"],
+     parties: [
+       {
+         id: "nl2012-vvd",
+@@ -697,6 +708,9 @@ export const pastElections: Preset[] = [
+   {
+     name: "2010 (Rutte I)",
+     updateDate: "2010-06-09",
++    description:
++      "Minderheidskabinet van VVD en CDA. Voor een meerderheid in de Kamer sloten zij een gedoogakkoord met de PVV, die zelf geen deel uitmaakte van het kabinet.",
++    coalition: ["nl2010-vvd", "nl2010-cda"],
+     parties: [
+       {
+         id: "nl2010-vvd",
+@@ -793,6 +807,9 @@ export const pastElections: Preset[] = [
+   {
+     name: "2006 (Balkenende IV)",
+     updateDate: "2006-11-22",
++    description:
++      "Balkenende III (CDA en VVD, 2006-2007) was een overgangskabinet dat niet na verkiezingen werd gevormd, maar na het vertrek van D66 uit Balkenende II. Daarom hoort bij deze verkiezingen Balkenende IV.",
++    coalition: ["nl2006-cda", "nl2006-pvda", "nl2006-cu"],
+     parties: [
+       {
+         id: "nl2006-cda",
+@@ -889,6 +906,7 @@ export const pastElections: Preset[] = [
+   {
+     name: "2003 (Balkenende II)",
+     updateDate: "2003-01-22",
++    coalition: ["nl2003-cda", "nl2003-vvd", "nl2003-d66"],
+     parties: [
+       {
+         id: "nl2003-cda",
+@@ -976,6 +994,7 @@ export const pastElections: Preset[] = [
+   {
+     name: "2002 (Balkenende I)",
+     updateDate: "2002-05-15",
++    coalition: ["nl2002-cda", "nl2002-vvd", "nl2002-lpf"],
+     parties: [
+       {
+         id: "nl2002-cda",
+@@ -1072,6 +1091,7 @@ export const pastElections: Preset[] = [
+   {
+     name: "1998 (Kok II)",
+     updateDate: "1998-05-06",
++    coalition: ["nl1998-pvda", "nl1998-vvd", "nl1998-d66"],
+     parties: [
+       {
+         id: "nl1998-pvda",
+@@ -1159,6 +1179,9 @@ export const pastElections: Preset[] = [
+   {
+     name: "1994 (Kok I)",
+     updateDate: "1994-05-03",
++    description:
++      "Het eerste paarse kabinet: het rood van de PvdA gemengd met het blauw van de VVD.",
++    coalition: ["nl1994-pvda", "nl1994-vvd", "nl1994-d66"],
+     parties: [
+       {
+         id: "nl1994-pvda",
+@@ -1273,6 +1296,7 @@ export const pastElections: Preset[] = [
+   {
+     name: "1989 (Lubbers III)",
+     updateDate: "1989-09-06",
++    coalition: ["nl1989-cda", "nl1989-pvda"],
+     parties: [
+       {
+         id: "nl1989-cda",
+@@ -1360,6 +1384,7 @@ export const pastElections: Preset[] = [
+   {
+     name: "1986 (Lubbers II)",
+     updateDate: "1986-05-21",
++    coalition: ["nl1986-cda", "nl1986-vvd"],
+     parties: [
+       {
+         id: "nl1986-cda",
+@@ -1447,6 +1472,7 @@ export const pastElections: Preset[] = [
+   {
+     name: "1982 (Lubbers I)",
+     updateDate: "1982-09-08",
++    coalition: ["nl1982-cda", "nl1982-vvd"],
+     parties: [
+       {
+         id: "nl1982-cda",
+@@ -1561,6 +1587,9 @@ export const pastElections: Preset[] = [
+   {
+     name: "1981 (Van Agt II)",
+     updateDate: "1981-05-26",
++    description:
++      "Na het vertrek van de PvdA-bewindslieden volgde in 1982 het minderheidskabinet Van Agt III van CDA en D66.",
++    coalition: ["nl1981-cda", "nl1981-pvda", "nl1981-d66"],
+     parties: [
+       {
+         id: "nl1981-cda",
+@@ -1657,6 +1686,9 @@ export const pastElections: Preset[] = [
+   {
+     name: "1977 (Van Agt I)",
+     updateDate: "1977-05-25",
++    description:
++      "De PvdA werd de grootste partij, maar werd niet in het kabinet opgenomen.",
++    coalition: ["nl1977-cda", "nl1977-vvd"],
+     parties: [
+       {
+         id: "nl1977-pvda",
+@@ -1762,6 +1794,15 @@ export const pastElections: Preset[] = [
+   {
+     name: "1972 (Den Uyl)",
+     updateDate: "1972-11-29",
++    description:
++      "Gezien als het meest links-progressieve kabinet uit de parlementaire geschiedenis.",
++    coalition: [
++      "nl1972-pvda",
++      "nl1972-d66",
++      "nl1972-ppr",
++      "nl1972-kvp",
++      "nl1972-arp",
++    ],
+     parties: [
+       {
+         id: "nl1972-pvda",
+@@ -1894,6 +1935,14 @@ export const pastElections: Preset[] = [
+   {
+     name: "1971 (Biesheuvel I)",
+     updateDate: "1971-04-28",
++    description: "Hierop volgde het kabinet Biesheuvel II (1972-1973).",
++    coalition: [
++      "nl1971-kvp",
++      "nl1971-chu",
++      "nl1971-arp",
++      "nl1971-vvd",
++      "nl1971-ds70",
++    ],
+     parties: [
+       {
+         id: "nl1971-pvda",
+@@ -2026,6 +2075,7 @@ export const pastElections: Preset[] = [
+   {
+     name: "1967 (De Jong)",
+     updateDate: "1967-02-15",
++    coalition: ["nl1967-kvp", "nl1967-arp", "nl1967-chu", "nl1967-vvd"],
+     parties: [
+       {
+         id: "nl1967-kvp",
+@@ -2131,6 +2181,9 @@ export const pastElections: Preset[] = [
+   {
+     name: "1963 (Marijnen)",
+     updateDate: "1963-05-15",
++    description:
++      "Opgevolgd zonder verkiezingen door Cals (KVP, PvdA en ARP, 1965-1966) en het overgangskabinet Zijlstra (KVP en ARP, 1966-1967).",
++    coalition: ["nl1963-kvp", "nl1963-arp", "nl1963-chu", "nl1963-vvd"],
+     parties: [
+       {
+         id: "nl1963-kvp",
+@@ -2227,6 +2280,8 @@ export const pastElections: Preset[] = [
+   {
+     name: "1959 (De Quay)",
+     updateDate: "1959-03-12",
++    description: "Het eerste naoorlogse kabinet zonder de PvdA.",
++    coalition: ["nl1959-kvp", "nl1959-arp", "nl1959-chu", "nl1959-vvd"],
+     parties: [
+       {
+         id: "nl1959-kvp",
+@@ -2303,8 +2358,11 @@ export const pastElections: Preset[] = [
+     ],
+   },
+   {
+-    name: "1956 (Drees III)",
++    name: "1956 (Drees IV)",
+     updateDate: "1956-06-13",
++    description:
++      "Het laatste rooms-rode kabinet. Na de val in 1958 volgde het overgangskabinet Beel II (KVP, ARP en CHU), dat nieuwe verkiezingen uitschreef.",
++    coalition: ["nl1956-pvda", "nl1956-kvp", "nl1956-arp", "nl1956-chu"],
+     parties: [
+       {
+         id: "nl1956-pvda",
+@@ -2372,8 +2430,11 @@ export const pastElections: Preset[] = [
+     ],
+   },
+   {
+-    name: "1952 (Drees II)",
++    name: "1952 (Drees III)",
+     updateDate: "1952-06-25",
++    description:
++      "Met één partijloze minister. De ARP nam de plaats in van de VVD uit het kabinet Drees II.",
++    coalition: ["nl1952-pvda", "nl1952-kvp", "nl1952-arp", "nl1952-chu"],
+     parties: [
+       {
+         id: "nl1952-kvp",
+@@ -2450,8 +2511,11 @@ export const pastElections: Preset[] = [
+     ],
+   },
+   {
+-    name: "1948 (Drees-Van Schaik)",
++    name: "1948 (Drees I)",
+     updateDate: "1948-07-07",
++    description:
++      "Extraparlementair kabinet met twee partijloze ministers: de fracties waren niet gebonden aan een regeerprogramma. In 1951 volgde Drees II zonder verkiezingen.",
++    coalition: ["nl1948-kvp", "nl1948-pvda", "nl1948-chu", "nl1948-vvd"],
+     parties: [
+       {
+         id: "nl1948-kvp",
+@@ -2530,6 +2594,9 @@ export const pastElections: Preset[] = [
+   {
+     name: "1946 (Beel I)",
+     updateDate: "1946-05-17",
++    description:
++      "Kabinet van KVP en PvdA met drie partijloze bewindslieden, het eerste van de rooms-rode kabinetten.",
++    coalition: ["nl1946-kvp", "nl1946-pvda"],
+     parties: [
+       {
+         id: "nl1946-kvp",
+diff --git a/src/i18n/en.json b/src/i18n/en.json
+index 0e9d26f..ae6f79f 100644
+--- a/src/i18n/en.json
++++ b/src/i18n/en.json
+@@ -34,7 +34,8 @@
+     "pollUpdatedAt": "Poll updated at",
+     "presetName": "Name",
+     "dataUpdatedAt": "Data updated at",
+-    "electionDate": "Election date"
++    "electionDate": "Election date",
++    "coalition": "Coalition"
+   },
+   "majority": {
+     "blockingMinority": "Blocking minority",
+@@ -48,6 +49,7 @@
+     "politicalSpectrum": "Political Spectrum",
+     "selectAll": "Select All",
+     "deselectAll": "Deselect All",
++    "coalition": "Coalition",
+     "left": "Left",
+     "right": "Right",
+     "leftWithoutFarLeft": "Left (without far-left)",
+diff --git a/src/i18n/nl.json b/src/i18n/nl.json
+index 7b5019f..9d6585d 100644
+--- a/src/i18n/nl.json
++++ b/src/i18n/nl.json
+@@ -34,7 +34,8 @@
+     "pollUpdatedAt": "Peiling bijgewerkt op",
+     "presetName": "Naam",
+     "dataUpdatedAt": "Data bijgewerkt op",
+-    "electionDate": "Verkiezingsdatum"
++    "electionDate": "Verkiezingsdatum",
++    "coalition": "Coalitie"
+   },
+   "majority": {
+     "blockingMinority": "Blokkerende Minderheid",
+@@ -48,6 +49,7 @@
+     "politicalSpectrum": "Politiek spectrum",
+     "selectAll": "Alles Selecteren",
+     "deselectAll": "Alles Deselecteren",
++    "coalition": "Coalitie",
+     "left": "Breed Links",
+     "right": "Breed Rechts",
+     "leftWithoutFarLeft": "Links (zonder extreem)",
+diff --git a/src/tests/coalition.test.ts b/src/tests/coalition.test.ts
+new file mode 100644
+index 0000000..87e9a03
+--- /dev/null
++++ b/src/tests/coalition.test.ts
+@@ -0,0 +1,56 @@
++/*
++    Parliament (parliament-seats) is a tool for visualizing and calculating
++    the distribution of seats in a parliamentary system.
++
++    Copyright (C) 2025 @disfordave
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU Affero General Public License as published
++    by the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU Affero General Public License for more details.
++
++    You should have received a copy of the GNU Affero General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++import { describe, expect, test } from "vitest";
++import { pastElections } from "@/data/pastElections";
++import { getCoalitionLabel, getCoalitionParties } from "@/utils/coalition";
++
++describe("past election coalitions", () => {
++  test("every past election has a coalition made of its own parties", () => {
++    for (const election of pastElections) {
++      expect(election.coalition?.length, election.name).toBeGreaterThan(0);
++      const ids = new Set(election.parties.map((p) => p.id));
++      for (const id of election.coalition ?? []) {
++        expect(ids.has(id), `${election.name}: ${id}`).toBe(true);
++      }
++      expect(getCoalitionParties(election)).toHaveLength(
++        election.coalition?.length ?? 0,
++      );
++    }
++  });
++
++  test("names are unique and look like '<year> (<cabinet>)'", () => {
++    const names = pastElections.map((e) => e.name);
++    expect(new Set(names).size).toBe(names.length);
++    for (const e of pastElections) {
++      expect(e.name).toMatch(/^\d{4} \(.+\)$/);
++      expect(e.name.slice(0, 4)).toBe(e.updateDate.slice(0, 4));
++    }
++  });
++
++  test("lists the coalition parties, largest first", () => {
++    const e = pastElections.find((p) => p.name.startsWith("2006"));
++    expect(getCoalitionLabel(e)).toBe("CDA, PvdA, CU");
++  });
++
++  test("presets without a coalition give nothing", () => {
++    expect(getCoalitionParties(undefined)).toEqual([]);
++    expect(getCoalitionLabel({ parties: [] })).toBe("");
++  });
++});
+diff --git a/src/types/presets.ts b/src/types/presets.ts
+index 1ed4fdf..01ea45d 100644
+--- a/src/types/presets.ts
++++ b/src/types/presets.ts
+@@ -30,6 +30,9 @@ export interface Preset {
+   // Shown above the chart, e.g. the poll's source and sample size.
+   // Line breaks are kept.
+   description?: string;
++  // Ids of the parties in `parties` that formed the cabinet after this election.
++  // Used for the "Coalition" button and the line under the name in the list.
++  coalition?: string[];
+ }
+ 
+ export type PresetInfo = Pick<Preset, "name" | "updateDate">;
+diff --git a/src/utils/coalition.ts b/src/utils/coalition.ts
+new file mode 100644
+index 0000000..76de764
+--- /dev/null
++++ b/src/utils/coalition.ts
+@@ -0,0 +1,41 @@
++/*
++    Parliament (parliament-seats) is a tool for visualizing and calculating
++    the distribution of seats in a parliamentary system.
++
++    Copyright (C) 2025 @disfordave
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU Affero General Public License as published
++    by the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU Affero General Public License for more details.
++
++    You should have received a copy of the GNU Affero General Public License
++    along with this program.  If not, see <https://www.gnu.org/licenses/>.
++*/
++
++import { Party, Preset } from "@/types";
++
++// The parties of the preset's coalition, largest first. Empty when it has none.
++export function getCoalitionParties(
++  preset: Pick<Preset, "parties" | "coalition"> | null | undefined,
++): Party[] {
++  if (!preset?.coalition) return [];
++  const ids = new Set(preset.coalition);
++  return preset.parties
++    .filter((party) => ids.has(party.id))
++    .sort((a, b) => b.seats - a.seats);
++}
++
++// e.g. "CDA, PvdA, CU", or "" when the preset has no coalition
++export function getCoalitionLabel(
++  preset: Pick<Preset, "parties" | "coalition"> | null | undefined,
++): string {
++  return getCoalitionParties(preset)
++    .map((party) => party.shortName)
++    .join(", ");
++}

@@ -34,7 +34,8 @@
     "pollUpdatedAt": "Peiling bijgewerkt op",
     "presetName": "Naam",
     "dataUpdatedAt": "Data bijgewerkt op",
-    "electionDate": "Verkiezingsdatum"
+    "electionDate": "Verkiezingsdatum",
+    "coalition": "Coalitie"
   },
   "majority": {
     "blockingMinority": "Blokkerende Minderheid",
@@ -48,6 +49,7 @@
     "politicalSpectrum": "Politiek spectrum",
     "selectAll": "Alles Selecteren",
     "deselectAll": "Alles Deselecteren",
+    "coalition": "Coalitie",
     "left": "Breed Links",
     "right": "Breed Rechts",
     "leftWithoutFarLeft": "Links (zonder extreem)",
@@ -110,9 +112,9 @@
     "independent": "Onafhankelijk"
   },
   "footer": {
-    "feelFree": "Voel je vrij om een issue te openen",
-    "onGitHub": "op GitHub",
-    "ifYouHave": "als u problemen of suggesties heeft."
+    "originalText": "Originele project:",
+    "clickHere": "parl.hws.is",
+    "restText": "150zetels is gemaakt door HippoEXE"
   },
   "embed": {
     "openFullVersion": "Openen in Parliament Seats",

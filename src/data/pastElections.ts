@@ -28,6 +28,9 @@ export const pastElections: Preset[] = [
     name: "2025 (Jetten I)",
     emoji: "⭐",
     updateDate: "2025-10-29",
+    description:
+      "Kabinet van D66, VVD en CDA, aangetreden op 23 februari 2026.",
+    coalition: ["nl2025-d66", "nl2025-vvd", "nl2025-cda"],
     parties: [
       {
         id: "nl2025-d66",
@@ -169,6 +172,9 @@ export const pastElections: Preset[] = [
   {
     name: "2023 (Schoof)",
     updateDate: "2023-11-22",
+    description:
+      "Kabinet van PVV, VVD, NSC en BBB, aangetreden op 2 juli 2024, zeven maanden na de verkiezingen. In juni 2025 stapte de PVV uit de coalitie en viel het kabinet.",
+    coalition: ["nl2023-pvv", "nl2023-vvd", "nl2023-nsc", "nl2023-bbb"],
     parties: [
       {
         id: "nl2023-pvv",
@@ -310,6 +316,9 @@ export const pastElections: Preset[] = [
   {
     name: "2021 (Rutte IV)",
     updateDate: "2021-03-17",
+    description:
+      "Kwam tot stand na de langste formatie sinds de Tweede Wereldoorlog: negen maanden na de verkiezingen.",
+    coalition: ["nl2021-vvd", "nl2021-d66", "nl2021-cda", "nl2021-cu"],
     parties: [
       {
         id: "nl2021-vvd",
@@ -469,6 +478,7 @@ export const pastElections: Preset[] = [
   {
     name: "2017 (Rutte III)",
     updateDate: "2017-03-15",
+    coalition: ["nl2017-vvd", "nl2017-d66", "nl2017-cda", "nl2017-cu"],
     parties: [
       {
         id: "nl2017-vvd",
@@ -592,6 +602,7 @@ export const pastElections: Preset[] = [
   {
     name: "2012 (Rutte II)",
     updateDate: "2012-09-12",
+    coalition: ["nl2012-vvd", "nl2012-pvda"],
     parties: [
       {
         id: "nl2012-vvd",
@@ -697,6 +708,9 @@ export const pastElections: Preset[] = [
   {
     name: "2010 (Rutte I)",
     updateDate: "2010-06-09",
+    description:
+      "Minderheidskabinet van VVD en CDA. Voor een meerderheid in de Kamer sloten zij een gedoogakkoord met de PVV, die zelf geen deel uitmaakte van het kabinet.",
+    coalition: ["nl2010-vvd", "nl2010-cda"],
     parties: [
       {
         id: "nl2010-vvd",
@@ -793,6 +807,9 @@ export const pastElections: Preset[] = [
   {
     name: "2006 (Balkenende IV)",
     updateDate: "2006-11-22",
+    description:
+      "Balkenende III (CDA en VVD, 2006-2007) was een overgangskabinet dat niet na verkiezingen werd gevormd, maar na het vertrek van D66 uit Balkenende II. Daarom hoort bij deze verkiezingen Balkenende IV.",
+    coalition: ["nl2006-cda", "nl2006-pvda", "nl2006-cu"],
     parties: [
       {
         id: "nl2006-cda",
@@ -889,6 +906,7 @@ export const pastElections: Preset[] = [
   {
     name: "2003 (Balkenende II)",
     updateDate: "2003-01-22",
+    coalition: ["nl2003-cda", "nl2003-vvd", "nl2003-d66"],
     parties: [
       {
         id: "nl2003-cda",
@@ -976,6 +994,7 @@ export const pastElections: Preset[] = [
   {
     name: "2002 (Balkenende I)",
     updateDate: "2002-05-15",
+    coalition: ["nl2002-cda", "nl2002-vvd", "nl2002-lpf"],
     parties: [
       {
         id: "nl2002-cda",
@@ -1072,6 +1091,7 @@ export const pastElections: Preset[] = [
   {
     name: "1998 (Kok II)",
     updateDate: "1998-05-06",
+    coalition: ["nl1998-pvda", "nl1998-vvd", "nl1998-d66"],
     parties: [
       {
         id: "nl1998-pvda",
@@ -1159,6 +1179,9 @@ export const pastElections: Preset[] = [
   {
     name: "1994 (Kok I)",
     updateDate: "1994-05-03",
+    description:
+      "Het eerste paarse kabinet: het rood van de PvdA gemengd met het blauw van de VVD.",
+    coalition: ["nl1994-pvda", "nl1994-vvd", "nl1994-d66"],
     parties: [
       {
         id: "nl1994-pvda",
@@ -1273,6 +1296,7 @@ export const pastElections: Preset[] = [
   {
     name: "1989 (Lubbers III)",
     updateDate: "1989-09-06",
+    coalition: ["nl1989-cda", "nl1989-pvda"],
     parties: [
       {
         id: "nl1989-cda",
@@ -1360,6 +1384,7 @@ export const pastElections: Preset[] = [
   {
     name: "1986 (Lubbers II)",
     updateDate: "1986-05-21",
+    coalition: ["nl1986-cda", "nl1986-vvd"],
     parties: [
       {
         id: "nl1986-cda",
@@ -1447,6 +1472,7 @@ export const pastElections: Preset[] = [
   {
     name: "1982 (Lubbers I)",
     updateDate: "1982-09-08",
+    coalition: ["nl1982-cda", "nl1982-vvd"],
     parties: [
       {
         id: "nl1982-cda",
@@ -1561,6 +1587,9 @@ export const pastElections: Preset[] = [
   {
     name: "1981 (Van Agt II)",
     updateDate: "1981-05-26",
+    description:
+      "Na het vertrek van de PvdA-bewindslieden volgde in 1982 het minderheidskabinet Van Agt III van CDA en D66.",
+    coalition: ["nl1981-cda", "nl1981-pvda", "nl1981-d66"],
     parties: [
       {
         id: "nl1981-cda",
@@ -1657,6 +1686,9 @@ export const pastElections: Preset[] = [
   {
     name: "1977 (Van Agt I)",
     updateDate: "1977-05-25",
+    description:
+      "De PvdA werd de grootste partij, maar werd niet in het kabinet opgenomen.",
+    coalition: ["nl1977-cda", "nl1977-vvd"],
     parties: [
       {
         id: "nl1977-pvda",
@@ -1762,6 +1794,15 @@ export const pastElections: Preset[] = [
   {
     name: "1972 (Den Uyl)",
     updateDate: "1972-11-29",
+    description:
+      "Gezien als het meest links-progressieve kabinet uit de parlementaire geschiedenis.",
+    coalition: [
+      "nl1972-pvda",
+      "nl1972-d66",
+      "nl1972-ppr",
+      "nl1972-kvp",
+      "nl1972-arp",
+    ],
     parties: [
       {
         id: "nl1972-pvda",
@@ -1894,6 +1935,14 @@ export const pastElections: Preset[] = [
   {
     name: "1971 (Biesheuvel I)",
     updateDate: "1971-04-28",
+    description: "Hierop volgde het kabinet Biesheuvel II (1972-1973).",
+    coalition: [
+      "nl1971-kvp",
+      "nl1971-chu",
+      "nl1971-arp",
+      "nl1971-vvd",
+      "nl1971-ds70",
+    ],
     parties: [
       {
         id: "nl1971-pvda",
@@ -2026,6 +2075,7 @@ export const pastElections: Preset[] = [
   {
     name: "1967 (De Jong)",
     updateDate: "1967-02-15",
+    coalition: ["nl1967-kvp", "nl1967-arp", "nl1967-chu", "nl1967-vvd"],
     parties: [
       {
         id: "nl1967-kvp",
@@ -2131,6 +2181,9 @@ export const pastElections: Preset[] = [
   {
     name: "1963 (Marijnen)",
     updateDate: "1963-05-15",
+    description:
+      "Opgevolgd zonder verkiezingen door Cals (KVP, PvdA en ARP, 1965-1966) en het overgangskabinet Zijlstra (KVP en ARP, 1966-1967).",
+    coalition: ["nl1963-kvp", "nl1963-arp", "nl1963-chu", "nl1963-vvd"],
     parties: [
       {
         id: "nl1963-kvp",
@@ -2227,6 +2280,8 @@ export const pastElections: Preset[] = [
   {
     name: "1959 (De Quay)",
     updateDate: "1959-03-12",
+    description: "Het eerste naoorlogse kabinet zonder de PvdA.",
+    coalition: ["nl1959-kvp", "nl1959-arp", "nl1959-chu", "nl1959-vvd"],
     parties: [
       {
         id: "nl1959-kvp",
@@ -2303,8 +2358,11 @@ export const pastElections: Preset[] = [
     ],
   },
   {
-    name: "1956 (Drees III)",
+    name: "1956 (Drees IV)",
     updateDate: "1956-06-13",
+    description:
+      "Het laatste rooms-rode kabinet. Na de val in 1958 volgde het overgangskabinet Beel II (KVP, ARP en CHU), dat nieuwe verkiezingen uitschreef.",
+    coalition: ["nl1956-pvda", "nl1956-kvp", "nl1956-arp", "nl1956-chu"],
     parties: [
       {
         id: "nl1956-pvda",
@@ -2372,8 +2430,11 @@ export const pastElections: Preset[] = [
     ],
   },
   {
-    name: "1952 (Drees II)",
+    name: "1952 (Drees III)",
     updateDate: "1952-06-25",
+    description:
+      "Met één partijloze minister. De ARP nam de plaats in van de VVD uit het kabinet Drees II.",
+    coalition: ["nl1952-pvda", "nl1952-kvp", "nl1952-arp", "nl1952-chu"],
     parties: [
       {
         id: "nl1952-kvp",
@@ -2450,8 +2511,11 @@ export const pastElections: Preset[] = [
     ],
   },
   {
-    name: "1948 (Drees-Van Schaik)",
+    name: "1948 (Drees I)",
     updateDate: "1948-07-07",
+    description:
+      "Extraparlementair kabinet met twee partijloze ministers: de fracties waren niet gebonden aan een regeerprogramma. In 1951 volgde Drees II zonder verkiezingen.",
+    coalition: ["nl1948-kvp", "nl1948-pvda", "nl1948-chu", "nl1948-vvd"],
     parties: [
       {
         id: "nl1948-kvp",
@@ -2530,6 +2594,9 @@ export const pastElections: Preset[] = [
   {
     name: "1946 (Beel I)",
     updateDate: "1946-05-17",
+    description:
+      "Kabinet van KVP en PvdA met drie partijloze bewindslieden, het eerste van de rooms-rode kabinetten.",
+    coalition: ["nl1946-kvp", "nl1946-pvda"],
     parties: [
       {
         id: "nl1946-kvp",

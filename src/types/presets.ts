@@ -30,6 +30,9 @@ export interface Preset {
   // Shown above the chart, e.g. the poll's source and sample size.
   // Line breaks are kept.
   description?: string;
+  // Ids of the parties in `parties` that formed the cabinet after this election.
+  // Used for the "Coalition" button and the line under the name in the list.
+  coalition?: string[];
 }
 
 export type PresetInfo = Pick<Preset, "name" | "updateDate">;

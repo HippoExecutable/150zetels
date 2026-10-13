@@ -18,8 +18,18 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useParties, useSelectedParties, useI18n } from "@/lib/zustandStore";
-import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/20/solid";
+import {
+  useParties,
+  useSelectedParties,
+  useSelectedPreset,
+  useI18n,
+} from "@/lib/zustandStore";
+import { getCoalitionParties } from "@/utils/coalition";
+import {
+  PlusCircleIcon,
+  MinusCircleIcon,
+  UserGroupIcon,
+} from "@heroicons/react/20/solid";
 
 interface ButtonConfig {
   id: string;
@@ -30,7 +40,12 @@ interface ButtonConfig {
 export default function CoalitionBySpectrumButtons() {
   const { parties } = useParties();
   const { setSelectedParties } = useSelectedParties();
+  const { selectedPreset } = useSelectedPreset();
   const { i } = useI18n();
+  // Only past elections have a coalition
+  const coalitionIds = new Set(
+    getCoalitionParties(selectedPreset).map((party) => party.id),
+  );
   const primaryButtonConfigurations: ButtonConfig[] = [
     {
       id: "selectAll",
@@ -42,6 +57,18 @@ export default function CoalitionBySpectrumButtons() {
       label: i("controls.deselectAll"),
       onClick: () => setSelectedParties([]),
     },
+    ...(coalitionIds.size > 0
+      ? [
+          {
+            id: "coalition",
+            label: i("controls.coalition"),
+            onClick: () =>
+              setSelectedParties(
+                parties.filter((party) => coalitionIds.has(party.id)),
+              ),
+          },
+        ]
+      : []),
   ];
   const buttonConfigurations: ButtonConfig[] = [
     {
@@ -142,7 +169,7 @@ export default function CoalitionBySpectrumButtons() {
           <button
             key={buttonConfig.id}
             onClick={buttonConfig.onClick}
-            className={`w-full flex-1 rounded-full border-2 border-transparent bg-white px-3 py-1 text-nowrap transition-colors hover:bg-zinc-700 hover:text-white dark:bg-zinc-900 dark:hover:bg-zinc-200 dark:hover:text-zinc-950`}
+            className={`rounded-full border-2 border-transparent bg-white px-3 py-1 text-nowrap transition-colors hover:bg-zinc-700 hover:text-white dark:bg-zinc-900 dark:hover:bg-zinc-200 dark:hover:text-zinc-950 ${buttonConfig.id === "coalition" ? "w-full flex-none" : "w-full flex-1"}`}
             type="button"
             title={buttonConfig.label}
             aria-label={buttonConfig.label}
@@ -152,6 +179,8 @@ export default function CoalitionBySpectrumButtons() {
             <span className="flex items-center justify-center gap-1">
               {buttonConfig.id === "selectAll" ? (
                 <PlusCircleIcon className="size-5 shrink-0" />
+              ) : buttonConfig.id === "coalition" ? (
+                <UserGroupIcon className="size-5 shrink-0" />
               ) : (
                 <MinusCircleIcon className="size-5 shrink-0" />
               )}

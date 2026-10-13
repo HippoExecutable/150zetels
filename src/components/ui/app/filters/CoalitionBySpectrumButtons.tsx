@@ -42,7 +42,7 @@ export default function CoalitionBySpectrumButtons() {
   const { setSelectedParties } = useSelectedParties();
   const { selectedPreset } = useSelectedPreset();
   const { i } = useI18n();
-  // Only past elections have a coalition
+  // Only past elections and current rooms have a coalition
   const coalitionIds = new Set(
     getCoalitionParties(selectedPreset).map((party) => party.id),
   );

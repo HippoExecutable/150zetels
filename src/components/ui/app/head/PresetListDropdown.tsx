@@ -25,6 +25,7 @@ import {
   useI18n,
   useCustomInfo,
 } from "@/lib/zustandStore";
+import { currentRooms } from "@/data/currentRooms";
 import { polls } from "@/data/polls";
 import { pastElections } from "@/data/pastElections";
 import { allPresets } from "@/data/allPresets";
@@ -221,6 +222,40 @@ export default function PresetListDropdown() {
                           </button>
                         </li>
                       ))}
+                  </CollapsibleSection>
+                  <CollapsibleSection title={i("header.currentRooms")}>
+                    {currentRooms.map((preset) => (
+                      <li
+                        key={preset.name}
+                        value={preset.name}
+                        id={preset.name}
+                        ref={(el) => {
+                          if (el) itemRefs.current[preset.name] = el;
+                        }}
+                      >
+                        <button
+                          onClick={() => {
+                            select(preset);
+                          }}
+                          className={`flex w-full flex-col items-start p-2 text-start transition-colors duration-300 ${
+                            selectedPreset === preset
+                              ? "bg-zinc-200 dark:bg-zinc-700"
+                              : "hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                          }`}
+                        >
+                          <div className="flex gap-1">
+                            <span>{preset.name}</span>
+                            <span>{preset.emoji}</span>
+                          </div>
+                          {/* {selectedPreset === preset && ( */}
+                          <PresetSubtitle
+                            preset={preset}
+                            dateLabelKey="body.dataUpdatedAt"
+                          />
+                          {/* )} */}
+                        </button>
+                      </li>
+                    ))}
                   </CollapsibleSection>
                   <CollapsibleSection title={i("header.pastElections")}>
                     {[...pastElections]

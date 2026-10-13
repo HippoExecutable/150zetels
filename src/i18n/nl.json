@@ -10,6 +10,7 @@
   "header": {
     "presets": "Peilingen & verkiezingen",
     "custom": "Eigen Peilingen",
+    "currentRooms": "Huidige Kamers",
     "polls": "Peilingen",
     "pastElections": "Verkiezingen",
     "majorityWithCount": "Meerderheid met {count} zetels",

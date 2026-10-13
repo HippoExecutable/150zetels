@@ -22,7 +22,7 @@ import { getCoalitionLabel } from "@/utils/coalition";
 import { useI18n } from "@/lib/zustandStore";
 import { Preset } from "@/types";
 
-// The small line under a preset's name: its coalition (past elections),
+// The small line under a preset's name: its coalition (past elections and current rooms),
 // or otherwise its date
 export default function PresetSubtitle({
   preset,

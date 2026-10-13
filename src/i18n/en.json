@@ -11,6 +11,7 @@
   "header": {
     "presets": "Polls & elections",
     "custom": "Custom",
+    "currentRooms": "Current Rooms",
     "polls": "Polls",
     "pastElections": "Past elections",
     "seatsForMajority": "{count} seats for majority",

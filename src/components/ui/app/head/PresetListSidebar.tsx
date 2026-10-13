@@ -18,6 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { currentRooms } from "@/data/currentRooms";
 import { polls } from "@/data/polls";
 import { pastElections } from "@/data/pastElections";
 import { allPresets } from "@/data/allPresets";
@@ -116,6 +117,11 @@ export default function PresetListSidebar() {
             {[...polls]
               .sort((a, b) => a.name.localeCompare(b.name))
               .map((preset) => renderPreset(preset, "body.pollUpdatedAt"))}
+          </CollapsibleSection>
+          <CollapsibleSection title={i("header.currentRooms")}>
+            {currentRooms.map((preset) =>
+              renderPreset(preset, "body.dataUpdatedAt"),
+            )}
           </CollapsibleSection>
           <CollapsibleSection title={i("header.pastElections")}>
             {[...pastElections]

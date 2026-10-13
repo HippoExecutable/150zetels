@@ -20,7 +20,12 @@
 
 import { Preset } from "@/types";
 import { polls } from "./polls";
+import { currentRooms } from "./currentRooms";
 import { pastElections } from "./pastElections";
 
-// Everything that can be selected by name (polls + past elections)
-export const allPresets: Preset[] = [...polls, ...pastElections];
+// Everything that can be selected by name (current rooms + polls + past elections)
+export const allPresets: Preset[] = [
+  ...currentRooms,
+  ...polls,
+  ...pastElections,
+];

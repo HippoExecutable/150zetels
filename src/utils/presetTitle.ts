@@ -18,6 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { currentRooms } from "@/data/currentRooms";
 import { pastElections } from "@/data/pastElections";
 import { Preset, PresetInfo } from "@/types";
 
@@ -30,9 +31,10 @@ export function getPresetTitle(
   const { name, updateDate } = selectedPreset ?? customInfo;
   const title = [name, selectedPreset?.emoji].filter(Boolean).join(" ");
   const isPastElection = pastElections.some((c) => c.name === name);
+  const isCurrentRoom = currentRooms.some((c) => c.name === name);
   const dateLabel = isPastElection
     ? i("body.electionDate")
-    : selectedPreset
+    : selectedPreset && !isCurrentRoom
       ? i("body.pollUpdatedAt")
       : i("body.dataUpdatedAt");
   const subtitle = updateDate

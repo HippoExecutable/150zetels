@@ -18,6 +18,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+// The positions a party can have, from far left to far right
+export const spectrumStops = [-100, -75, -50, -25, 0, 25, 50, 75, 100];
+
 export const getPosition = (
   position: number,
 ): { full: string; short: string } => {

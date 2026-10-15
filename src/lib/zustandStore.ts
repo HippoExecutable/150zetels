@@ -81,7 +81,7 @@ const useIsEditMode = create<IsEditModeState>((set) => ({
 }));
 
 const useSortBy = create<SortByState>((set) => ({
-  sortBy: "seats",
+  sortBy: "position",
   setSortBy: (by) => set(() => ({ sortBy: by })),
 }));
 

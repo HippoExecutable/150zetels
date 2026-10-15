@@ -64,16 +64,11 @@
     "selectAll": "Alles Selecteren",
     "deselectAll": "Alles Deselecteren",
     "coalition": "Coalitie",
-    "left": "Breed Links",
-    "right": "Breed Rechts",
-    "leftWithoutFarLeft": "Links (zonder extreem)",
-    "rightWithoutFarRight": "Rechts (zonder extreem)",
-    "centre": "Centrum",
-    "grandCentre": "Breed (Centrum)",
-    "grandWithoutExtremes": "Breder (zonder extremen)",
-    "leftWing": "Links",
-    "rightWing": "Rechts",
-    "coalitionWithSupport": "Coalitie + gedoogsteun"
+    "coalitionWithSupport": "Coalitie + gedoogsteun",
+    "apply": "Toepassen",
+    "party": "partij",
+    "parties": "partijen",
+    "spectrumHandle": "Grens van het bereik"
   },
   "buttons": {
     "dataManagement": "Databeheer",

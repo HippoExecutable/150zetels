@@ -25,6 +25,7 @@ import {
   useI18n,
 } from "@/lib/zustandStore";
 import { getCoalitionParties, getSupportParties } from "@/utils/coalition";
+import SpectrumRange from "./SpectrumRange";
 import {
   PlusCircleIcon,
   MinusCircleIcon,
@@ -94,97 +95,6 @@ export default function CoalitionBySpectrumButtons() {
         ]
       : []),
   ];
-  const buttonConfigurations: ButtonConfig[] = [
-    {
-      id: "left",
-      label: i("controls.left"),
-      onClick: () => {
-        const leftParties = parties.filter((party) => party.position < 0);
-        setSelectedParties(leftParties);
-      },
-    },
-    {
-      id: "right",
-      label: i("controls.right"),
-      onClick: () => {
-        const rightParties = parties.filter((party) => party.position > 0);
-        setSelectedParties(rightParties);
-      },
-    },
-    {
-      id: "leftWithoutFarLeft",
-      label: i("controls.leftWithoutFarLeft"),
-      onClick: () => {
-        const leftParties = parties.filter(
-          (party) => party.position < 0 && party.position > -100,
-        );
-        setSelectedParties(leftParties);
-      },
-    },
-    {
-      id: "rightWithoutFarRight",
-      label: i("controls.rightWithoutFarRight"),
-      onClick: () => {
-        const rightParties = parties.filter(
-          (party) => party.position > 0 && party.position < 100,
-        );
-        setSelectedParties(rightParties);
-      },
-    },
-    {
-      id: "leftWing",
-      label: i("controls.leftWing"),
-      onClick: () => {
-        const leftParties = parties.filter((party) => party.position <= -75);
-        setSelectedParties(leftParties);
-      },
-    },
-    {
-      id: "rightWing",
-      label: i("controls.rightWing"),
-      onClick: () => {
-        const rightParties = parties.filter((party) => party.position >= 75);
-        setSelectedParties(rightParties);
-      },
-    },
-    {
-      id: "centre",
-      label: i("controls.centre"),
-      onClick: () => {
-        const centerParties = parties.filter(
-          (party) =>
-            party.position <= 25 &&
-            party.position >= -25 &&
-            !party.isIndependent,
-        );
-        setSelectedParties(centerParties);
-      },
-    },
-    {
-      id: "grandCentre",
-      label: i("controls.grandCentre"),
-      onClick: () => {
-        const centerParties = parties.filter(
-          (party) =>
-            party.position < 75 && party.position > -75 && !party.isIndependent,
-        );
-        setSelectedParties(centerParties);
-      },
-    },
-    {
-      id: "grandWithoutExtremes",
-      label: i("controls.grandWithoutExtremes"),
-      onClick: () => {
-        const grandParties = parties.filter(
-          (party) =>
-            party.position > -100 &&
-            party.position < 100 &&
-            !party.isIndependent,
-        );
-        setSelectedParties(grandParties);
-      },
-    },
-  ];
 
   return (
     <>
@@ -216,24 +126,7 @@ export default function CoalitionBySpectrumButtons() {
       <span className="mt-4 flex w-full items-center justify-start gap-2 text-sm font-semibold text-nowrap text-zinc-900 opacity-75 dark:text-white">
         {i("controls.politicalSpectrum")}
       </span>
-      <div className="mt-1 flex flex-wrap gap-2 overflow-auto rounded-2xl bg-zinc-200 p-4 dark:bg-zinc-700">
-        <div className="flex flex-wrap gap-2 overflow-auto bg-zinc-200 dark:bg-zinc-700">
-          {buttonConfigurations.map((buttonConfig) => (
-            <button
-              key={buttonConfig.id}
-              onClick={buttonConfig.onClick}
-              className={`rounded-full border-2 border-transparent bg-white px-3 py-1 text-nowrap transition-colors hover:bg-zinc-700 hover:text-white dark:bg-zinc-900 dark:hover:bg-zinc-200 dark:hover:text-zinc-950 ${buttonConfig.id === "selectAll" || buttonConfig.id === "deselectAll" ? "w-full" : ""}`}
-              type="button"
-              title={buttonConfig.label}
-              aria-label={buttonConfig.label}
-              aria-describedby={buttonConfig.label}
-              aria-disabled={false}
-            >
-              {buttonConfig.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <SpectrumRange />
     </>
   );
 }

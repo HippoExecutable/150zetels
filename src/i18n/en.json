@@ -64,16 +64,11 @@
     "selectAll": "Select All",
     "deselectAll": "Deselect All",
     "coalition": "Coalition",
-    "left": "Left",
-    "right": "Right",
-    "leftWithoutFarLeft": "Left (without far-left)",
-    "rightWithoutFarRight": "Right (without far-right)",
-    "centre": "Centre",
-    "grandCentre": "Grand (centre)",
-    "grandWithoutExtremes": "Grand (without extremes)",
-    "leftWing": "Left-wing",
-    "rightWing": "Right-wing",
-    "coalitionWithSupport": "Coalition + support"
+    "coalitionWithSupport": "Coalition + support",
+    "apply": "Apply",
+    "party": "party",
+    "parties": "parties",
+    "spectrumHandle": "Edge of the range"
   },
   "buttons": {
     "dataManagement": "Data Management",

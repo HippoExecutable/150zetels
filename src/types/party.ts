@@ -30,4 +30,6 @@ export interface Party {
   votes?: number;
   // Wins seats from votes even below the electoral threshold
   isThresholdExempt?: boolean;
+  // Supports the cabinet without joining it (gedoogsteun)
+  isSupport?: boolean;
 }

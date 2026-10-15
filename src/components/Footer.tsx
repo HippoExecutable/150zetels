@@ -52,7 +52,8 @@ export default function Footer() {
                 target={"_blank"}
               >
                 {i("footer.clickHere")}
-              </a>{" | "}
+              </a>
+              {" | "}
               {i("footer.restText")}
             </p>
           </div>

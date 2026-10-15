@@ -31,6 +31,23 @@ export function getCoalitionParties(
     .sort((a, b) => b.seats - a.seats);
 }
 
+// The parties that support the cabinet without joining it, largest first
+export function getSupportParties(
+  parties: Party[] | null | undefined,
+): Party[] {
+  return (parties ?? [])
+    .filter((party) => party.isSupport)
+    .sort((a, b) => b.seats - a.seats);
+}
+
+// A preset's parties as they are shown when it is picked: gedoogsteun only
+// shows once the coalition is selected with the "Coalition" button
+export function withoutSupport(parties: Party[]): Party[] {
+  return parties.map((party) =>
+    party.isSupport ? { ...party, isSupport: false } : party,
+  );
+}
+
 // e.g. "CDA, PvdA, CU", or "" when the preset has no coalition
 export function getCoalitionLabel(
   preset: Pick<Preset, "parties" | "coalition"> | null | undefined,

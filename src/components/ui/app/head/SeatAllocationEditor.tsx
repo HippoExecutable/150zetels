@@ -23,9 +23,7 @@ import {
   AllocationMethod,
   allocateSeats,
   allocationMethods,
-  applyThreshold,
-  getDefaultTotalVotes,
-  Threshold,
+  sumVotes,
 } from "@/utils/allocateSeats";
 import { CalculatorIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
@@ -36,34 +34,20 @@ export default function SeatAllocationEditor() {
   const { i } = useI18n();
   const [totalSeats, setTotalSeats] = useState("");
   const [method, setMethod] = useState<AllocationMethod>("dHondt");
-  const [threshold, setThreshold] = useState("");
-  const [totalVotes, setTotalVotes] = useState("");
 
   const currentTotal = parties.reduce((acc, party) => acc + party.seats, 0);
   const votes = parties.map((party) => party.votes ?? 0);
-  const defaultTotalVotes = getDefaultTotalVotes(votes);
 
-  // Empty fields keep the current number of seats, with no threshold, out of
-  // 100 for vote shares or the votes entered for vote counts
+  // An empty field keeps the current number of seats
   const seatCount = totalSeats ? Number(totalSeats) : currentTotal;
-  const thresholdPercent = threshold ? Number(threshold) : 0;
-  const voteCount = totalVotes ? Number(totalVotes) : defaultTotalVotes;
-  const electoralThreshold: Threshold = {
-    percent: thresholdPercent,
-    totalVotes: voteCount,
-    isExempt: parties.map((party) => party.isThresholdExempt === true),
-  };
   const canAllocate =
     Number.isInteger(seatCount) &&
     seatCount > 0 &&
     seatCount <= 99999 &&
-    thresholdPercent >= 0 &&
-    thresholdPercent <= 100 &&
-    voteCount > 0 &&
-    applyThreshold(votes, electoralThreshold).some((count) => count > 0);
+    sumVotes(votes) > 0;
 
   const allocate = () => {
-    const seats = allocateSeats(votes, seatCount, method, electoralThreshold);
+    const seats = allocateSeats(votes, seatCount, method);
     const newParties = parties.map((party, index) => ({
       ...party,
       seats: seats[index],
@@ -113,42 +97,6 @@ export default function SeatAllocationEditor() {
               </option>
             ))}
           </select>
-        </label>
-        <label className="flex min-w-36 flex-1 flex-col gap-1">
-          <span className="text-xs opacity-75">
-            {i("allocation.threshold")}
-          </span>
-          <span className="flex items-center gap-1 tabular-nums">
-            <input
-              name="electoralThreshold"
-              type="number"
-              inputMode="decimal"
-              placeholder="0"
-              className="w-full border-b border-zinc-200 bg-transparent outline-hidden dark:border-zinc-700"
-              min={0}
-              max={100}
-              step="any"
-              value={threshold}
-              onChange={(e) => setThreshold(e.target.value)}
-            />
-            <span className="opacity-75">%</span>
-          </span>
-        </label>
-        <label className="flex min-w-36 flex-1 flex-col gap-1">
-          <span className="text-xs opacity-75">
-            {i("allocation.totalVotes")}
-          </span>
-          <input
-            name="totalVotes"
-            type="number"
-            inputMode="decimal"
-            placeholder={defaultTotalVotes.toString()}
-            className="w-full border-b border-zinc-200 bg-transparent outline-hidden dark:border-zinc-700"
-            min={0}
-            step="any"
-            value={totalVotes}
-            onChange={(e) => setTotalVotes(e.target.value)}
-          />
         </label>
       </div>
       <div className="flex flex-wrap items-center justify-between gap-2">

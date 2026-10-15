@@ -1,7 +1,7 @@
 {
   "locale": "en",
   "parliament": "Parliament",
-  "subtitle": "A Parliamentary Seat Distribution Tool",
+  "subtitle": "Cabinet builder with the latest polls",
   "appearance": {
     "light": "Light",
     "dark": "Dark",
@@ -36,7 +36,9 @@
     "presetName": "Name",
     "dataUpdatedAt": "Data updated at",
     "electionDate": "Election date",
-    "coalition": "Coalition"
+    "coalition": "Coalition",
+    "changeFromNow": "Change from the current House",
+    "electionSeats": "{year} House election"
   },
   "majority": {
     "blockingMinority": "Blocking minority",
@@ -51,10 +53,7 @@
     "votes": "Votes or %",
     "totalSeats": "Total seats",
     "method": "Method",
-    "threshold": "Electoral threshold",
-    "totalVotes": "Total votes or %",
-    "thresholdExempt": "Exempt from threshold",
-    "hint": "Enter each party's votes or vote share, then calculate the seats. The threshold counts all votes, including those for parties not listed.",
+    "hint": "Enter each party's votes or vote share, then calculate the seats.",
     "calculate": "Calculate seats",
     "dHondt": "D'Hondt",
     "sainteLague": "Sainte-Laguë",
@@ -73,7 +72,8 @@
     "grandCentre": "Grand (centre)",
     "grandWithoutExtremes": "Grand (without extremes)",
     "leftWing": "Left-wing",
-    "rightWing": "Right-wing"
+    "rightWing": "Right-wing",
+    "coalitionWithSupport": "Coalition + support"
   },
   "buttons": {
     "dataManagement": "Data Management",
@@ -128,12 +128,47 @@
   },
   "footer": {
     "originalText": "Original project:",
-    "clickHere": "parl.hws.is",
+    "clickHere": "parl.hsw.is",
     "restText": "150zetels is created by HippoEXE"
   },
   "embed": {
-    "openFullVersion": "Open in Parliament Seats",
+    "openFullVersion": "Open on 150zetels.nl",
     "invalidData": "This chart could not be loaded.",
     "reset": "Reset"
+  },
+  "partyInfo": {
+    "moreInfo": "More information about {party}",
+    "close": "Close",
+    "colour": "Colour",
+    "colours": "Colours",
+    "searchWikipedia": "Search Wikipedia",
+    "fusion": "Merger",
+    "mergedInto": "Merged into",
+    "currentSeats": "Seats now",
+    "tweedeKamer": "House of Representatives",
+    "eersteKamer": "Senate",
+    "europeesParlement": "European Parliament",
+    "history": "House of Representatives election results",
+    "historyNote": "Seats per election. On the right are the current seats in the House and the chosen poll.",
+    "inParliament": "In the House",
+    "now": "now",
+    "noHistory": "This party has not won seats at a House election yet.",
+    "poll": "poll",
+    "nowTweedeKamer": "Now in the House",
+    "ofSeats": "of {count} seats",
+    "houseGrowth": "100 → 150 seats",
+    "splitFrom": "Split off from",
+    "wikipediaDescription": "Background and history",
+    "parlementDescription": "Parliamentary history and key facts",
+    "searchParlement": "Search Parlement.com",
+    "choosePoll": "Choose a poll",
+    "inCabinet": "In the {cabinet} cabinet",
+    "supportingCabinet": "Supporting the {cabinet} cabinet",
+    "cabinetLegend": "In the cabinet",
+    "supportLegend": "Supporting the cabinet"
+  },
+  "support": {
+    "label": "Supports cabinet",
+    "toggle": "Toggle cabinet support from {party}"
   }
 }

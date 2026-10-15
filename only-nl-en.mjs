@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// One-off cleanup for 150zetels. Run from the repo root:  node only-nl-en.mjs
+// One-off cleanup for KabinetBouwer. Run from the repo root:  node only-nl-en.mjs
 //
 // 1. Renames the four translation keys in nl.json and en.json
 //      header.countries -> header.presets, header.sampleCountries -> header.polls,

@@ -29,7 +29,7 @@ export const pastElections: Preset[] = [
     emoji: "⭐",
     updateDate: "2025-10-29",
     description:
-      "Kabinet van D66, VVD en CDA, aangetreden op 23 februari 2026.",
+      "Kabinet van D66, VVD en CDA, aangetreden op 23 februari 2026.\nLet op! Dit is niet de huidige Tweede Kamer wegens afsplitsingen.",
     coalition: ["nl2025-d66", "nl2025-vvd", "nl2025-cda"],
     parties: [
       {
@@ -738,6 +738,8 @@ export const pastElections: Preset[] = [
         colour: "#012758",
         position: 100,
         isIndependent: false,
+        // Gedoogsteun for Rutte I, without joining the cabinet
+        isSupport: true,
       },
       {
         id: "nl2010-cda",
@@ -2036,7 +2038,7 @@ export const pastElections: Preset[] = [
       },
       {
         id: "nl1971-nmp",
-        name: "Nieuwe Middenpartij",
+        name: "Nederlandse Middenstands Partij",
         shortName: "NMP",
         seats: 2,
         colour: "#A8A29E",

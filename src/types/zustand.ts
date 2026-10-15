@@ -71,6 +71,12 @@ interface CustomInfoState {
   setCustomInfo: (by: PresetInfo) => void;
 }
 
+interface PartyInfoState {
+  // Key of the party whose info popup is open, see `getPartyKey`
+  partyKey: string | null;
+  setPartyKey: (by: string | null) => void;
+}
+
 export type {
   DefaultPresetValueState,
   PartiesState,
@@ -82,4 +88,5 @@ export type {
   I18nState,
   SelectedPresetState,
   CustomInfoState,
+  PartyInfoState,
 };

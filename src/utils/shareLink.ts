@@ -95,8 +95,8 @@ function escapeHtml(text: string) {
 export function createEmbedCode(embedLink: string, preset: PresetData) {
   const { origin } = new URL(embedLink);
   const title = preset.name
-    ? `${preset.name} - Parliament Seats`
-    : "Parliament Seats";
+    ? `${preset.name} - 150zetels`
+    : "150zetels";
   // A rough fit for a few rows of parties, until the script resizes it
   const height = 560 + Math.ceil(preset.parties.length / 3) * 60;
   const iframe = `<iframe src="${escapeHtml(embedLink)}" title="${escapeHtml(title)}" width="100%" height="${height}" style="border:0;max-width:100%" loading="lazy"></iframe>`;

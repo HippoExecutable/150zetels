@@ -18,7 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { getCoalitionLabel } from "@/utils/coalition";
+import { getCoalitionLabel, getSupportParties } from "@/utils/coalition";
 import { useI18n } from "@/lib/zustandStore";
 import { Preset } from "@/types";
 
@@ -33,11 +33,16 @@ export default function PresetSubtitle({
 }) {
   const { i } = useI18n();
   const coalition = getCoalitionLabel(preset);
+  const support = getSupportParties(preset.parties)
+    .map((party) => party.shortName)
+    .join(", ");
 
   return (
     <p className="text-xs opacity-75">
       {coalition
-        ? `${i("body.coalition")}: ${coalition}`
+        ? `${i("body.coalition")}: ${coalition}${
+            support ? ` (${i("support.label").toLowerCase()}: ${support})` : ""
+          }`
         : `${i(dateLabelKey)}: ${new Date(preset.updateDate).toLocaleDateString(
             i("locale"),
             { timeZone: "UTC" },

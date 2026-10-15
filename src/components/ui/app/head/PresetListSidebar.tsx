@@ -18,6 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { withoutSupport } from "@/utils/coalition";
 import { currentRooms } from "@/data/currentRooms";
 import { polls } from "@/data/polls";
 import { pastElections } from "@/data/pastElections";
@@ -44,8 +45,9 @@ export default function PresetListSidebar() {
     setSelectedPreset(preset);
     const findPreset = allPresets.find((c) => c.name === preset.name);
     if (findPreset) {
-      setParties(findPreset.parties);
-      setSelectedParties(findPreset.parties);
+      const presetParties = withoutSupport(findPreset.parties);
+      setParties(presetParties);
+      setSelectedParties(presetParties);
     } else {
       setSelectedPreset(null);
       setParties([]);

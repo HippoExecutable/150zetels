@@ -28,6 +28,7 @@ import {
   useIsEditMode,
 } from "@/lib/zustandStore";
 import { sort } from "@/utils/sort";
+import { supportStripes } from "@/components/colors";
 import { getMajority } from "@/utils/getMajority";
 import { pluralize } from "@/utils/pluralize";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
@@ -134,7 +135,9 @@ export default function SeatsGraph() {
                     : party.shortName
                 } (${party.seats})`}
                 style={{
-                  backgroundColor: party.colour,
+                  background: party.isSupport
+                    ? supportStripes(party.colour)
+                    : party.colour,
                   minWidth: "0%",
                   width: selectedParties.some((p) => p.id === party.id)
                     ? `${(party.seats / total) * 100}%`

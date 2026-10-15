@@ -19,7 +19,12 @@
 */
 import { describe, expect, test } from "vitest";
 import { pastElections } from "@/data/pastElections";
-import { getCoalitionLabel, getCoalitionParties } from "@/utils/coalition";
+import {
+  getCoalitionLabel,
+  getCoalitionParties,
+  getSupportParties,
+  withoutSupport,
+} from "@/utils/coalition";
 
 describe("past election coalitions", () => {
   test("every past election has a coalition made of its own parties", () => {
@@ -47,6 +52,20 @@ describe("past election coalitions", () => {
   test("lists the coalition parties, largest first", () => {
     const e = pastElections.find((p) => p.name.startsWith("2006"));
     expect(getCoalitionLabel(e)).toBe("CDA, PvdA, CU");
+  });
+
+  test("shows gedoogsteun only once the coalition is picked", () => {
+    const rutte = pastElections.find((p) => p.name.startsWith("2010"))!;
+    expect(getSupportParties(rutte.parties).map((p) => p.shortName)).toEqual([
+      "PVV",
+    ]);
+    const shown = withoutSupport(rutte.parties);
+    expect(getSupportParties(shown)).toEqual([]);
+    expect(shown.map((p) => p.seats)).toEqual(
+      rutte.parties.map((p) => p.seats),
+    );
+    // The preset itself keeps its gedoogsteun
+    expect(getSupportParties(rutte.parties)).toHaveLength(1);
   });
 
   test("presets without a coalition give nothing", () => {

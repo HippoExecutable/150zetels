@@ -24,6 +24,7 @@ export { default as PieChart } from "./head/PieChart";
 export { default as PresetInfoEditor } from "./head/PresetInfoEditor";
 export { default as PresetDescription } from "./head/PresetDescription";
 export { default as SeatAllocationEditor } from "./head/SeatAllocationEditor";
+export { default as PartyInfoDialog } from "./parties/PartyInfoDialog";
 
 export { default as MajorityThresholdButton } from "./filters/MajorityThresholdButton";
 export { default as SortButton } from "./filters/SortButton";

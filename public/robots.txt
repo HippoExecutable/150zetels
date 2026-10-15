@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://parl.hsw.is/sitemap.xml
+Sitemap: https://150zetels.nl/sitemap.xml

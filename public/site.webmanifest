@@ -1,7 +1,7 @@
 {
-  "name": "Parliament Seats",
-  "short_name": "Parliament",
-  "description": "Free coalition and majority calculator for parliaments around the world.",
+  "name": "150zetels",
+  "short_name": "150zetels",
+  "description": "Bouw je eigen kabinet met de nieuwste peilingen en alle verkiezingsuitslagen sinds 1946.",
   "start_url": "/",
   "icons": [
     {
@@ -19,5 +19,6 @@
   ],
   "theme_color": "#27272a",
   "background_color": "#27272a",
-  "display": "standalone"
+  "display": "standalone",
+  "lang": "nl"
 }

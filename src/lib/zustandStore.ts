@@ -31,6 +31,7 @@ import {
   SelectedPresetState,
   I18nState,
   CustomInfoState,
+  PartyInfoState,
   PresetData,
   IncludeOptions,
 } from "@/types";
@@ -123,6 +124,11 @@ const useCustomInfo = create<CustomInfoState>((set) => ({
   setCustomInfo: (by) => set(() => ({ customInfo: by })),
 }));
 
+const usePartyInfo = create<PartyInfoState>((set) => ({
+  partyKey: null,
+  setPartyKey: (by) => set(() => ({ partyKey: by })),
+}));
+
 // Loads imported or shared data, and keeps the settings it leaves out
 function importPresetData({
   name,
@@ -186,6 +192,7 @@ export {
   useI18n,
   useSelectedPreset,
   useCustomInfo,
+  usePartyInfo,
   importPresetData,
   exportPresetData,
 };

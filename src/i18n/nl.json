@@ -36,7 +36,9 @@
     "presetName": "Naam",
     "dataUpdatedAt": "Data bijgewerkt op",
     "electionDate": "Verkiezingsdatum",
-    "coalition": "Coalitie"
+    "coalition": "Coalitie",
+    "changeFromNow": "Verschil met de huidige Tweede Kamer",
+    "electionSeats": "TK-verkiezingen {year}"
   },
   "majority": {
     "blockingMinority": "Blokkerende Minderheid",
@@ -51,10 +53,7 @@
     "votes": "Stemmen of %",
     "totalSeats": "Totaal aantal zetels",
     "method": "Methode",
-    "threshold": "Kiesdrempel",
-    "totalVotes": "Totaal stemmen of %",
-    "thresholdExempt": "Vrijgesteld van drempel",
-    "hint": "Vul de stemmen of het stempercentage van elke partij in en bereken dan de zetels. De drempel telt alle stemmen mee, ook die voor partijen die niet in de lijst staan.",
+    "hint": "Vul de stemmen of het stempercentage van elke partij in en bereken dan de zetels.",
     "calculate": "Zetels berekenen",
     "dHondt": "D'Hondt",
     "sainteLague": "Sainte-Laguë",
@@ -73,7 +72,8 @@
     "grandCentre": "Breed (Centrum)",
     "grandWithoutExtremes": "Breder (zonder extremen)",
     "leftWing": "Links",
-    "rightWing": "Rechts"
+    "rightWing": "Rechts",
+    "coalitionWithSupport": "Coalitie + gedoogsteun"
   },
   "buttons": {
     "dataManagement": "Databeheer",
@@ -128,12 +128,47 @@
   },
   "footer": {
     "originalText": "Originele project:",
-    "clickHere": "parl.hws.is",
+    "clickHere": "parl.hsw.is",
     "restText": "150zetels is gemaakt door HippoEXE"
   },
   "embed": {
-    "openFullVersion": "Openen in Parliament Seats",
+    "openFullVersion": "Openen op 150zetels.nl",
     "invalidData": "Deze grafiek kon niet worden geladen.",
     "reset": "Herstellen"
+  },
+  "partyInfo": {
+    "moreInfo": "Meer informatie over {party}",
+    "close": "Sluiten",
+    "colour": "Kleur",
+    "colours": "Kleuren",
+    "searchWikipedia": "Zoeken op Wikipedia",
+    "fusion": "Fusie",
+    "mergedInto": "Opgegaan in",
+    "currentSeats": "Zetels nu",
+    "tweedeKamer": "Tweede Kamer",
+    "eersteKamer": "Eerste Kamer",
+    "europeesParlement": "Europees Parlement",
+    "history": "Verkiezingsuitslagen Tweede Kamer",
+    "historyNote": "Zetels per verkiezing. Rechts staan de huidige zetels in de Tweede Kamer en de gekozen peiling.",
+    "inParliament": "In de Tweede Kamer",
+    "now": "nu",
+    "noHistory": "Deze partij heeft nog geen zetels gewonnen bij een Tweede Kamerverkiezing.",
+    "poll": "peiling",
+    "nowTweedeKamer": "Nu in de Tweede Kamer",
+    "ofSeats": "van de {count} zetels",
+    "houseGrowth": "100 → 150 zetels",
+    "splitFrom": "Afsplitsing van",
+    "wikipediaDescription": "Achtergrond en geschiedenis",
+    "parlementDescription": "Parlementaire geschiedenis en kerngegevens",
+    "searchParlement": "Zoeken op Parlement.com",
+    "choosePoll": "Kies een peiling",
+    "inCabinet": "In kabinet-{cabinet}",
+    "supportingCabinet": "Gedoogsteun voor kabinet-{cabinet}",
+    "cabinetLegend": "In het kabinet",
+    "supportLegend": "Gedoogsteun"
+  },
+  "support": {
+    "label": "Gedoogsteun",
+    "toggle": "Gedoogsteun van {party} aan- of uitzetten"
   }
 }

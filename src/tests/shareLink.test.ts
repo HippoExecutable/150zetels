@@ -151,7 +151,7 @@ test("embed code has an iframe and a script that only trusts the app", async () 
   const code = createEmbedCode(embedLink, preset);
 
   expect(code).toContain(`<iframe src="${embedLink}"`);
-  expect(code).toContain('title="Ostfriesland 🌊 - Parliament Seats"');
+  expect(code).toContain('title="Ostfriesland 🌊 - 150zetels"');
   expect(code).toContain('e.origin!=="https://example.com"');
   expect(code).toContain(embedHeightMessage);
 });

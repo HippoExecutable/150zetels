@@ -28,7 +28,9 @@ import {
   useSelectedPreset,
   useMajorityThreshold,
   useCustomInfo,
+  usePartyInfo,
 } from "@/lib/zustandStore";
+import { getPartyInfo, getPartyKey } from "@/data/partyInfo";
 import {
   PartyButton,
   MajorityThresholdButton,
@@ -41,6 +43,7 @@ import {
   PresetInfoEditor,
   PresetDescription,
   SeatAllocationEditor,
+  PartyInfoDialog,
   JsonShareExportButton,
   JsonShareImportButton,
   PieChart,
@@ -56,6 +59,7 @@ const Seats = () => {
   const { setSelectedPreset } = useSelectedPreset();
   const { majorityThreshold } = useMajorityThreshold();
   const { setCustomInfo } = useCustomInfo();
+  const { setPartyKey } = usePartyInfo();
 
   return (
     <div>
@@ -63,6 +67,7 @@ const Seats = () => {
         <PresetListDropdown />
       </div>
       <PresetDescription />
+      <PartyInfoDialog />
       <div className="relative z-12 mt-4 -mb-[calc(env(safe-area-inset-top))] aspect-2/1 h-full w-full">
         <PieChart
           parties={parties}
@@ -70,6 +75,10 @@ const Seats = () => {
           isEditMode={isEditMode}
           sortBy={sortBy}
           majorityThreshold={majorityThreshold}
+          onPartyClick={(party) => {
+            const key = getPartyKey(party.id);
+            if (getPartyInfo(key)) setPartyKey(key);
+          }}
         />
       </div>
       <div className="sticky top-0 z-10 mx-auto w-full">
@@ -88,7 +97,7 @@ const Seats = () => {
       )}
       <>
         <ul
-          className={`xs:grid-cols-2 grid grid-cols-1 gap-4 transition-all sm:grid-cols-3 sm:gap-4 md:grid-cols-4`}
+          className={`xs:grid-cols-2 grid grid-cols-1 gap-4 transition-all sm:grid-cols-3 sm:gap-4 xl:grid-cols-4`}
         >
           {[...parties]
             .sort((a, b) => sort(a, b, isEditMode, sortBy))

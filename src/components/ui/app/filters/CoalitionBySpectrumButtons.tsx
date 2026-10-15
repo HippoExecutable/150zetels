@@ -24,7 +24,7 @@ import {
   useSelectedPreset,
   useI18n,
 } from "@/lib/zustandStore";
-import { getCoalitionParties } from "@/utils/coalition";
+import { getCoalitionParties, getSupportParties } from "@/utils/coalition";
 import {
   PlusCircleIcon,
   MinusCircleIcon,
@@ -38,13 +38,23 @@ interface ButtonConfig {
 }
 
 export default function CoalitionBySpectrumButtons() {
-  const { parties } = useParties();
+  const { parties, setParties } = useParties();
   const { setSelectedParties } = useSelectedParties();
   const { selectedPreset } = useSelectedPreset();
   const { i } = useI18n();
-  // Only past elections and current rooms have a coalition
+  // Only past elections and current rooms have a coalition. Parties with
+  // gedoogsteun, in the preset or marked by hand, are selected with it, since
+  // the cabinet relies on them.
   const coalitionIds = new Set(
     getCoalitionParties(selectedPreset).map((party) => party.id),
+  );
+  const supportIds = new Set(
+    coalitionIds.size > 0
+      ? [
+          ...getSupportParties(selectedPreset?.parties),
+          ...getSupportParties(parties),
+        ].map((party) => party.id)
+      : [],
   );
   const primaryButtonConfigurations: ButtonConfig[] = [
     {
@@ -61,11 +71,25 @@ export default function CoalitionBySpectrumButtons() {
       ? [
           {
             id: "coalition",
-            label: i("controls.coalition"),
-            onClick: () =>
+            label:
+              supportIds.size > 0
+                ? i("controls.coalitionWithSupport")
+                : i("controls.coalition"),
+            onClick: () => {
+              // Presets are shown without gedoogsteun until now
+              const newParties = parties.map((party) =>
+                supportIds.has(party.id) && !party.isSupport
+                  ? { ...party, isSupport: true }
+                  : party,
+              );
+              setParties(newParties);
               setSelectedParties(
-                parties.filter((party) => coalitionIds.has(party.id)),
-              ),
+                newParties.filter(
+                  (party) =>
+                    coalitionIds.has(party.id) || supportIds.has(party.id),
+                ),
+              );
+            },
           },
         ]
       : []),

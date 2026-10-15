@@ -62,7 +62,7 @@ export interface ImageStyle {
   logo: CanvasImageSource | null;
 }
 
-const brandName = "Parliament Seats";
+const brandName = "150zetels.nl";
 
 export interface ArcSegment {
   colour: string;
